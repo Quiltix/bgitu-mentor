@@ -6,7 +6,6 @@ import com.bgitu.mentor.article.dto.ArticleShortDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.dto.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.persistence.Cacheable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
