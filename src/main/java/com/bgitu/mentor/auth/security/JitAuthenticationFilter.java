@@ -1,6 +1,7 @@
 package com.bgitu.mentor.auth.security;
 
-import com.quiltix.tasktracker.service.CustomUserDetailsService;
+
+import com.bgitu.mentor.auth.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
