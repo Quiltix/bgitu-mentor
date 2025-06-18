@@ -1,4 +1,13 @@
 package com.bgitu.mentor.common.dto;
 
-public class MessageDto {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class MessageDTO {
+
+    private String message;
 }
