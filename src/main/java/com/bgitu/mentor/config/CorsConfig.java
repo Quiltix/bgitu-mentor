@@ -1,4 +1,4 @@
-package com.bgitu.mentor.common.config;
+package com.bgitu.mentor.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.bgitu.mentor.common.config;
+package com.bgitu.mentor.config;
 
 
 import com.bgitu.mentor.auth.security.JitAuthenticationFilter;

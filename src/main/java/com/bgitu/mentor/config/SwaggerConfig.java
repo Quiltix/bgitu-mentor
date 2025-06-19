@@ -1,4 +1,4 @@
-package com.bgitu.mentor.common.config;
+package com.bgitu.mentor.config;
 
 
 import io.swagger.v3.oas.models.OpenAPI;

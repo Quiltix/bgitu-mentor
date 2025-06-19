@@ -37,7 +37,7 @@ public class Mentor {
     private List<Student> students;
 
     @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
-    private List<Application> requests;
+    private List<Application> applications;
 
     @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
     private List<Article> articles;

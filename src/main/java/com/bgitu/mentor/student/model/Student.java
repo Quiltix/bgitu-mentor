@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -17,6 +19,7 @@ public class Student {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Email
     @NotBlank
     private String email;
 
@@ -27,4 +30,11 @@ public class Student {
 
     private String lastName;
 
+    private String avatarUrl;
+
+    private String vkUrl;
+    private String telegramUrl;
+
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
+    private List<Application> applications;
 }
