@@ -1,36 +1,48 @@
 package com.bgitu.mentor.auth.service;
 
-
-import lombok.extern.slf4j.Slf4j;
+import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentor.repository.MentorRepository;
+import com.bgitu.mentor.student.model.Student;
+import com.bgitu.mentor.student.repository.StudentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
-
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    UserRepository userRepository;
-
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final MentorRepository mentorRepository;
+    private final StudentRepository studentRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-
-            User user = userRepository.findUserByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<Mentor> mentorOpt = mentorRepository.findByEmail(email);
+        if (mentorOpt.isPresent()) {
+            Mentor mentor = mentorOpt.get();
             return new org.springframework.security.core.userdetails.User(
-                    user.getUsername(),
-                    user.getPassword(),
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+                    mentor.getEmail(),
+                    mentor.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_MENTOR"))
+            );
+        }
 
+        Optional<Student> studentOpt = studentRepository.findByEmail(email);
+        if (studentOpt.isPresent()) {
+            Student student = studentOpt.get();
+            return new org.springframework.security.core.userdetails.User(
+                    student.getEmail(),
+                    student.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
+            );
+        }
+
+        throw new UsernameNotFoundException("User not found with email: " + email);
     }
 }

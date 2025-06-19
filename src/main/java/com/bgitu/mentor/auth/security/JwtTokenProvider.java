@@ -1,5 +1,6 @@
 package com.bgitu.mentor.auth.security;
 
+import com.bgitu.mentor.auth.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -14,38 +15,44 @@ import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-    private final SecretKey jwtSecret = Keys.secretKeyFor(SignatureAlgorithm.HS512); // Генерируем безопасный ключ
+    private final SecretKey jwtSecret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private final long jwtExpirationInMs = 86400000;
 
-    public String generateToken(Authentication authentication) {
+    public String generateToken(String email, Role role) {
         Date now = new Date();
-        String username = authentication.getName();
-        // 1 день
-        long jwtExpirationInMs = 86400000;
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
+                .claim("role", role.name())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(jwtSecret) // Исправлено
+                .signWith(jwtSecret)
                 .compact();
     }
 
     public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(jwtSecret)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+        return parseClaims(token).getSubject();
+    }
+
+    public String getRoleFromToken(String token) {
+        return parseClaims(token).get("role", String.class);
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(token);
+            parseClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    private Claims parseClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(jwtSecret)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
