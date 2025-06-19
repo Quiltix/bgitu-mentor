@@ -34,7 +34,7 @@ public class JitAuthenticationFilter extends OncePerRequestFilter {
         String token = getJwtFromRequest(request);
 
         if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
-            String email = tokenProvider.getUsernameFromToken(token);
+            String email = tokenProvider.getEmailFromToken(token);
             String role = tokenProvider.getRoleFromToken(token);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);

@@ -1,15 +1,16 @@
 package com.bgitu.mentor.mentor.service;
 
+import com.bgitu.mentor.auth.security.JwtTokenProvider;
 import com.bgitu.mentor.mentor.dto.RegisterCardDto;
 import com.bgitu.mentor.mentor.model.Mentor;
 
 public class MentorService {
 
 
-    зregisterCardMentor
+    registerCardMentor
 
     public void registerCard(RegisterCardDto dto) {
-        String email = SecurityUtil.getCurrentUserEmail();
+        String email = JwtTokenProvider.getCurrentUserEmail();
 
         Mentor mentor = mentorRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Mentor not found"));
