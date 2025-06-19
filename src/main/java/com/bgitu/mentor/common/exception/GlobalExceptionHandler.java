@@ -1,4 +1,4 @@
-package com.bgitu.mentor.common;
+package com.bgitu.mentor.common.exception;
 
 
 
