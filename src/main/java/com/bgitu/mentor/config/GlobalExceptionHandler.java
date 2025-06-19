@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<MessageDto> handleUserNotFoundExceptions(UsernameNotFoundException ex){
-        log.error("UsernameNotFoundException:{}", String.valueOf(ex));
+        log.error("UsernameNotFoundException:{}",ex);
         return ResponseEntity.badRequest().body(new MessageDto("User not found"));
     }
 

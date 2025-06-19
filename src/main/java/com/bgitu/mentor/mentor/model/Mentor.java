@@ -32,17 +32,17 @@ public class Mentor {
 
     private Integer rank;
 
-    // lazy-связи на остальное
-    @ManyToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
-    private List<Student> students;
+//    // lazy-связи на остальное
+//    @ManyToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
+//    private List<Student> students;
 
-    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
-    private List<Application> applications;
-
-    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
-    private List<Article> articles;
-
-    @OneToMany(mappedBy = "mentor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Review> reviews;
+//    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
+//    private List<Application> applications;
+//
+//    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
+//    private List<Article> articles;
+//
+//    @OneToMany(mappedBy = "mentor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<Review> reviews;
 
 }

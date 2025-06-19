@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface MentorRepository extends JpaRepository<Mentor, Long> {
+
     boolean existsByEmail(@Email @NotBlank(message = "Email cannot be empty") String email);
 
     Optional<Mentor> findByEmail(String email);

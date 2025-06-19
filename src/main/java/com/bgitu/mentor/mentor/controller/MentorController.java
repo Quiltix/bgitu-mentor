@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,9 +23,9 @@ public class MentorController {
 
     @PreAuthorize("hasRole('MENTOR')")
     @PostMapping("/summary")
-    public ResponseEntity<?> registerCardMentor(@RequestBody @Valid RegisterCardDto cardDto){
+    public ResponseEntity<?> registerCardMentor(Authentication authentication, @RequestBody @Valid RegisterCardDto cardDto){
 
-        ResponseEntity.ok(mentorService.registerCardMentor(cardDto));
+        return ResponseEntity.ok(mentorService.registerCardMentor(authentication,cardDto));
     }
 
 

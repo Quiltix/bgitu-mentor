@@ -35,6 +35,6 @@ public class Student {
     private String vkUrl;
     private String telegramUrl;
 
-    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
-    private List<Application> applications;
+//    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
+//    private List<Application> applications;
 }

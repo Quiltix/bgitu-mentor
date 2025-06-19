@@ -12,12 +12,12 @@ public class MentorApplication {
 
     private String message;
 
-    @ManyToOne
-    private Student student;
-
-    @ManyToOne
-    private Mentor mentor;
-
-    @Enumerated(EnumType.STRING)
-    private ApplicationStatus status; // PENDING, ACCEPTED, REJECTED
+//    @ManyToOne
+//    private Student student;
+//
+//    @ManyToOne
+//    private Mentor mentor;
+//
+//    @Enumerated(EnumType.STRING)
+//    private ApplicationStatus status; // PENDING, ACCEPTED, REJECTED
 }
