@@ -11,8 +11,6 @@ public class RegisterCardDto {
 
     String description;
 
-    String avatarUrl;
-
     @NotBlank
     String specialty;
 

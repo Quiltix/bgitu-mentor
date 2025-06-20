@@ -27,6 +27,7 @@ public class MentorService {
         Mentor mentor = mentorRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Mentor not found"));
 
+
         mentor.setDescription(cardDto.getDescription());
         mentor.setAvatarUrl(cardDto.getAvatarUrl());
         mentor.setSpecialty(cardDto.getSpecialty());
