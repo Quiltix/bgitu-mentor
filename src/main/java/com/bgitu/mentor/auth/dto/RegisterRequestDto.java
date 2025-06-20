@@ -4,24 +4,25 @@ package com.bgitu.mentor.auth.dto;
 import com.bgitu.mentor.auth.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 public class RegisterRequestDto {
 
-    @Email
-    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Email должен быть правильным")
+    @NotBlank(message = "Email не может быть пустым")
     private String email;
 
-    @NotBlank
-    @Size(min = 5,message = "Password must be at least 5 characters")
+    @NotBlank(message = "Пароль должен содержать хотя-бы 5 символов")
+    @Size(min = 5,message = "Пароль должен содержать хотя-бы 5 символов")
     private String password;
 
-    @NotBlank
+    @NotBlank(message = "Заполните имя")
     private String firstName;
 
-    @NotBlank
+    @NotBlank(message = "Заполните фамилию")
     private String lastName;
 
     private Role role;

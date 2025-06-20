@@ -10,11 +10,11 @@ import lombok.Setter;
 @Setter
 public class LoginRequestDto {
 
-    @Email
-    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Email должен быть правильным")
+    @NotBlank(message = "Email не может быть пустым")
     private String email;
 
-    @Size(min = 5, message = "Password must be at least 5 characters long")
-    @NotBlank(message = "Password cannot be empty")
+    @Size(min = 5, message = "Пароль должен содержать хотя-бы 5 символов")
+    @NotBlank(message = "Пароль не может быть пустым")
     private String password;
 }

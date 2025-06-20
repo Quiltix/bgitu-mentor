@@ -1,10 +1,12 @@
 package com.bgitu.mentor.mentor.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Value;
 
 
 @Value
+@Schema(description = "Данные для заполнения карточки ментора")
 public class RegisterCardMentorDto {
 
     String description;

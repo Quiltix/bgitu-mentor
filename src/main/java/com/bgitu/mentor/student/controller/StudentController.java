@@ -1,5 +1,6 @@
 package com.bgitu.mentor.student.controller;
 
+
 import com.bgitu.mentor.student.dto.RegisterStudentCardDto;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.service.StudentService;
@@ -14,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/student")
+@RequestMapping("/api/student")
 public class StudentController {
 
     private final StudentService studentService;
@@ -24,7 +25,8 @@ public class StudentController {
     public ResponseEntity<StudentCardDto> registerStudentCard(
             Authentication authentication,
             @RequestPart("card") @Valid RegisterStudentCardDto cardDto,
-            @RequestPart(value = "avatar", required = false) MultipartFile avatarFile) {
+            @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
+    ) {
 
         return ResponseEntity.ok(new StudentCardDto(studentService.registerStudentCard(authentication, cardDto, avatarFile)));
     }

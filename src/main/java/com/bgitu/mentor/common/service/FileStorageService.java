@@ -3,13 +3,11 @@ package com.bgitu.mentor.common.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,7 +22,13 @@ public class FileStorageService {
     private String uploadDir;
 
     public String storeAvatar(MultipartFile file, String filenamePrefix) {
+        String contentType = file.getContentType();
         String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+
+        if (!isAllowedImage(contentType, extension)) {
+            throw new IllegalArgumentException("Недопустимый тип файла. Разрешены только изображения (JPG, PNG, WEBP).");
+        }
+
         String fileName = filenamePrefix + "." + extension;
         Path path = Paths.get(uploadDir).toAbsolutePath().normalize();
 
@@ -34,18 +38,22 @@ public class FileStorageService {
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             return "/api/files/avatars/" + fileName;
         } catch (IOException e) {
-            throw new RuntimeException("Could not store file: " + fileName, e);
+            throw new RuntimeException("Не удалось сохранить файл: " + fileName, e);
         }
     }
 
-    public Resource loadAvatar(String fileName) {
-        try {
-            Path path = Paths.get(uploadDir).toAbsolutePath().resolve(fileName).normalize();
-            Resource resource = new UrlResource(path.toUri());
-            if (resource.exists()) return resource;
-            else throw new FileNotFoundException("File not found " + fileName);
-        } catch (Exception e) {
-            throw new RuntimeException("File load failed", e);
-        }
+    private boolean isAllowedImage(String contentType, String extension) {
+        if (contentType == null || extension == null) return false;
+
+        // Проверка расширения (чтобы не загрузили .sh или .exe с типом image/png)
+        String lowerExt = extension.toLowerCase();
+        boolean validExtension = lowerExt.equals("jpg") || lowerExt.equals("jpeg") ||
+                lowerExt.equals("png") || lowerExt.equals("webp");
+
+        boolean validMime = contentType.equals("image/jpeg") ||
+                contentType.equals("image/png") ||
+                contentType.equals("image/webp");
+
+        return validMime && validExtension;
     }
 }

@@ -2,7 +2,7 @@ package com.bgitu.mentor.mentor.service;
 
 
 import com.bgitu.mentor.common.service.FileStorageService;
-import com.bgitu.mentor.mentor.dto.CardMentorDto;
+
 import com.bgitu.mentor.mentor.dto.RegisterCardMentorDto;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
@@ -23,7 +23,7 @@ public class MentorService {
     private final FileStorageService fileStorageService;
 
 
-    public CardMentorDto registerCardMentor(Authentication authentication, RegisterCardMentorDto cardDto, MultipartFile avatarFile){
+    public Mentor registerCardMentor(Authentication authentication, RegisterCardMentorDto cardDto, MultipartFile avatarFile){
         String email = authentication.getName();
 
         Mentor mentor = mentorRepository.findByEmail(email)
@@ -40,6 +40,14 @@ public class MentorService {
             mentor.setAvatarUrl(avatarUrl);
         }
 
-        return  new CardMentorDto(mentorRepository.save(mentor));
+        return mentorRepository.save(mentor);
+    }
+
+    public Mentor getMentorByAuth(Authentication authentication){
+        String email = authentication.getName();
+
+        return mentorRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Mentor not found"));
+
     }
 }

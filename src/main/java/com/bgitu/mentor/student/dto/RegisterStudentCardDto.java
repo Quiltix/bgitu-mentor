@@ -1,17 +1,16 @@
 package com.bgitu.mentor.student.dto;
 
-import com.bgitu.mentor.mentor.model.Mentor;
-import com.bgitu.mentor.mentorship.model.Application;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+
 
 
 @Getter
+@Schema(description = "Данные для заполнения карточки студента")
 @Setter
 public class RegisterStudentCardDto {
 
