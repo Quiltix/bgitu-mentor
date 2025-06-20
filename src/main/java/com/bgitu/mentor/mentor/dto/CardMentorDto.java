@@ -16,7 +16,7 @@ public class CardMentorDto {
     String lastName;
     String description;
     String avatarUrl;
-    String specialty;
+    String speciality;
     String vkUrl;
     String telegramUrl;
     Integer rank;
@@ -27,7 +27,7 @@ public class CardMentorDto {
         this.lastName = mentor.getLastName();
         this.description = mentor.getDescription();
         this.avatarUrl = mentor.getAvatarUrl();
-        this.specialty = mentor.getSpecialty();
+        this.speciality = mentor.getSpeciality();
         this.vkUrl = mentor.getVkUrl();
         this.telegramUrl = mentor.getTelegramUrl();
         this.rank = mentor.getRank();

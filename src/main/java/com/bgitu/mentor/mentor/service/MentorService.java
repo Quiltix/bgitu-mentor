@@ -1,16 +1,17 @@
 package com.bgitu.mentor.mentor.service;
 
 
+import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
-import com.bgitu.mentor.mentor.dto.RegisterCardDto;
+import com.bgitu.mentor.mentor.dto.RegisterCardMentorDto;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -19,9 +20,10 @@ public class MentorService {
 
 
     private final MentorRepository mentorRepository;
+    private final FileStorageService fileStorageService;
 
 
-    public CardMentorDto registerCardMentor(Authentication authentication, RegisterCardDto cardDto){
+    public CardMentorDto registerCardMentor(Authentication authentication, RegisterCardMentorDto cardDto, MultipartFile avatarFile){
         String email = authentication.getName();
 
         Mentor mentor = mentorRepository.findByEmail(email)
@@ -29,10 +31,14 @@ public class MentorService {
 
 
         mentor.setDescription(cardDto.getDescription());
-        mentor.setAvatarUrl(cardDto.getAvatarUrl());
-        mentor.setSpecialty(cardDto.getSpecialty());
+        mentor.setSpeciality(cardDto.getSpeciality());
         mentor.setVkUrl(cardDto.getVkUrl());
         mentor.setTelegramUrl(cardDto.getTelegramUrl());
+
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            String avatarUrl = fileStorageService.storeAvatar(avatarFile, "mentor_" + mentor.getId());
+            mentor.setAvatarUrl(avatarUrl);
+        }
 
         return  new CardMentorDto(mentorRepository.save(mentor));
     }
