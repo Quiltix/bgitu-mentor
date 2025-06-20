@@ -13,7 +13,11 @@ public class JwtAuthenticationResponseDto {
     @Schema(description = "Тип аутентификации", example = "Bearer")
     private final String tokenType = "Bearer";
 
-    public JwtAuthenticationResponseDto(String accessToken) {
+    private String role;
+
+    public JwtAuthenticationResponseDto(String accessToken, String role) {
         this.accessToken = accessToken;
+        this.role = role;
+
     }
 }
