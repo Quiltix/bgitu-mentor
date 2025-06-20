@@ -1,5 +1,7 @@
 package com.bgitu.mentor.mentor.model;
 
+import com.bgitu.mentor.arcticle.model.Article;
+import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.student.model.Student;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -25,24 +27,21 @@ public class Mentor {
 
     private String description;
     private String avatarUrl;
-    private String specialty;
+    private String speciality;
 
     private String vkUrl;
     private String telegramUrl;
 
     private Integer rank;
 
-//    // lazy-связи на остальное
-//    @ManyToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
-//    private List<Student> students;
+    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
+    private List<Student> students;
 
-//    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
-//    private List<Application> applications;
-//
-//    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
-//    private List<Article> articles;
-//
-//    @OneToMany(mappedBy = "mentor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<Review> reviews;
+    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
+    private List<Application> applications;
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    private List<Article> articles;
+
 
 }

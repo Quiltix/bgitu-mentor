@@ -1,5 +1,7 @@
 package com.bgitu.mentor.student.model;
 
+import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentorship.model.Application;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -30,11 +32,17 @@ public class Student {
 
     private String lastName;
 
-    private String avatarUrl;
+    private String description;//
 
-    private String vkUrl;
-    private String telegramUrl;
+    private String avatarUrl;//
 
-//    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
-//    private List<Application> applications;
+    private String vkUrl;//
+    private String telegramUrl;//
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mentor_id")  // внешний ключ
+    private Mentor mentor;
+
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
+    private List<Application> applications;
 }
