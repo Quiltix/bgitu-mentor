@@ -8,6 +8,7 @@ import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.student.dto.RegisterStudentCardDto;
 import com.bgitu.mentor.student.dto.StudentCardDto;
+import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.service.StudentService;
 import jakarta.validation.Valid;
@@ -48,17 +49,26 @@ public class StudentController {
 
     @PreAuthorize("hasRole('STUDENT')")
     @PatchMapping("/profile")
-    public ResponseEntity<?> updateMentorProfile(
+    public ResponseEntity<PersonalInfoDto> updateMentorProfile(
             Authentication authentication,
             @RequestBody @Valid UpdatePersonalInfo dto
     ) {
-        try {
-            Student updated = studentService.updateStudentProfile(authentication, dto);
-            return ResponseEntity.ok(new PersonalInfoDto(updated));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(500).body(new MessageDto("Ошибка обновления профиля"));
-        }
+        Student updated = studentService.updateStudentProfile(authentication, dto);
+        return ResponseEntity.ok(new PersonalInfoDto(updated));
+
     }
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @PatchMapping(value = "/summary", consumes = "multipart/form-data")
+    public ResponseEntity<StudentCardDto> updateStudentCard(
+            Authentication authentication,
+            @RequestPart("card") UpdateStudentCardDto dto,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
+    ) {
+
+        Student updated = studentService.updateStudentCard(authentication, dto, avatarFile);
+        return ResponseEntity.ok(new StudentCardDto(updated));
+    }
+
 
 }

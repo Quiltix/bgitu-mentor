@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<MessageDto> handleAllExceptions(Exception ex) {
         log.error("Unhandled exception occurred: ", ex);
-        return ResponseEntity.status(500).body(new MessageDto("Internal server error: " + ex.getMessage()));
+        return ResponseEntity.status(500).body(new MessageDto("Ошибка сервера" + ex.getMessage()));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

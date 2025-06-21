@@ -27,7 +27,12 @@ public class Mentor {
 
     private String description;
     private String avatarUrl;
-    private String speciality;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "speciality_id")
+    private Speciality speciality;
+
+
 
     private String vkUrl;
     private String telegramUrl;

@@ -5,8 +5,12 @@ import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.dto.RegisterCardMentorDto;
+import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.service.MentorService;
+import com.bgitu.mentor.student.dto.StudentCardDto;
+import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
+import com.bgitu.mentor.student.model.Student;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,39 +33,51 @@ public class MentorController {
 
 
     @PreAuthorize("hasRole('MENTOR')")
-    @PostMapping(value ="/summary", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/summary", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CardMentorDto> registerCardMentor(
             Authentication authentication,
             @RequestPart("card") @Valid RegisterCardMentorDto cardDto,
             @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
-    ){
+    ) {
 
-        return ResponseEntity.ok(new CardMentorDto(mentorService.registerCardMentor(authentication,cardDto,avatarFile)));
+        return ResponseEntity.ok(new CardMentorDto(mentorService.registerCardMentor(authentication, cardDto, avatarFile)));
     }
 
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/summary")
-    public ResponseEntity<CardMentorDto> getCardMentor( Authentication authentication){
+    public ResponseEntity<CardMentorDto> getCardMentor(Authentication authentication) {
         return ResponseEntity.ok(new CardMentorDto(mentorService.getMentorByAuth(authentication)));
     }
 
     @PreAuthorize("hasRole('MENTOR')")
     @PatchMapping("/profile")
-    public ResponseEntity<?> updateMentorProfile(
+    public ResponseEntity<PersonalInfoDto> updateMentorProfile(
             Authentication authentication,
             @RequestBody @Valid UpdatePersonalInfo dto
     ) {
-        try {
-            Mentor updated = mentorService.updateMentorProfile(authentication, dto);
-            return ResponseEntity.ok(new PersonalInfoDto(updated));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(500).body(new MessageDto("Ошибка обновления профиля"));
-        }
+
+        Mentor updated = mentorService.updateMentorProfile(authentication, dto);
+        return ResponseEntity.ok(new PersonalInfoDto(updated));
+
     }
 
+    @PreAuthorize("hasRole('MENTOR')")
+    @PatchMapping(value = "/summary", consumes = "multipart/form-data")
+    public ResponseEntity<CardMentorDto> updateMentorCard(
+            Authentication authentication,
+            @RequestPart("card") UpdateMentorCardDto dto,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
+    ) {
 
-
-
-
+        Mentor updated = mentorService.updateMentorCard(authentication, dto, avatarFile);
+        return ResponseEntity.ok(new CardMentorDto(updated));
+    }
 }
+
+
+
+
+
+
+
+

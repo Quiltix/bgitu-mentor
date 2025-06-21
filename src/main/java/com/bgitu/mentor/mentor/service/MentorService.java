@@ -1,13 +1,17 @@
 package com.bgitu.mentor.mentor.service;
 
 
-import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
 
 import com.bgitu.mentor.mentor.dto.RegisterCardMentorDto;
+import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
 import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentor.model.Speciality;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
+import com.bgitu.mentor.mentor.repository.SpecialityRepository;
+import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
+import com.bgitu.mentor.student.model.Student;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -25,6 +29,7 @@ public class MentorService {
     private final MentorRepository mentorRepository;
     private final FileStorageService fileStorageService;
     private final PasswordEncoder passwordEncoder;
+    private final SpecialityRepository specialityRepository;
 
 
     public Mentor registerCardMentor(Authentication authentication, RegisterCardMentorDto cardDto, MultipartFile avatarFile){
@@ -33,7 +38,9 @@ public class MentorService {
 
 
         mentor.setDescription(cardDto.getDescription());
-        mentor.setSpeciality(cardDto.getSpeciality());
+        Speciality speciality = specialityRepository.findById(cardDto.getSpecialityId())
+                .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
+        mentor.setSpeciality(speciality);
         mentor.setVkUrl(cardDto.getVkUrl());
         mentor.setTelegramUrl(cardDto.getTelegramUrl());
 
@@ -75,5 +82,36 @@ public class MentorService {
 
         return mentorRepository.save(mentor);
     }
+    public Mentor updateMentorCard(Authentication authentication, UpdateMentorCardDto dto, MultipartFile avatarFile) {
+
+
+        Mentor mentor = getMentorByAuth(authentication);
+
+        if (dto.getDescription() != null) {
+            mentor.setDescription(dto.getDescription());
+        }
+
+        if (dto.getVkUrl() != null) {
+            mentor.setVkUrl(dto.getVkUrl());
+        }
+
+        if (dto.getTelegramUrl() != null) {
+            mentor.setTelegramUrl(dto.getTelegramUrl());
+        }
+
+        if (dto.getSpecialityId() != null) {
+            Speciality speciality = specialityRepository.findById(dto.getSpecialityId())
+                    .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
+            mentor.setSpeciality(speciality);
+        }
+
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            String avatarUrl = fileStorageService.storeAvatar(avatarFile, "mentor_" + mentor.getId());
+            mentor.setAvatarUrl(avatarUrl);
+        }
+
+        return mentorRepository.save(mentor);
+    }
+
 
 }

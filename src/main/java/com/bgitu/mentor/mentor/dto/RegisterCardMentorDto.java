@@ -12,7 +12,7 @@ public class RegisterCardMentorDto {
     String description;
 
     @NotBlank(message = "Специальность не должна быть пустой")
-    String speciality;
+    private Long specialityId;
 
     @NotBlank(message = "Добавьте ссылку на VK")
     String vkUrl;

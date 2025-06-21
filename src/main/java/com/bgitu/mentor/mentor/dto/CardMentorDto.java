@@ -11,15 +11,14 @@ import lombok.Value;
 @Getter
 @Setter
 public class CardMentorDto {
-    Long id;
-    String firstName;
-    String lastName;
-    String description;
-    String avatarUrl;
-    String speciality;
-    String vkUrl;
-    String telegramUrl;
-    Integer rank;
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String description;
+    private String avatarUrl;
+    private String vkUrl;
+    private String telegramUrl;
+    private String speciality; // имя специальности
 
     public CardMentorDto(Mentor mentor) {
         this.id = mentor.getId();
@@ -27,9 +26,8 @@ public class CardMentorDto {
         this.lastName = mentor.getLastName();
         this.description = mentor.getDescription();
         this.avatarUrl = mentor.getAvatarUrl();
-        this.speciality = mentor.getSpeciality();
         this.vkUrl = mentor.getVkUrl();
         this.telegramUrl = mentor.getTelegramUrl();
-        this.rank = mentor.getRank();
+        this.speciality = mentor.getSpeciality() != null ? mentor.getSpeciality().getName() : null;
     }
 }

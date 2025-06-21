@@ -5,6 +5,7 @@ import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.student.dto.RegisterStudentCardDto;
+import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -71,4 +72,30 @@ public class StudentService {
 
         return studentRepository.save(student);
     }
+
+    public Student updateStudentCard(
+            Authentication authentication,
+            UpdateStudentCardDto dto,
+            MultipartFile avatarFile
+    ) {
+        Student student = getStudentByAuth(authentication);
+
+        if (dto.getDescription() != null) {
+            student.setDescription(dto.getDescription());
+        }
+        if (dto.getVkUrl() != null) {
+            student.setVkUrl(dto.getVkUrl());
+        }
+        if (dto.getTelegramUrl() != null) {
+            student.setTelegramUrl(dto.getTelegramUrl());
+        }
+
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            String avatarUrl = fileStorageService.storeAvatar(avatarFile, "student_" + student.getId());
+            student.setAvatarUrl(avatarUrl);
+        }
+
+        return studentRepository.save(student);
+    }
+
 }
