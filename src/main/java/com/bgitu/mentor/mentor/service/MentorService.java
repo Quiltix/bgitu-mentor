@@ -1,16 +1,18 @@
 package com.bgitu.mentor.mentor.service;
 
 
+import com.bgitu.mentor.common.dto.PersonalInfoDto;
+import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
 
 import com.bgitu.mentor.mentor.dto.RegisterCardMentorDto;
-import com.bgitu.mentor.mentor.dto.UpdateMentorProfileDto;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +24,7 @@ public class MentorService {
 
     private final MentorRepository mentorRepository;
     private final FileStorageService fileStorageService;
+    private final PasswordEncoder passwordEncoder;
 
 
     public Mentor registerCardMentor(Authentication authentication, RegisterCardMentorDto cardDto, MultipartFile avatarFile){
@@ -50,7 +53,7 @@ public class MentorService {
 
     }
 
-    public Mentor updateMentorProfile(Authentication authentication, UpdateMentorProfileDto dto) {
+    public Mentor updateMentorProfile(Authentication authentication, UpdatePersonalInfo dto) {
 
         Mentor mentor = getMentorByAuth(authentication);
 

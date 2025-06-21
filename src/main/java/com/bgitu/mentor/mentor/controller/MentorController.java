@@ -1,12 +1,15 @@
 package com.bgitu.mentor.mentor.controller;
 
+import com.bgitu.mentor.common.dto.MessageDto;
+import com.bgitu.mentor.common.dto.PersonalInfoDto;
+import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.dto.RegisterCardMentorDto;
+import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.service.MentorService;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +17,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mentor")
@@ -38,6 +44,22 @@ public class MentorController {
     public ResponseEntity<CardMentorDto> getCardMentor( Authentication authentication){
         return ResponseEntity.ok(new CardMentorDto(mentorService.getMentorByAuth(authentication)));
     }
+
+    @PreAuthorize("hasRole('MENTOR')")
+    @PatchMapping("/profile")
+    public ResponseEntity<?> updateMentorProfile(
+            Authentication authentication,
+            @RequestBody @Valid UpdatePersonalInfo dto
+    ) {
+        try {
+            Mentor updated = mentorService.updateMentorProfile(authentication, dto);
+            return ResponseEntity.ok(new PersonalInfoDto(updated));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(500).body(new MessageDto("Ошибка обновления профиля"));
+        }
+    }
+
 
 
 
