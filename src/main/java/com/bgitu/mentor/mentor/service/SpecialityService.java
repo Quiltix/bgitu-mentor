@@ -1,6 +1,11 @@
 package com.bgitu.mentor.mentor.service;
 
+import com.bgitu.mentor.mentor.dto.SpecialityDto;
+import com.bgitu.mentor.mentor.repository.SpecialityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

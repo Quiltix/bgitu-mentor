@@ -4,6 +4,8 @@ package com.bgitu.mentor.mentor.service;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
 
+import com.bgitu.mentor.mentor.dto.CardMentorDto;
+import com.bgitu.mentor.mentor.dto.MentorShortDto;
 import com.bgitu.mentor.mentor.dto.RegisterCardMentorDto;
 import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
 import com.bgitu.mentor.mentor.model.Mentor;
@@ -12,6 +14,7 @@ import com.bgitu.mentor.mentor.repository.MentorRepository;
 import com.bgitu.mentor.mentor.repository.SpecialityRepository;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
 import com.bgitu.mentor.student.model.Student;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -19,6 +22,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -113,5 +120,32 @@ public class MentorService {
         return mentorRepository.save(mentor);
     }
 
+    public List<CardMentorDto> getTopMentors() {
+        return mentorRepository.findTop3ByOrderByRankDesc()
+                .stream()
+                .map(CardMentorDto::new)
+                .toList();
+    }
 
+
+
+    public List<MentorShortDto> getAllShort(Optional<Long> specialityId) {
+        List<Mentor> mentors = specialityId
+                .map(mentorRepository::findAllBySpecialityId)
+                .orElseGet(mentorRepository::findAll);
+
+        return mentors.stream()
+                .map(MentorShortDto::new)
+                .collect(Collectors.toList());
+    }
+
+
+    public CardMentorDto getById(Long id) {
+        Mentor mentor = mentorRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
+        return new CardMentorDto(mentor);
+    }
 }
+
+
+

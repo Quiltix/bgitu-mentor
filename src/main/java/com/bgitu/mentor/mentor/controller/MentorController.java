@@ -4,6 +4,7 @@ import com.bgitu.mentor.common.dto.MessageDto;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
+import com.bgitu.mentor.mentor.dto.MentorShortDto;
 import com.bgitu.mentor.mentor.dto.RegisterCardMentorDto;
 import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
 import com.bgitu.mentor.mentor.model.Mentor;
@@ -21,7 +22,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -71,6 +74,24 @@ public class MentorController {
 
         Mentor updated = mentorService.updateMentorCard(authentication, dto, avatarFile);
         return ResponseEntity.ok(new CardMentorDto(updated));
+    }
+
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
+    @GetMapping("/popular")
+    public ResponseEntity<List<CardMentorDto>> getTopMentors() {
+        return ResponseEntity.ok(mentorService.getTopMentors());
+    }
+
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
+    @GetMapping("/all")
+    public List<MentorShortDto> getAllMentorsShort(@RequestParam(required = false) Long specialityId) {
+        return mentorService.getAllShort(Optional.ofNullable(specialityId));
+    }
+
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
+    @GetMapping("/{id}")
+    public CardMentorDto getMentorDetails(@PathVariable Long id) {
+        return mentorService.getById(id);
     }
 }
 

@@ -1,0 +1,26 @@
+package com.bgitu.mentor.mentor.controller;
+
+import com.bgitu.mentor.mentor.dto.SpecialityDto;
+import com.bgitu.mentor.mentor.service.SpecialityService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/speciality")
+@RequiredArgsConstructor
+public class SpecialityController {
+
+    private final SpecialityService specialityService;
+
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
+    @GetMapping
+    public ResponseEntity<List<SpecialityDto>> getAllSpecialities() {
+        return ResponseEntity.ok(specialityService.getAllSpecialities());
+    }
+}
