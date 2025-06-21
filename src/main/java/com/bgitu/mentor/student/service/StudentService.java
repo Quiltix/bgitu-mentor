@@ -2,6 +2,7 @@ package com.bgitu.mentor.student.service;
 
 
 import com.bgitu.mentor.common.service.FileStorageService;
+import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.student.dto.RegisterStudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
@@ -34,5 +35,13 @@ public class StudentService {
         }
 
         return studentRepository.save(student);
+    }
+
+    public Student getStudentByAuth(Authentication authentication){
+        String email = authentication.getName();
+
+        return studentRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Студент не найден"));
+
     }
 }

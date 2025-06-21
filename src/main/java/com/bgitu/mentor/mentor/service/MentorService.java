@@ -4,6 +4,7 @@ package com.bgitu.mentor.mentor.service;
 import com.bgitu.mentor.common.service.FileStorageService;
 
 import com.bgitu.mentor.mentor.dto.RegisterCardMentorDto;
+import com.bgitu.mentor.mentor.dto.UpdateMentorProfileDto;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +25,8 @@ public class MentorService {
 
 
     public Mentor registerCardMentor(Authentication authentication, RegisterCardMentorDto cardDto, MultipartFile avatarFile){
-        String email = authentication.getName();
 
-        Mentor mentor = mentorRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Mentor not found"));
+        Mentor mentor = getMentorByAuth(authentication);
 
 
         mentor.setDescription(cardDto.getDescription());
@@ -50,4 +49,28 @@ public class MentorService {
                 .orElseThrow(() -> new UsernameNotFoundException("Mentor not found"));
 
     }
+
+    public Mentor updateMentorProfile(Authentication authentication, UpdateMentorProfileDto dto) {
+
+        Mentor mentor = getMentorByAuth(authentication);
+
+        if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+            mentor.setEmail(dto.getEmail());
+        }
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            mentor.setPassword(passwordEncoder.encode(dto.getPassword())); // обязательно хешируй!
+        }
+
+        if (dto.getFirstName() != null) {
+            mentor.setFirstName(dto.getFirstName());
+        }
+
+        if (dto.getLastName() != null) {
+            mentor.setLastName(dto.getLastName());
+        }
+
+        return mentorRepository.save(mentor);
+    }
+
 }

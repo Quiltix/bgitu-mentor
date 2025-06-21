@@ -1,6 +1,7 @@
 package com.bgitu.mentor.student.controller;
 
 
+import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.student.dto.RegisterStudentCardDto;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.service.StudentService;
@@ -29,5 +30,12 @@ public class StudentController {
     ) {
 
         return ResponseEntity.ok(new StudentCardDto(studentService.registerStudentCard(authentication, cardDto, avatarFile)));
+    }
+
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("/summary")
+    public ResponseEntity<StudentCardDto> getCardStudent(Authentication authentication){
+        return ResponseEntity.ok(new StudentCardDto(studentService.getStudentByAuth(authentication)));
     }
 }
