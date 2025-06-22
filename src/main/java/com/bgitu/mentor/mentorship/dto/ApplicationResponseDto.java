@@ -2,6 +2,7 @@ package com.bgitu.mentor.mentorship.dto;
 
 
 import com.bgitu.mentor.mentorship.model.ApplicationStatus;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ public class ApplicationResponseDto {
 
     Long id;
 
+    @Size(max = 250, message = "Сократите сообщение до 250 символов")
     String message;
 
     ApplicationStatus status;

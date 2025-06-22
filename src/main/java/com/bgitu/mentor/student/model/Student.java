@@ -32,6 +32,7 @@ public class Student {
 
     private String lastName;
 
+    @Column(length = 2000)
     private String description;//
 
     private String avatarUrl;//

@@ -1,7 +1,12 @@
 package com.bgitu.mentor.article.dto;
 
 import com.bgitu.mentor.article.model.Article;
+import lombok.Getter;
+import lombok.Setter;
 
+
+@Getter
+@Setter
 public class ArticleShortDto {
     private Long id;
     private String title;

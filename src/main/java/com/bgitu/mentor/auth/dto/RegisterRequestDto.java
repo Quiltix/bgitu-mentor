@@ -13,6 +13,7 @@ public class RegisterRequestDto {
 
     @Email(message = "Email должен быть правильным")
     @NotBlank(message = "Email не может быть пустым")
+    @Size(min = 250,message = "Email слишком длинный")
     private String email;
 
     @NotBlank(message = "Пароль должен содержать хотя-бы 5 символов")
@@ -20,9 +21,11 @@ public class RegisterRequestDto {
     private String password;
 
     @NotBlank(message = "Заполните имя")
+    @Size(min = 30,message = "Имя не больше 30 символов")
     private String firstName;
 
     @NotBlank(message = "Заполните фамилию")
+    @Size(min = 50,message = "Фамилия не больше 50 символов")
     private String lastName;
 
     private Role role;
