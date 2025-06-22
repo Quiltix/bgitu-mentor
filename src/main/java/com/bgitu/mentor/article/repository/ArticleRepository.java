@@ -11,4 +11,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findAllByOrderByRankDesc();
 
     List<Article> findBySpecialityIdOrderByRankDesc(Long specialityId);
+
+    List<Article> findTop3ByOrderByRankDesc();
 }

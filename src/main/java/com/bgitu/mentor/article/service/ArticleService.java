@@ -2,6 +2,7 @@ package com.bgitu.mentor.article.service;
 
 import com.bgitu.mentor.article.dto.ArticleCreateDto;
 import com.bgitu.mentor.article.dto.ArticleResponseDto;
+import com.bgitu.mentor.article.dto.ArticleShortDto;
 import com.bgitu.mentor.article.model.Article;
 import com.bgitu.mentor.article.model.ArticleVote;
 import com.bgitu.mentor.article.repository.ArticleRepository;
@@ -63,13 +64,13 @@ public class ArticleService {
         return new ArticleResponseDto(article);
     }
 
-    public List<ArticleResponseDto> getAllArticles(Optional<Long> specialityId) {
+    public List<ArticleShortDto> getAllArticles(Optional<Long> specialityId) {
         List<Article> articles = specialityId
                 .map(articleRepository::findBySpecialityIdOrderByRankDesc)
                 .orElseGet(articleRepository::findAllByOrderByRankDesc);
 
         return articles.stream()
-                .map(ArticleResponseDto::new)
+                .map(ArticleShortDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -123,6 +124,13 @@ public class ArticleService {
 
         article.setRank(article.getRank() + (like ? 1 : -1));
         articleRepository.save(article);
+    }
+
+    public List<ArticleShortDto> getTop3Articles() {
+        List<Article> topArticles = articleRepository.findTop3ByOrderByRankDesc();
+        return topArticles.stream()
+                .map(ArticleShortDto::new)
+                .collect(Collectors.toList());
     }
 
 
