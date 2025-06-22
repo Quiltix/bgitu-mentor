@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -122,6 +123,13 @@ public class MentorController {
     ) {
         mentorService.voteMentor(id, upvote, authentication);
         return ResponseEntity.ok(new MessageDto("Голос учтен"));
+    }
+
+
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
+    @GetMapping("/search")
+    public ResponseEntity<List<MentorShortDto>> searchMentors(@RequestParam  String query) {
+        return ResponseEntity.ok(mentorService.searchMentors(query));
     }
 
 }

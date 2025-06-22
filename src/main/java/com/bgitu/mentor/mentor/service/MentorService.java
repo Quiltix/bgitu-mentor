@@ -178,6 +178,17 @@ public class MentorService {
         mentorRepository.save(mentor);
     }
 
+    public List<MentorShortDto> searchMentors(String query) {
+        if (query.length()>250){
+            throw new IllegalStateException("Строка для поиска слишком длинная");
+        }
+        List<Mentor> mentors = mentorRepository.searchByNameOrDescription(query);
+        return mentors.stream()
+                .map(MentorShortDto::new)
+                .collect(Collectors.toList());
+    }
+
+
 }
 
 
