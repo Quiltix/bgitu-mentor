@@ -1,10 +1,14 @@
-package com.bgitu.mentor.arcticle.model;
+package com.bgitu.mentor.article.model;
 
 import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentor.model.Speciality;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.List;
 
+@Getter
+@Setter
 @Entity
 public class Article {
     @Id
@@ -19,10 +23,11 @@ public class Article {
 
     private String imageUrl;
 
-    @ElementCollection
-    @CollectionTable(name = "article_technology", joinColumns = @JoinColumn(name = "article_id"))
-    @Column(name = "technology")
-    private List<String> technologies; // JAva Spring QA SQL .split(" )
+    private int rank;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "speciality_id")
+    private Speciality speciality;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")

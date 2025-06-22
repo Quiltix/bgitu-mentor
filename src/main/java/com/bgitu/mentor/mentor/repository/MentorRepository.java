@@ -17,4 +17,6 @@ public interface MentorRepository extends JpaRepository<Mentor, Long> {
     List<Mentor> findTop3ByOrderByRankDesc();
 
     List<Mentor> findAllBySpecialityId(Long specialityId);
+
+    List<Mentor> findBySpecialityIdOrderByRankDesc(Long specId);
 }

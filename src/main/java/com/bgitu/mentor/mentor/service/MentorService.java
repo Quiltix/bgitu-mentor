@@ -12,8 +12,6 @@ import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.model.Speciality;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
 import com.bgitu.mentor.mentor.repository.SpecialityRepository;
-import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
-import com.bgitu.mentor.student.model.Student;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +74,7 @@ public class MentorService {
         }
 
         if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-            mentor.setPassword(passwordEncoder.encode(dto.getPassword())); // обязательно хешируй!
+            mentor.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
         if (dto.getFirstName() != null) {
@@ -131,10 +129,11 @@ public class MentorService {
 
     public List<MentorShortDto> getAllShort(Optional<Long> specialityId) {
         List<Mentor> mentors = specialityId
-                .map(mentorRepository::findAllBySpecialityId)
+                .map(mentorRepository::findBySpecialityIdOrderByRankDesc)
                 .orElseGet(mentorRepository::findAll);
 
         return mentors.stream()
+                .filter(mentor -> mentor.getVkUrl() != null)
                 .map(MentorShortDto::new)
                 .collect(Collectors.toList());
     }
@@ -145,6 +144,8 @@ public class MentorService {
                 .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
         return new CardMentorDto(mentor);
     }
+
+
 }
 
 

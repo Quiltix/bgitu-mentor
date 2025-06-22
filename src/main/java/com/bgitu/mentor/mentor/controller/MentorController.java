@@ -12,6 +12,8 @@ import com.bgitu.mentor.mentor.service.MentorService;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
 import com.bgitu.mentor.student.model.Student;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,12 +31,15 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Mentor", description = "Методы для взаимодействия с карточками и профилем ментора")
+
 @RequestMapping("/api/mentor")
 public class MentorController {
 
     private final MentorService mentorService;
 
 
+    @Operation(summary = "Создание карточки ментора", description = "Доступно только для роли MENTOR. Загружает описание и аватар.")
     @PreAuthorize("hasRole('MENTOR')")
     @PostMapping(value = "/summary", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CardMentorDto> registerCardMentor(
@@ -46,12 +51,14 @@ public class MentorController {
         return ResponseEntity.ok(new CardMentorDto(mentorService.registerCardMentor(authentication, cardDto, avatarFile)));
     }
 
+    @Operation(summary = "Получение карточки ментора", description = "Доступно только для роли MENTOR. Возвращает полную информацию по текущему пользователю.")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/summary")
     public ResponseEntity<CardMentorDto> getCardMentor(Authentication authentication) {
         return ResponseEntity.ok(new CardMentorDto(mentorService.getMentorByAuth(authentication)));
     }
 
+    @Operation(summary = "Обновление профиля ментора", description = "Доступно только для роли MENTOR. Обновляет имя, фамилию, пароль и email.")
     @PreAuthorize("hasRole('MENTOR')")
     @PatchMapping("/profile")
     public ResponseEntity<PersonalInfoDto> updateMentorProfile(
@@ -64,6 +71,7 @@ public class MentorController {
 
     }
 
+    @Operation(summary = "Обновление карточки ментора", description = "Доступно только для роли MENTOR. Позволяет редактировать описание, направление и аватар.")
     @PreAuthorize("hasRole('MENTOR')")
     @PatchMapping(value = "/summary", consumes = "multipart/form-data")
     public ResponseEntity<CardMentorDto> updateMentorCard(
@@ -76,22 +84,32 @@ public class MentorController {
         return ResponseEntity.ok(new CardMentorDto(updated));
     }
 
+    @Operation(summary = "Получение топ-3 менторов", description = "Доступно для ролей STUDENT и MENTOR. Возвращает менторов с наивысшим рангом.")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/popular")
     public ResponseEntity<List<CardMentorDto>> getTopMentors() {
         return ResponseEntity.ok(mentorService.getTopMentors());
     }
 
+    @Operation(summary = "Получение списка менторов (короткое описание)", description = "Доступно для ролей STUDENT и MENTOR. Поддерживает фильтрацию по id специальности.")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/all")
-    public List<MentorShortDto> getAllMentorsShort(@RequestParam(required = false) Long specialityId) {
-        return mentorService.getAllShort(Optional.ofNullable(specialityId));
+    public ResponseEntity<List<MentorShortDto>>  getAllMentorsShort(@RequestParam(required = false) Long specialityId) {
+        return  ResponseEntity.ok(mentorService.getAllShort(Optional.ofNullable(specialityId)));
     }
 
+    @Operation(summary = "Получение полной карточки ментора", description = "Доступно для ролей STUDENT и MENTOR. Возвращает полную информацию по ментору по id.")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/{id}")
-    public CardMentorDto getMentorDetails(@PathVariable Long id) {
-        return mentorService.getById(id);
+    public ResponseEntity<CardMentorDto> getMentorDetails(@PathVariable Long id) {
+        return ResponseEntity.ok( mentorService.getById(id));
+    }
+
+    @Operation(summary = "Получение моего профиля", description = "MENTOR. Возвращает профиль по авторизации")
+    @PreAuthorize("hasRole('MENTOR')")
+    @GetMapping("/profile")
+    public ResponseEntity<PersonalInfoDto> getMentorProfile(Authentication authentication) {
+        return ResponseEntity.ok(new PersonalInfoDto( mentorService.getMentorByAuth(authentication)));
     }
 }
 

@@ -89,4 +89,10 @@ public class GlobalExceptionHandler {
         error.put("message", "Файл слишком большой. Максимально допустимый размер — 10MB.");
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(error);
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<MessageDto> handleIllegalStateException(IllegalStateException ex){
+        log.error("IllegalStateException:{}",ex);
+        return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
+    }
 }

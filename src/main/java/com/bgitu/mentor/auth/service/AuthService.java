@@ -37,6 +37,7 @@ public class AuthService {
             mentor.setPassword(passwordEncoder.encode(dto.getPassword()));
             mentor.setFirstName(dto.getFirstName());
             mentor.setLastName(dto.getLastName());
+            mentor.setRank(0);
             mentorRepository.save(mentor);
         } else {
             Student student = new Student();

@@ -3,6 +3,7 @@ package com.bgitu.mentor.student.service;
 
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
+import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.student.dto.RegisterStudentCardDto;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
@@ -96,6 +97,18 @@ public class StudentService {
         }
 
         return studentRepository.save(student);
+    }
+
+
+    public CardMentorDto getMentorOfStudent(Authentication auth) {
+        Student student = getStudentByAuth(auth);
+
+        Mentor mentor = student.getMentor();
+        if (mentor == null) {
+            throw new IllegalStateException("У студента пока нет назначенного ментора");
+        }
+
+        return new CardMentorDto(mentor);
     }
 
 }

@@ -1,12 +1,12 @@
 package com.bgitu.mentor.mentor.model;
 
-import com.bgitu.mentor.arcticle.model.Article;
+import com.bgitu.mentor.article.model.Article;
 import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.student.model.Student;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 
@@ -25,6 +25,7 @@ public class Mentor {
     private String firstName;
     private String lastName;
 
+    @Column(length = 2000)
     private String description;
     private String avatarUrl;
 

@@ -3,7 +3,6 @@ package com.bgitu.mentor.mentor.dto;
 import com.bgitu.mentor.mentor.model.Mentor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Value;
 
 /**
  * DTO for {@link com.bgitu.mentor.mentor.model.Mentor}
@@ -18,7 +17,8 @@ public class CardMentorDto {
     private String avatarUrl;
     private String vkUrl;
     private String telegramUrl;
-    private String speciality; // имя специальности
+    private String speciality;
+    Integer rank;
 
     public CardMentorDto(Mentor mentor) {
         this.id = mentor.getId();
@@ -29,5 +29,6 @@ public class CardMentorDto {
         this.vkUrl = mentor.getVkUrl();
         this.telegramUrl = mentor.getTelegramUrl();
         this.speciality = mentor.getSpeciality() != null ? mentor.getSpeciality().getName() : null;
+        this.rank = mentor.getRank();
     }
 }
