@@ -9,12 +9,18 @@ import com.bgitu.mentor.mentor.dto.MentorShortDto;
 import com.bgitu.mentor.mentor.dto.RegisterCardMentorDto;
 import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
 import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentor.model.MentorVote;
 import com.bgitu.mentor.mentor.model.Speciality;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
+import com.bgitu.mentor.mentor.repository.MentorVoteRepository;
 import com.bgitu.mentor.mentor.repository.SpecialityRepository;
+import com.bgitu.mentor.student.model.Student;
+import com.bgitu.mentor.student.service.StudentService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +35,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MentorService {
+
+    private final MentorVoteRepository mentorVoteRepository;
+
+    private final StudentService studentService;
 
 
     private final MentorRepository mentorRepository;
@@ -145,6 +155,28 @@ public class MentorService {
         return new CardMentorDto(mentor);
     }
 
+
+
+    @Transactional
+    public void voteMentor(Long mentorId, boolean upvote, Authentication auth) {
+        Student student = studentService.getStudentByAuth(auth);
+        Mentor mentor = mentorRepository.findById(mentorId)
+                .orElseThrow(() ->  new EntityNotFoundException("Ментор не найден"));
+
+        if (mentorVoteRepository.existsByMentorAndStudent(mentor, student)) {
+            throw new IllegalStateException("Вы уже голосовали за этого ментора");
+        }
+
+        MentorVote vote = new MentorVote();
+        vote.setMentor(mentor);
+        vote.setStudent(student);
+        vote.setUpvote(upvote);
+        mentorVoteRepository.save(vote);
+
+        int change = upvote ? 1 : -1;
+        mentor.setRank(mentor.getRank() + change);
+        mentorRepository.save(mentor);
+    }
 
 }
 

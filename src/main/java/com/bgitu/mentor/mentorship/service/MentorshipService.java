@@ -37,6 +37,11 @@ public class MentorshipService {
         Mentor mentor = mentorRepository.findById(dto.getMentorId())
                 .orElseThrow(() -> new RuntimeException("Mentor not found"));
 
+
+        boolean alreadyApplied = applicationRepository.existsByStudentIdAndMentorId(student.getId(), mentor.getId());
+        if (alreadyApplied) {
+            throw new IllegalArgumentException("Вы уже отправляли заявку этому ментору.");
+        }
         Application app = new Application();
         app.setStudent(student);
         app.setMentor(mentor);

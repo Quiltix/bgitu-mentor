@@ -111,6 +111,19 @@ public class MentorController {
     public ResponseEntity<PersonalInfoDto> getMentorProfile(Authentication authentication) {
         return ResponseEntity.ok(new PersonalInfoDto( mentorService.getMentorByAuth(authentication)));
     }
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @PostMapping("/mentors/{id}/vote")
+    @Operation(summary = "Лайк/дизлайк ментора", description = "Голосование за ментора (1 раз на студента)")
+    public ResponseEntity<MessageDto> voteMentor(
+            @PathVariable Long id,
+            @RequestParam boolean upvote,
+            Authentication authentication
+    ) {
+        mentorService.voteMentor(id, upvote, authentication);
+        return ResponseEntity.ok(new MessageDto("Голос учтен"));
+    }
+
 }
 
 

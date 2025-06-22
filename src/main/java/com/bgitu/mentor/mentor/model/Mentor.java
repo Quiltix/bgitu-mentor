@@ -35,10 +35,14 @@ public class Mentor {
 
 
 
+
     private String vkUrl;
     private String telegramUrl;
 
     private Integer rank;
+
+    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
+    private List<MentorVote> votes;
 
     @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
     private List<Student> students;
