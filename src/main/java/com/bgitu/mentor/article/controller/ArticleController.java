@@ -6,7 +6,9 @@ import com.bgitu.mentor.article.dto.ArticleShortDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.dto.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,11 +25,11 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PreAuthorize("hasRole('MENTOR')")
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Создание статьи", description = "Позволяет ментору опубликовать статью")
     public ResponseEntity<ArticleResponseDto> createArticle(
             Authentication auth,
-            @RequestPart("data") ArticleCreateDto dto,
+            @RequestPart("data")  @Valid ArticleCreateDto dto,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         return ResponseEntity.ok(articleService.createArticle(auth, dto, image));

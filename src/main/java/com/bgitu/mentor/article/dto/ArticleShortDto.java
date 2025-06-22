@@ -2,11 +2,13 @@ package com.bgitu.mentor.article.dto;
 
 import com.bgitu.mentor.article.model.Article;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ArticleShortDto {
     private Long id;
     private String title;
@@ -24,9 +26,13 @@ public class ArticleShortDto {
         this.specialityName = article.getSpeciality().getName();
         this.authorFullName = article.getAuthor().getFirstName() + " " + article.getAuthor().getLastName();
         String desc = article.getContent();
-        this.content = desc.length() > 120
-                ? desc.substring(0, 117) + "..."
-                : desc;
+        if (desc != null) {
+            this.content = desc.length() > 120
+                    ? desc.substring(0, 117) + "..."
+                    : desc;
+        } else {
+            this.content = "";
+        }
     }
 }
 

@@ -2,6 +2,7 @@ package com.bgitu.mentor.article.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,12 +11,14 @@ import lombok.Setter;
 @Setter
 public class ArticleCreateDto {
 
-    @Size(min = 250, message = "Сократите название до 250 символов")
+    @Size(max = 250, message = "Сократите название до 250 символов")
     @NotBlank(message = "У статьи должно быть название")
+    @NotNull
     private String title;
 
-    @Size(min = 5000, message = "Сократите содержание статьи до 5000 символов")
+    @Size(max = 5000, message = "Сократите содержание статьи до 5000 символов")
     @NotBlank(message = "Статья должна содержать информацию")
+    @NotNull
     private String content;
 
 
