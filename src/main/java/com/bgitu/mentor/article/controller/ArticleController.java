@@ -78,6 +78,13 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.getTop3Articles());
     }
 
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
+    @GetMapping("/search")
+    public ResponseEntity<List<ArticleShortDto>> searchArticles(@RequestParam String query) {
+        return ResponseEntity.ok(articleService.searchArticles(query));
+    }
+
+
 
 
 

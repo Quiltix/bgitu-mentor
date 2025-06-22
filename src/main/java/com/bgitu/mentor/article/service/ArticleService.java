@@ -133,6 +133,17 @@ public class ArticleService {
                 .collect(Collectors.toList());
     }
 
+    public List<ArticleShortDto> searchArticles(String query) {
+        if (query.length()>250){
+            throw new IllegalStateException("Сократите строку поиска до 250 символов");
+        }
+        return articleRepository.searchByTitleOrContent(query)
+                .stream()
+                .map(ArticleShortDto::new)
+                .collect(Collectors.toList());
+    }
+
+
 
 
 
