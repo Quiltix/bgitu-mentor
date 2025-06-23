@@ -1,5 +1,7 @@
 package com.bgitu.mentor.mentor.controller;
 
+import com.bgitu.mentor.article.dto.ArticleShortDto;
+import com.bgitu.mentor.article.model.Article;
 import com.bgitu.mentor.common.dto.MessageDto;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
@@ -120,6 +122,11 @@ public class MentorController {
         return ResponseEntity.ok(mentorService.searchMentors(query));
     }
 
+    @PreAuthorize("hasRole('MENTOR')")
+    @GetMapping("/articles")
+    public List<ArticleShortDto> getArticlesByMentor(Authentication authentication) {
+        return mentorService.getMentorArticles(authentication);
+    }
 }
 
 

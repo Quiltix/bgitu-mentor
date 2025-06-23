@@ -1,6 +1,8 @@
 package com.bgitu.mentor.mentor.service;
 
 
+import com.bgitu.mentor.article.dto.ArticleShortDto;
+import com.bgitu.mentor.article.model.Article;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
 
@@ -164,6 +166,17 @@ public class MentorService {
         List<Mentor> mentors = mentorRepository.searchByNameOrDescription(query);
         return mentors.stream()
                 .map(MentorShortDto::new)
+                .collect(Collectors.toList());
+    }
+
+
+    public List<ArticleShortDto> getMentorArticles(Authentication authentication) {
+        Mentor mentor = getMentorByAuth(authentication);
+
+        List<Article> articles = mentor.getArticles();
+
+        return articles.stream()
+                .map(ArticleShortDto::new)
                 .collect(Collectors.toList());
     }
 
