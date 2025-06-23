@@ -23,8 +23,14 @@ public class ArticleShortDto {
         this.title = article.getTitle();
         this.imageUrl = article.getImageUrl();
         this.rank = article.getRank();
-        this.specialityName = article.getSpeciality().getName();
-        this.authorFullName = article.getAuthor().getFirstName() + " " + article.getAuthor().getLastName();
+        if (article.getSpeciality() != null) {
+            this.specialityName = article.getSpeciality().getName();
+        }
+
+        if (article.getAuthor() != null) {
+            this.authorFullName = article.getAuthor().getFirstName() + " " + article.getAuthor().getLastName();
+        }
+
         String desc = article.getContent();
         if (desc != null) {
             this.content = desc.length() > 120

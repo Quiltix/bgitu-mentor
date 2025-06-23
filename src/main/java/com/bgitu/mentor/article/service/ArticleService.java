@@ -16,6 +16,7 @@ import com.bgitu.mentor.mentor.service.MentorService;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -64,6 +65,7 @@ public class ArticleService {
         return new ArticleResponseDto(article);
     }
 
+    @Transactional
     public List<ArticleShortDto> getAllArticles(Optional<Long> specialityId) {
         List<Article> articles = specialityId
                 .map(articleRepository::findBySpecialityIdOrderByRankDesc)
@@ -125,7 +127,7 @@ public class ArticleService {
         article.setRank(article.getRank() + (like ? 1 : -1));
         articleRepository.save(article);
     }
-
+    @Transactional
     public List<ArticleShortDto> getTop3Articles() {
         List<Article> topArticles = articleRepository.findTop3ByOrderByRankDesc();
         return topArticles.stream()
