@@ -25,23 +25,6 @@ public class StudentService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public Student registerStudentCard(Authentication authentication, RegisterStudentCardDto dto, MultipartFile avatarFile) {
-        String email = authentication.getName();
-
-        Student student = studentRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
-
-        student.setDescription(dto.getDescription());
-        student.setVkUrl(dto.getVkUrl());
-        student.setTelegramUrl(dto.getTelegramUrl());
-
-        if (avatarFile != null && !avatarFile.isEmpty()) {
-            String avatarUrl = fileStorageService.storeAvatar(avatarFile, "student_" + student.getId());
-            student.setAvatarUrl(avatarUrl);
-        }
-
-        return studentRepository.save(student);
-    }
 
     public Student getStudentByAuth(Authentication authentication){
         String email = authentication.getName();
@@ -61,14 +44,6 @@ public class StudentService {
 
         if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
             student.setPassword(passwordEncoder.encode(dto.getPassword())); // обязательно хешируй!
-        }
-
-        if (dto.getFirstName() != null) {
-            student.setFirstName(dto.getFirstName());
-        }
-
-        if (dto.getLastName() != null) {
-            student.setLastName(dto.getLastName());
         }
 
         return studentRepository.save(student);

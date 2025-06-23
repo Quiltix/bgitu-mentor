@@ -13,7 +13,5 @@ public class UpdatePersonalInfo {
 
     private String password;
 
-    private String firstName;
-    private String lastName;
 
 }

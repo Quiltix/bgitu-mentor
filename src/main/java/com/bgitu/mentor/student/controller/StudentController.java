@@ -33,18 +33,6 @@ public class StudentController {
     private final StudentService studentService;
 
 
-    @Operation(summary = "Создание карточки студента", description = "Доступно только для роли STUDENT. Загружает описание и аватар студента.")
-    @PreAuthorize("hasRole('STUDENT')")
-    @PostMapping(value = "/summary", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<StudentCardDto> registerStudentCard(
-            Authentication authentication,
-            @RequestPart("card") @Valid RegisterStudentCardDto cardDto,
-            @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
-    ) {
-        return ResponseEntity.ok(new StudentCardDto(studentService.registerStudentCard(authentication, cardDto, avatarFile)));
-    }
-
-
 
     @Operation(summary = "Получение карточки студента", description = "Доступно только для роли STUDENT. Возвращает полную информацию по текущему студенту.")
     @PreAuthorize("hasRole('STUDENT')")

@@ -33,8 +33,8 @@ public class ArticleShortDto {
 
         String desc = article.getContent();
         if (desc != null) {
-            this.content = desc.length() > 120
-                    ? desc.substring(0, 117) + "..."
+            this.content = desc.length() > 300
+                    ? desc.substring(0, 297) + "..."
                     : desc;
         } else {
             this.content = "";

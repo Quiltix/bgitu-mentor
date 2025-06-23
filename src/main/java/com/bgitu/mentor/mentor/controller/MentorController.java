@@ -40,18 +40,6 @@ public class MentorController {
     private final MentorService mentorService;
 
 
-    @Operation(summary = "Создание карточки ментора", description = "Доступно только для роли MENTOR. Загружает описание и аватар.")
-    @PreAuthorize("hasRole('MENTOR')")
-    @PostMapping(value = "/summary", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<CardMentorDto> registerCardMentor(
-            Authentication authentication,
-            @RequestPart("card") @Valid RegisterCardMentorDto cardDto,
-            @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
-    ) {
-
-        return ResponseEntity.ok(new CardMentorDto(mentorService.registerCardMentor(authentication, cardDto, avatarFile)));
-    }
-
     @Operation(summary = "Получение карточки ментора", description = "Доступно только для роли MENTOR. Возвращает полную информацию по текущему пользователю.")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/summary")

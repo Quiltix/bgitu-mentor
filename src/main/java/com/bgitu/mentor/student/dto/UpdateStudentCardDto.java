@@ -8,6 +8,12 @@ import lombok.Setter;
 @Setter
 public class UpdateStudentCardDto {
 
+    @Size(max = 30,message = "Имя не больше 30 символов")
+    private String firstName;
+
+    @Size(max = 50,message = "Фамилия не больше 50 символов")
+    private String lastName;
+
     @Size(max = 2000,message = "Сократите описание до 2000 символов")
     private String description;
 

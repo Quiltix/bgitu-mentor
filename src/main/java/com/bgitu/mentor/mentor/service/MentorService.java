@@ -47,25 +47,6 @@ public class MentorService {
     private final SpecialityRepository specialityRepository;
 
 
-    public Mentor registerCardMentor(Authentication authentication, RegisterCardMentorDto cardDto, MultipartFile avatarFile){
-
-        Mentor mentor = getMentorByAuth(authentication);
-
-
-        mentor.setDescription(cardDto.getDescription());
-        Speciality speciality = specialityRepository.findById(cardDto.getSpecialityId())
-                .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
-        mentor.setSpeciality(speciality);
-        mentor.setVkUrl(cardDto.getVkUrl());
-        mentor.setTelegramUrl(cardDto.getTelegramUrl());
-
-        if (avatarFile != null && !avatarFile.isEmpty()) {
-            String avatarUrl = fileStorageService.storeAvatar(avatarFile, "mentor_" + mentor.getId());
-            mentor.setAvatarUrl(avatarUrl);
-        }
-
-        return mentorRepository.save(mentor);
-    }
 
     public Mentor getMentorByAuth(Authentication authentication){
         String email = authentication.getName();
@@ -87,14 +68,6 @@ public class MentorService {
             mentor.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
-        if (dto.getFirstName() != null) {
-            mentor.setFirstName(dto.getFirstName());
-        }
-
-        if (dto.getLastName() != null) {
-            mentor.setLastName(dto.getLastName());
-        }
-
         return mentorRepository.save(mentor);
     }
     public Mentor updateMentorCard(Authentication authentication, UpdateMentorCardDto dto, MultipartFile avatarFile) {
@@ -104,6 +77,12 @@ public class MentorService {
 
         if (dto.getDescription() != null) {
             mentor.setDescription(dto.getDescription());
+        }
+        if (dto.getFirstName() != null) {
+            mentor.setFirstName(dto.getFirstName());
+        }
+        if (dto.getLastName() != null) {
+            mentor.setLastName(dto.getLastName());
         }
 
         if (dto.getVkUrl() != null) {

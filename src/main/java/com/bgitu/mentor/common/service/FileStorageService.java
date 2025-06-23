@@ -36,7 +36,7 @@ public class FileStorageService {
             Files.createDirectories(path);
             Path filePath = path.resolve(fileName);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            return "/api/files/avatars/" + fileName;
+            return "/api/uploads/images" + fileName;
         } catch (IOException e) {
             throw new RuntimeException("Не удалось сохранить файл: " + fileName, e);
         }
