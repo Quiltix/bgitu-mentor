@@ -65,6 +65,12 @@ public class StudentService {
         if (dto.getTelegramUrl() != null) {
             student.setTelegramUrl(dto.getTelegramUrl());
         }
+        if (dto.getFirstName() != null) {
+            student.setFirstName(dto.getFirstName());
+        }
+        if (dto.getLastName() != null) {
+            student.setLastName(dto.getLastName());
+        }
 
         if (avatarFile != null && !avatarFile.isEmpty()) {
             String avatarUrl = fileStorageService.storeAvatar(avatarFile, "student_" + student.getId());
