@@ -80,6 +80,7 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.getTop3Articles());
     }
 
+    @Operation(summary = "Поиск статей", description = "Доступно для всех ролей. Ищет по названию и содержанию статьи.")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/search")
     public ResponseEntity<List<ArticleShortDto>> searchArticles(@RequestParam String query) {

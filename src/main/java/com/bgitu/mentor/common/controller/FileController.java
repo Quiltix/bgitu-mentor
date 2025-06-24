@@ -1,5 +1,6 @@
 package com.bgitu.mentor.common.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -19,6 +20,7 @@ public class FileController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    @Operation(summary = "Получение изображение", description = "Без авторизации")
     @GetMapping("/{filename:.+}")
     public ResponseEntity<Resource> serveImage(@PathVariable String filename) {
         try {
