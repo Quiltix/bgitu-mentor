@@ -49,13 +49,13 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<MessageDto> handleIllegalArgumentExceptionExceptions(IllegalArgumentException ex){
-        log.error("IllegalArgumentExceptionExceptions:{}", String.valueOf(ex));
+        log.error("IllegalArgumentExceptionExceptions:{}", ex.getMessage());
         return ResponseEntity.status(400).body(new MessageDto(ex.getMessage()));
     }
 
     @ExceptionHandler(EntityExistsException.class)
     public ResponseEntity<MessageDto> handleEntityExistsExceptionExceptions(EntityExistsException ex){
-        log.error("EntityExistsException:{}", String.valueOf(ex));
+        log.error("EntityExistsException:{}", ex.getMessage());
         return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
 
     }
@@ -92,7 +92,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<MessageDto> handleIllegalStateException(IllegalStateException ex){
-        log.error("IllegalStateException:{}",ex);
+        log.error("IllegalStateException:{}",ex.getMessage());
         return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
     }
 }
