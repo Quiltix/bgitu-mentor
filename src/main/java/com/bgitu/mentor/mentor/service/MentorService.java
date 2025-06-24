@@ -15,6 +15,7 @@ import com.bgitu.mentor.mentor.model.Speciality;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
 import com.bgitu.mentor.mentor.repository.MentorVoteRepository;
 import com.bgitu.mentor.mentor.repository.SpecialityRepository;
+import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.service.StudentService;
 import jakarta.persistence.EntityNotFoundException;
@@ -176,6 +177,14 @@ public class MentorService {
         return articles.stream()
                 .map(ArticleShortDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public List<StudentCardDto> getAllStudentsForMentor(Authentication authentication) {
+        Mentor mentor = getMentorByAuth(authentication);
+
+        return mentor.getStudents().stream()
+                .map(StudentCardDto::new)
+                .toList();
     }
 
 

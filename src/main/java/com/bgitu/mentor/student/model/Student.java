@@ -33,15 +33,15 @@ public class Student {
     private String lastName;
 
     @Column(length = 2000)
-    private String description;//
+    private String description;
 
-    private String avatarUrl;//
+    private String avatarUrl;
 
-    private String vkUrl;//
-    private String telegramUrl;//
+    private String vkUrl;
+    private String telegramUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mentor_id")  // внешний ключ
+    @JoinColumn(name = "mentor_id")
     private Mentor mentor;
 
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)

@@ -1,15 +1,11 @@
 package com.bgitu.mentor.student.dto;
 
-import com.bgitu.mentor.mentor.model.Mentor;
-import com.bgitu.mentor.mentorship.model.Application;
+
 import com.bgitu.mentor.student.model.Student;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+
 
 @Getter
 @Setter

@@ -9,6 +9,7 @@ import com.bgitu.mentor.mentor.dto.MentorShortDto;
 import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.service.MentorService;
+import com.bgitu.mentor.student.dto.StudentCardDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -109,16 +110,25 @@ public class MentorController {
     }
 
 
+    @Operation(summary = "Поиск во вкладке менторов по описанию и фио", description = "Доступно для роли MENTOR")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/search")
     public ResponseEntity<List<MentorShortDto>> searchMentors(@RequestParam  String query) {
         return ResponseEntity.ok(mentorService.searchMentors(query));
     }
 
+    @Operation(summary = "Получение всех статей ментора", description = "Доступно для роли MENTOR")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/articles")
     public List<ArticleShortDto> getArticlesByMentor(Authentication authentication) {
         return mentorService.getMentorArticles(authentication);
+    }
+
+    @Operation(summary = "Получение всех студентов ментора", description = "Доступно для роли MENTOR")
+    @PreAuthorize("hasRole('MENTOR')")
+    @GetMapping("/students")
+    public List<StudentCardDto> getStudents(Authentication authentication) {
+        return mentorService.getAllStudentsForMentor(authentication);
     }
 }
 
