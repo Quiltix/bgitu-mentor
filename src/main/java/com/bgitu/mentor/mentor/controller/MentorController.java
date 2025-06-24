@@ -1,26 +1,19 @@
 package com.bgitu.mentor.mentor.controller;
 
 import com.bgitu.mentor.article.dto.ArticleShortDto;
-import com.bgitu.mentor.article.model.Article;
 import com.bgitu.mentor.common.dto.MessageDto;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.dto.MentorShortDto;
-import com.bgitu.mentor.mentor.dto.RegisterCardMentorDto;
 import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.service.MentorService;
-import com.bgitu.mentor.student.dto.StudentCardDto;
-import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
-import com.bgitu.mentor.student.model.Student;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
