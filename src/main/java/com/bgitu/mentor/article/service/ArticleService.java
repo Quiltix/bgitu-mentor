@@ -87,8 +87,10 @@ public class ArticleService {
             throw new AccessDeniedException("Вы можете удалять только свои статьи");
         }
 
+        articleVoteRepository.deleteAllByArticleId(articleId); // <== удаление голосов
         articleRepository.delete(article);
     }
+
 
     public void changeArticleRank(Long articleId, boolean like, Authentication auth) {
         Article article = articleRepository.findById(articleId)

@@ -17,4 +17,7 @@ public interface ArticleVoteRepository extends JpaRepository<ArticleVote, Long> 
     Optional<ArticleVote> findByArticleAndStudent(Article article, Student student);
 
     Optional<ArticleVote> findByArticleAndMentor(Article article, Mentor mentor);
+
+    void deleteAllByArticleId(Long articleId);
+
 }
