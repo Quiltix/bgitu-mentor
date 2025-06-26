@@ -145,6 +145,31 @@ public class ArticleService {
                 .collect(Collectors.toList());
     }
 
+    public ArticleResponseDto getById(Long id, Authentication auth) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Статья не найдена"));
+
+        boolean canVote = true;
+
+        if (auth != null) {
+            String email = auth.getName();
+
+            if (studentRepository.existsByEmail(email)) {
+                Student student = studentRepository.findByEmail(email)
+                        .orElseThrow(() -> new IllegalArgumentException("Студент не найден"));
+
+                canVote = articleVoteRepository.findByArticleAndStudent(article, student).isEmpty();
+            } else if (mentorRepository.existsByEmail(email)) {
+                Mentor mentor = mentorRepository.findByEmail(email)
+                        .orElseThrow(() -> new IllegalArgumentException("Ментор не найден"));
+
+                canVote = articleVoteRepository.findByArticleAndMentor(article, mentor).isEmpty();
+            }
+        }
+
+        return new ArticleResponseDto(article, canVote);
+    }
+
 
 
 

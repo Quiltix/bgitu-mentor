@@ -5,16 +5,22 @@ import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentorship.model.Application;
+import com.bgitu.mentor.mentorship.repository.ApplicationRepository;
+import com.bgitu.mentor.student.dto.ApplicationStudentDto;
 import com.bgitu.mentor.student.dto.RegisterStudentCardDto;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +30,7 @@ public class StudentService {
     private final FileStorageService fileStorageService;
     private final PasswordEncoder passwordEncoder;
 
+    private final ApplicationRepository applicationRepository;
 
 
     public Student getStudentByAuth(Authentication authentication){
@@ -90,6 +97,18 @@ public class StudentService {
         }
 
         return new CardMentorDto(mentor);
+    }
+
+    public List<ApplicationStudentDto> getStudentApplications(Authentication authentication) {
+        String email = authentication.getName();
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found"));
+
+        List<Application> applications = applicationRepository.findAllByStudent(student);
+
+        return applications.stream()
+                .map(ApplicationStudentDto::new)
+                .toList();
     }
 
 

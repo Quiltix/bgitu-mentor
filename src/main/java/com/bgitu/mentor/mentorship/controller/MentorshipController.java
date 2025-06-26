@@ -47,9 +47,9 @@ public class MentorshipController {
             @ApiResponse(responseCode = "200", description = "Ответ на заявку принят"),
             @ApiResponse(responseCode = "404", description = "Заявка не найдена")
     })
-    public ResponseEntity<String> respondToApplication(@RequestBody ApplicationDecisionDto dto) {
+    public ResponseEntity<MessageDto> respondToApplication(@RequestBody ApplicationDecisionDto dto) {
         mentorshipService.respondToApplication(dto);
-        return ResponseEntity.ok("Ответ принят");
+        return ResponseEntity.ok( new MessageDto("Ответ принят"));
     }
 
     @GetMapping("/applications/me")

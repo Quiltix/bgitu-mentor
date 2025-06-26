@@ -6,6 +6,7 @@ import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.student.dto.ApplicationStudentDto;
 import com.bgitu.mentor.student.dto.RegisterStudentCardDto;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
@@ -22,6 +23,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -79,6 +82,13 @@ public class StudentController {
     @Operation(summary = "Получить информацию о менторе студента", description = "Доступно для роли STUDENT")
     public ResponseEntity<CardMentorDto> getStudentMentor(Authentication authentication) {
         return ResponseEntity.ok(studentService.getMentorOfStudent(authentication));
+    }
+
+    @Operation(summary = "Получение всех заявок студента", description = "Доступно только студенту")
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("/applications")
+    public List<ApplicationStudentDto> getStudentApplications(Authentication authentication) {
+        return studentService.getStudentApplications(authentication);
     }
 
 }
