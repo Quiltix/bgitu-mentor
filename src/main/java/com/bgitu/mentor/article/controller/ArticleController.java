@@ -6,6 +6,7 @@ import com.bgitu.mentor.article.dto.ArticleShortDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.dto.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.persistence.Cacheable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -71,6 +72,7 @@ public class ArticleController {
         articleService.changeArticleRank(id, like,authentication);
         return ResponseEntity.ok(new MessageDto(like ? "Статья лайкнута" : "Статья дизлайкнута"));
     }
+
 
 
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")

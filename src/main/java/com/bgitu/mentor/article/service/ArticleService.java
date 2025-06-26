@@ -18,6 +18,7 @@ import com.bgitu.mentor.student.repository.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -127,6 +128,8 @@ public class ArticleService {
         article.setRank(article.getRank() + (like ? 1 : -1));
         articleRepository.save(article);
     }
+
+    @Cacheable(value = "topArticles")
     @Transactional
     public List<ArticleShortDto> getTop3Articles() {
         List<Article> topArticles = articleRepository.findTop3ByOrderByRankDesc();

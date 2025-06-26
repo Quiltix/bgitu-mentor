@@ -116,4 +116,34 @@ public class MentorshipService {
         }).toList();
     }
 
+    @Transactional
+    public void studentRejectMentorship(Authentication authentication) {
+        Student student = studentService.getStudentByAuth(authentication);
+
+        Mentor mentor = student.getMentor();
+        if (mentor != null) {
+            mentor.getStudents().remove(student);
+            student.setMentor(null);
+
+            studentRepository.save(student);
+            mentorRepository.save(mentor);
+        }
+    }
+
+    @Transactional
+    public void mentorRejectStudent(Authentication authentication, Long studentId) {
+        Mentor mentor = mentorService.getMentorByAuth(authentication);
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found"));
+
+        if (student.getMentor() != null && student.getMentor().getId().equals(mentor.getId())) {
+            student.setMentor(null);
+            mentor.getStudents().remove(student);
+
+            studentRepository.save(student);
+            mentorRepository.save(mentor);
+        }
+    }
+
 }

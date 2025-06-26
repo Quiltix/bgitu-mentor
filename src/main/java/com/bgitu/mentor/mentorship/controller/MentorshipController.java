@@ -52,6 +52,8 @@ public class MentorshipController {
         return ResponseEntity.ok( new MessageDto("Ответ принят"));
     }
 
+
+    @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/applications/me")
     @Operation(summary = "Получить входящие заявки", description = "Возвращает список заявок, направленных этому ментору. Можно фильтровать по статусу.")
     @ApiResponses({
@@ -62,6 +64,21 @@ public class MentorshipController {
             @RequestParam(required = false) ApplicationStatus status
     ) {
         return ResponseEntity.ok(mentorshipService.getApplicationsForMentor(authentication, status));
+    }
+
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @PostMapping("/student/reject")
+    public ResponseEntity<Void> studentRejectMentor(Authentication authentication) {
+        mentorshipService.studentRejectMentorship(authentication);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('MENTOR')")
+    @PostMapping("/mentor/reject/{studentId}")
+    public ResponseEntity<Void> mentorRejectStudent( Authentication authentication, @PathVariable Long studentId) {
+        mentorshipService.mentorRejectStudent(authentication, studentId);
+        return ResponseEntity.ok().build();
     }
 
 }

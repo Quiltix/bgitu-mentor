@@ -33,9 +33,6 @@ public class Mentor {
     @JoinColumn(name = "speciality_id")
     private Speciality speciality;
 
-
-
-
     private String vkUrl;
     private String telegramUrl;
 

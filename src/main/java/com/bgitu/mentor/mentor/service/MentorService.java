@@ -22,6 +22,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,7 +54,7 @@ public class MentorService {
         String email = authentication.getName();
 
         return mentorRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Mentor not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("Ментор не найден"));
 
     }
 
@@ -108,6 +109,7 @@ public class MentorService {
         return mentorRepository.save(mentor);
     }
 
+    @Cacheable(value = "topMentors")
     public List<CardMentorDto> getTopMentors() {
         return mentorRepository.findTop3ByOrderByRankDesc()
                 .stream()
