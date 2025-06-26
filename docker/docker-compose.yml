@@ -11,8 +11,11 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=qwe
       - SWAGGER_SERVER_URL=http://89.22.225.116:8080
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
     depends_on:
       - db
+      - redis
 
 
   db:
@@ -40,6 +43,13 @@ services:
       - db
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
 
 volumes:
   postgres_data:

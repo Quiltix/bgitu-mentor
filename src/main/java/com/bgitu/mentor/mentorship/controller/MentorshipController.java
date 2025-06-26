@@ -69,16 +69,16 @@ public class MentorshipController {
 
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/student/reject")
-    public ResponseEntity<Void> studentRejectMentor(Authentication authentication) {
+    public ResponseEntity<MessageDto> studentRejectMentor(Authentication authentication) {
         mentorshipService.studentRejectMentorship(authentication);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new MessageDto("Ментор успешно удален"));
     }
 
     @PreAuthorize("hasRole('MENTOR')")
     @PostMapping("/mentor/reject/{studentId}")
-    public ResponseEntity<Void> mentorRejectStudent( Authentication authentication, @PathVariable Long studentId) {
+    public ResponseEntity<MessageDto> mentorRejectStudent( Authentication authentication, @PathVariable Long studentId) {
         mentorshipService.mentorRejectStudent(authentication, studentId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new MessageDto("Студент успешно удален"));
     }
 
 }
