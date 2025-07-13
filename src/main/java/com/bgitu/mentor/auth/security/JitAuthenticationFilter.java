@@ -48,6 +48,7 @@ public class JitAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
+
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e) {
