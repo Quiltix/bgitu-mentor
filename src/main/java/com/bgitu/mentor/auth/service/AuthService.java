@@ -39,7 +39,8 @@ public class AuthService {
             mentor.setLastName(dto.getLastName());
             mentor.setRank(0);
             mentorRepository.save(mentor);
-        } else {
+        }
+        else if (dto.getRole() == Role.STUDENT){
             Student student = new Student();
             student.setEmail(email);
             student.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -47,6 +48,10 @@ public class AuthService {
             student.setLastName(dto.getLastName());
             studentRepository.save(student);
         }
+        else {
+            throw new IllegalArgumentException("Вы выбрали недопустимую роль");
+        }
+
 
         return tokenProvider.generateToken(email, dto.getRole());
     }

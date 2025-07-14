@@ -17,16 +17,6 @@ services:
       - db
       - redis
 
-#  frontend:
-#    build:
-#      context: ./frontend
-#      dockerfile: Dockerfile
-#    container_name: mentor-frontend
-#    ports:
-#      - "80:80"
-#    depends_on:
-#      - app
-#
 
 
   db:
