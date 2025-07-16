@@ -2,6 +2,7 @@ package com.bgitu.mentor.student.model;
 
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentorship.model.Application;
+import com.bgitu.mentor.user.model.BaseUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -15,30 +16,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "student")
-public class Student {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @Email
-    @NotBlank
-    private String email;
-
-    @NotBlank
-    private String password;
-
-    private String firstName;
-
-    private String lastName;
-
-    @Column(length = 2000)
-    private String description;
-
-    private String avatarUrl;
-
-    private String vkUrl;
-    private String telegramUrl;
+public class Student extends BaseUser {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mentor_id")
