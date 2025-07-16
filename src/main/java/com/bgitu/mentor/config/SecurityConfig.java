@@ -1,11 +1,10 @@
 package com.bgitu.mentor.config;
 
 
-import com.bgitu.mentor.auth.security.JitAuthenticationFilter;
+import com.bgitu.mentor.auth.security.JiwAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,9 +25,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JitAuthenticationFilter jwtAuthenticationFilter;
+    private final JiwAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(JitAuthenticationFilter jwtAuthentificationFilter) {
+    public SecurityConfig(JiwAuthenticationFilter jwtAuthentificationFilter) {
         this.jwtAuthenticationFilter = jwtAuthentificationFilter;
     }
 

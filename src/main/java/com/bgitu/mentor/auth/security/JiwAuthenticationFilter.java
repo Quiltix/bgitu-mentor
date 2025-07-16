@@ -19,14 +19,12 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class JitAuthenticationFilter extends OncePerRequestFilter {
+public class JiwAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
-    private final CustomUserDetailsService userDetailsService;
 
-    public JitAuthenticationFilter(JwtTokenProvider tokenProvider, CustomUserDetailsService userDetailsService) {
+    public JiwAuthenticationFilter(JwtTokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
-        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -37,7 +35,9 @@ public class JitAuthenticationFilter extends OncePerRequestFilter {
             String email = tokenProvider.getEmailFromToken(token);
             String role = tokenProvider.getRoleFromToken(token);
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                    email, "", List.of(new SimpleGrantedAuthority(role))
+            );
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,
