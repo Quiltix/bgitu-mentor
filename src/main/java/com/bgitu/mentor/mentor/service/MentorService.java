@@ -51,9 +51,9 @@ public class MentorService {
 
 
     public Mentor getMentorByAuth(Authentication authentication){
-        String email = authentication.getName();
+        Long longId = Long.parseLong(authentication.getName());
 
-        return mentorRepository.findByEmail(email)
+        return mentorRepository.findById(longId)
                 .orElseThrow(() -> new UsernameNotFoundException("Ментор не найден"));
 
     }

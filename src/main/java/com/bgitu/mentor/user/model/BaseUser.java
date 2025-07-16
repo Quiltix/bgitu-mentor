@@ -8,19 +8,21 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@MappedSuperclass
+@Entity
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class BaseUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Email
-    @NotBlank
+    @Email( message = "Email должен быть корректным")
+    @NotBlank(message = "Email должен быть не пустым")
     @Column(unique = true)
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "Password должен быть не пустым")
     private String password;
 
     private String firstName;

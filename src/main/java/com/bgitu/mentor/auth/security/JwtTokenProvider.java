@@ -24,12 +24,14 @@ public class JwtTokenProvider {
         this.jwtSecret = Keys.hmacShaKeyFor(secret.getBytes());
 
     }
-    public String generateToken(String email, Role role) {
+    // --- ИЗМЕНЕНО ---
+    // Метод теперь принимает Long id вместо String email
+    public String generateToken(Long userId, Role role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(String.valueOf(userId)) // Устанавливаем ID как subject токена
                 .claim("role", "ROLE_" + role.name())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
@@ -37,9 +39,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getEmailFromToken(String token) {
-        return parseClaims(token).getSubject();
+    public Long getIdFromToken(String token) {
+        Claims claims = parseClaims(token);
+        return Long.parseLong(claims.getSubject());
     }
+
+
 
     public String getRoleFromToken(String token) {
         return parseClaims(token).get("role", String.class);

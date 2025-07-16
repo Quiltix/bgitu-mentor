@@ -34,9 +34,9 @@ public class StudentService {
 
 
     public Student getStudentByAuth(Authentication authentication){
-        String email = authentication.getName();
+        Long longId = Long.parseLong(authentication.getName());
 
-        return studentRepository.findByEmail(email)
+        return studentRepository.findById(longId)
                 .orElseThrow(() -> new UsernameNotFoundException("Студент не найден"));
 
     }

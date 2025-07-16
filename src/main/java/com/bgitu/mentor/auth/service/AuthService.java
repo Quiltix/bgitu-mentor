@@ -35,28 +35,28 @@ public class AuthService {
             throw new IllegalArgumentException("Email уже используется");
         }
 
-        // Общая логика для заполнения полей
-        BaseUser user;
+
+
+        BaseUser userToSave;
         if (dto.getRole() == Role.MENTOR) {
             Mentor mentor = new Mentor();
-            mentor.setRank(0); // Специфичное поле для ментора
-            user = mentor;
-            mentorRepository.save(mentor);
+            mentor.setRank(0);
+            userToSave = mentor;
         } else if (dto.getRole() == Role.STUDENT) {
-            Student student = new Student();
-            user = student;
-            studentRepository.save(student);
+            userToSave = new Student();
         } else {
             throw new IllegalArgumentException("Вы выбрали недопустимую роль");
         }
 
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
+        userToSave.setEmail(email);
+        userToSave.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userToSave.setFirstName(dto.getFirstName());
+        userToSave.setLastName(dto.getLastName());
+
+        BaseUser savedUser = userRepository.save(userToSave);
 
 
-        return tokenProvider.generateToken(email, dto.getRole());
+        return tokenProvider.generateToken(savedUser.getId(), dto.getRole());
     }
 
 
@@ -82,6 +82,6 @@ public class AuthService {
             throw new IllegalStateException("Неопределенная роль для пользователя");
         }
 
-        return tokenProvider.generateToken(email, role);
+        return tokenProvider.generateToken(user.getId(), role);
     }
 }
