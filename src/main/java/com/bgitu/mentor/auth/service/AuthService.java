@@ -8,6 +8,8 @@ import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
+import com.bgitu.mentor.user.model.BaseUser;
+import com.bgitu.mentor.user.repository.BaseUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,35 +24,36 @@ public class AuthService {
     private final MentorRepository mentorRepository;
     private final StudentRepository studentRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BaseUserRepository userRepository;
     private final JwtTokenProvider tokenProvider;
 
     public String register(RegisterRequestDto dto) {
         String email = dto.getEmail();
 
-        if (mentorRepository.existsByEmail(email) || studentRepository.existsByEmail(email)) {
+        // Одна простая проверка вместо двух
+        if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email уже используется");
         }
 
+        // Общая логика для заполнения полей
+        BaseUser user;
         if (dto.getRole() == Role.MENTOR) {
             Mentor mentor = new Mentor();
-            mentor.setEmail(email);
-            mentor.setPassword(passwordEncoder.encode(dto.getPassword()));
-            mentor.setFirstName(dto.getFirstName());
-            mentor.setLastName(dto.getLastName());
-            mentor.setRank(0);
+            mentor.setRank(0); // Специфичное поле для ментора
+            user = mentor;
             mentorRepository.save(mentor);
-        }
-        else if (dto.getRole() == Role.STUDENT){
+        } else if (dto.getRole() == Role.STUDENT) {
             Student student = new Student();
-            student.setEmail(email);
-            student.setPassword(passwordEncoder.encode(dto.getPassword()));
-            student.setFirstName(dto.getFirstName());
-            student.setLastName(dto.getLastName());
+            user = student;
             studentRepository.save(student);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Вы выбрали недопустимую роль");
         }
+
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
 
 
         return tokenProvider.generateToken(email, dto.getRole());
@@ -61,24 +64,24 @@ public class AuthService {
         String email = dto.getEmail();
         String rawPassword = dto.getPassword();
 
-        Optional<Mentor> mentorOpt = mentorRepository.findByEmail(email);
-        if (mentorOpt.isPresent()) {
-            Mentor mentor = mentorOpt.get();
-            if (!passwordEncoder.matches(rawPassword, mentor.getPassword())) {
-                throw new BadCredentialsException("Неверный пароль");
-            }
-            return tokenProvider.generateToken(email, Role.MENTOR);
+
+        BaseUser user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+
+
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+            throw new BadCredentialsException("Неверный пароль");
         }
 
-        Optional<Student> studentOpt = studentRepository.findByEmail(email);
-        if (studentOpt.isPresent()) {
-            Student student = studentOpt.get();
-            if (!passwordEncoder.matches(rawPassword, student.getPassword())) {
-                throw new BadCredentialsException("Неверный пароль");
-            }
-            return tokenProvider.generateToken(email, Role.STUDENT);
+        Role role;
+        if (user instanceof Mentor) {
+            role = Role.MENTOR;
+        } else if (user instanceof Student) {
+            role = Role.STUDENT;
+        } else {
+            throw new IllegalStateException("Неопределенная роль для пользователя");
         }
 
-        throw new UsernameNotFoundException("Пользователь не найден");
+        return tokenProvider.generateToken(email, role);
     }
 }
