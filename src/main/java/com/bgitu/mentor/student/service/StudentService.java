@@ -8,7 +8,6 @@ import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.mentorship.repository.ApplicationRepository;
 import com.bgitu.mentor.student.dto.ApplicationStudentDto;
-import com.bgitu.mentor.student.dto.RegisterStudentCardDto;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;

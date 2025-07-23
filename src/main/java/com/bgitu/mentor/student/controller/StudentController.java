@@ -1,13 +1,11 @@
 package com.bgitu.mentor.student.controller;
 
 
-import com.bgitu.mentor.common.dto.MessageDto;
+
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
-import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.student.dto.ApplicationStudentDto;
-import com.bgitu.mentor.student.dto.RegisterStudentCardDto;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
 import com.bgitu.mentor.student.model.Student;

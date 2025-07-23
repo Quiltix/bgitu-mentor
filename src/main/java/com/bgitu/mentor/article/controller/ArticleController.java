@@ -35,6 +35,7 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.createArticle(auth, dto, image));
     }
 
+
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/{id}")
     @Operation(summary = "Получить статью", description = "Получить статью по её ID")
