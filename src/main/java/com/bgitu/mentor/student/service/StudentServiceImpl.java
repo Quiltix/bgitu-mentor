@@ -1,7 +1,7 @@
 package com.bgitu.mentor.student.service;
 
 
-import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
+
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.model.Mentor;
@@ -12,9 +12,7 @@ import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
