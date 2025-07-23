@@ -24,28 +24,28 @@ import java.util.Optional;
 @RequestMapping("/api/mentors")
 public class MentorController {
 
-    private final MentorService mentorServiceImpl;
+    private final MentorService mentorService;
 
 
     @Operation(summary = "Получение топ-3 менторов", description = "Доступно для ролей STUDENT и MENTOR. Возвращает менторов с наивысшим рангом.")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/popular")
     public ResponseEntity<List<CardMentorDto>> getTopMentors() {
-        return ResponseEntity.ok(mentorServiceImpl.getTopMentors());
+        return ResponseEntity.ok(mentorService.getTopMentors());
     }
 
     @Operation(summary = "Получение списка менторов (короткое описание)", description = "Доступно для ролей STUDENT и MENTOR. Поддерживает фильтрацию по id специальности.")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/all")
     public ResponseEntity<List<MentorShortDto>>  getAllMentorsShort(@RequestParam(required = false) Long specialityId) {
-        return  ResponseEntity.ok(mentorServiceImpl.getAllShort(Optional.ofNullable(specialityId)));
+        return  ResponseEntity.ok(mentorService.getAllShort(Optional.ofNullable(specialityId)));
     }
 
     @Operation(summary = "Получение полной карточки ментора", description = "Доступно для ролей STUDENT и MENTOR. Возвращает полную информацию по ментору по id.")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/{id}")
     public ResponseEntity<CardMentorDto> getMentorDetails(@PathVariable Long id) {
-        return ResponseEntity.ok( mentorServiceImpl.getById(id));
+        return ResponseEntity.ok( mentorService.getById(id));
     }
 
 
@@ -57,7 +57,7 @@ public class MentorController {
             @RequestParam boolean upvote,
             Authentication authentication
     ) {
-        mentorServiceImpl.voteMentor(id, upvote, authentication);
+        mentorService.voteMentor(id, upvote, authentication);
         return ResponseEntity.ok(new MessageDto("Голос учтен"));
     }
 
@@ -66,7 +66,7 @@ public class MentorController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/search")
     public ResponseEntity<List<MentorShortDto>> searchMentors(@RequestParam  String query) {
-        return ResponseEntity.ok(mentorServiceImpl.searchMentors(query));
+        return ResponseEntity.ok(mentorService.searchMentors(query));
     }
 }
 

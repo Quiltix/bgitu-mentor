@@ -50,7 +50,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
 
 
-
+    @Override
     public Mentor updateCard(Authentication authentication, UpdateMentorCardDto dto, MultipartFile avatarFile) {
 
         Mentor mentor = getByAuth(authentication);
@@ -76,6 +76,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
 
 
+    @Override
     public List<MentorShortDto> getAllShort(Optional<Long> specialityId) {
         List<Mentor> mentors = specialityId
                 .map(repository::findBySpecialityIdOrderByRankDesc)
@@ -87,7 +88,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
                 .collect(Collectors.toList());
     }
 
-
+    @Override
     public CardMentorDto getById(Long id) {
         Mentor mentor = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
@@ -95,7 +96,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     }
 
 
-
+    @Override
     @Transactional
     public void voteMentor(Long mentorId, boolean upvote, Authentication auth) {
         Student student = studentService.getByAuth(auth);
@@ -117,6 +118,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
         repository.save(mentor);
     }
 
+    @Override
     public List<MentorShortDto> searchMentors(String query) {
         if (query.length()>250){
             throw new IllegalStateException("Строка для поиска слишком длинная");
@@ -127,7 +129,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
                 .collect(Collectors.toList());
     }
 
-
+    @Override
     public List<ArticleShortDto> getMentorArticles(Authentication authentication) {
         Mentor mentor = getByAuth(authentication);
 
@@ -138,6 +140,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<StudentCardDto> getAllStudentsForMentor(Authentication authentication) {
         Mentor mentor = getByAuth(authentication);
 

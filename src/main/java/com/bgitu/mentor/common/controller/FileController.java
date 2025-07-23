@@ -14,13 +14,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
-@RequestMapping("/api/uploads/images")
+@RequestMapping("/api/uploads/image")
 public class FileController {
 
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    @Operation(summary = "Получение изображение", description = "Без авторизации")
+    @Operation(summary = "Получение изображения", description = "Без авторизации")
     @GetMapping("/{filename:.+}")
     public ResponseEntity<Resource> serveImage(@PathVariable String filename) {
         try {
