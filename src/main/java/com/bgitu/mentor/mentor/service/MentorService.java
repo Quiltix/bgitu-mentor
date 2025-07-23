@@ -6,9 +6,8 @@ import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.dto.MentorShortDto;
 import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
 import com.bgitu.mentor.mentor.model.Mentor;
-import com.bgitu.mentor.student.dto.ApplicationStudentDto;
 import com.bgitu.mentor.student.dto.StudentCardDto;
-import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
+
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;

@@ -3,6 +3,7 @@ package com.bgitu.mentor.mentorship.service;
 
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
+import com.bgitu.mentor.mentor.service.MentorService;
 import com.bgitu.mentor.mentor.service.MentorServiceImpl;
 import com.bgitu.mentor.mentorship.dto.ApplicationDecisionDto;
 import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;
@@ -13,6 +14,7 @@ import com.bgitu.mentor.mentorship.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.repository.ApplicationRepository;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
+import com.bgitu.mentor.student.service.StudentService;
 import com.bgitu.mentor.student.service.StudentServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -28,11 +30,11 @@ public class MentorshipService {
     private final StudentRepository studentRepository;
     private final MentorRepository mentorRepository;
     private final ApplicationRepository applicationRepository;
-    private final StudentServiceImpl studentService;
-    private final MentorServiceImpl mentorServiceImpl;
+    private final StudentService studentService;
+    private final MentorService mentorServiceImpl;
 
     public void requestMentorship(Authentication authentication, MentorshipRequestDto dto) {
-        Student student = studentService.getStudentByAuth(authentication);
+        Student student = studentService.getByAuth(authentication);
 
         Mentor mentor = mentorRepository.findById(dto.getMentorId())
                 .orElseThrow(() -> new RuntimeException("Mentor not found"));
@@ -86,7 +88,7 @@ public class MentorshipService {
     }
 
     public List<ApplicationResponseDto> getApplicationsForMentor(Authentication authentication, ApplicationStatus status) {
-        Long mentorId = mentorServiceImpl.getMentorByAuth(authentication).getId();
+        Long mentorId = mentorServiceImpl.getByAuth(authentication).getId();
 
         List<Application> applications;
         if (status != null) {
@@ -118,7 +120,7 @@ public class MentorshipService {
 
     @Transactional
     public void studentRejectMentorship(Authentication authentication) {
-        Student student = studentService.getStudentByAuth(authentication);
+        Student student = studentService.getByAuth(authentication);
 
         Mentor mentor = student.getMentor();
         if (mentor != null) {
@@ -132,7 +134,7 @@ public class MentorshipService {
 
     @Transactional
     public void mentorRejectStudent(Authentication authentication, Long studentId) {
-        Mentor mentor = mentorServiceImpl.getMentorByAuth(authentication);
+        Mentor mentor = mentorServiceImpl.getByAuth(authentication);
 
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found"));

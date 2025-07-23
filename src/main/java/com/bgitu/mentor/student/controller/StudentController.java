@@ -9,7 +9,7 @@ import com.bgitu.mentor.student.dto.ApplicationStudentDto;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
 import com.bgitu.mentor.student.model.Student;
-import com.bgitu.mentor.student.service.StudentServiceImpl;
+import com.bgitu.mentor.student.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -30,7 +30,7 @@ import java.util.List;
 @RequestMapping("/api/student")
 public class StudentController {
 
-    private final StudentServiceImpl studentService;
+    private final StudentService studentService;
 
 
 
