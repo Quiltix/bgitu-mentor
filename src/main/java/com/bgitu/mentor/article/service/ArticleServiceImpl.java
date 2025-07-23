@@ -39,6 +39,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final StudentRepository studentRepository;
     private final ArticleVoteRepository articleVoteRepository;
 
+    @Override
     public ArticleResponseDto createArticle(Authentication auth, ArticleCreateDto dto, MultipartFile image) {
         Mentor author = mentorServiceImpl.getByAuth(auth);
         Speciality speciality = specialityRepository.findById(dto.getSpecialityId())
@@ -60,12 +61,14 @@ public class ArticleServiceImpl implements ArticleService {
         return new ArticleResponseDto(saved);
     }
 
+    @Override
     public ArticleResponseDto getById(Long id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Статья не найдена"));
         return new ArticleResponseDto(article);
     }
 
+    @Override
     @Transactional
     public List<ArticleShortDto> getAllArticles(Optional<Long> specialityId) {
         List<Article> articles = specialityId
@@ -77,6 +80,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public void deleteArticle(Long articleId, Authentication authentication) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException("Статья не найдена"));
@@ -91,7 +95,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.delete(article);
     }
 
-
+    @Override
     public void changeArticleRank(Long articleId, boolean like, Authentication auth) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException("Статья не найдена"));
@@ -131,6 +135,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleRepository.save(article);
     }
 
+    @Override
     @Cacheable(value = "topArticles")
     @Transactional
     public List<ArticleShortDto> getTop3Articles() {
@@ -140,6 +145,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<ArticleShortDto> searchArticles(String query) {
         if (query.length()>250){
             throw new IllegalStateException("Сократите строку поиска до 250 символов");
@@ -150,6 +156,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public ArticleResponseDto getById(Long id, Authentication auth) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Статья не найдена"));
