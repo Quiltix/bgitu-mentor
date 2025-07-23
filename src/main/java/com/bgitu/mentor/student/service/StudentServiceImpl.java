@@ -44,6 +44,7 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
     }
 
 
+    @Override
     public CardMentorDto getMentorOfStudent(Authentication auth) {
         Student student = getByAuth(auth);
 
@@ -55,6 +56,7 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
         return new CardMentorDto(mentor);
     }
 
+    @Override
     public List<ApplicationStudentDto> getStudentApplications(Authentication authentication) {
 
         Student student = getByAuth(authentication);
