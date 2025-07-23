@@ -38,7 +38,7 @@ public class StudentController {
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/summary")
     public ResponseEntity<StudentCardDto> getCardStudent(Authentication authentication){
-        return ResponseEntity.ok(new StudentCardDto(studentService.getStudentByAuth(authentication)));
+        return ResponseEntity.ok(new StudentCardDto(studentService.getByAuth(authentication)));
     }
 
 
@@ -49,7 +49,7 @@ public class StudentController {
             Authentication authentication,
             @RequestBody @Valid UpdatePersonalInfo dto
     ) {
-        Student updated = studentService.updateStudentProfile(authentication, dto);
+        Student updated = studentService.updateProfile(authentication, dto);
         return ResponseEntity.ok(new PersonalInfoDto(updated));
     }
 
@@ -62,7 +62,7 @@ public class StudentController {
             @RequestPart("card") UpdateStudentCardDto dto,
             @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
     ) {
-        Student updated = studentService.updateStudentCard(authentication, dto, avatarFile);
+        Student updated = studentService.updateCard(authentication, dto, avatarFile);
         return ResponseEntity.ok(new StudentCardDto(updated));
     }
 
@@ -71,7 +71,7 @@ public class StudentController {
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/profile")
     public ResponseEntity<PersonalInfoDto> getMentorProfile(Authentication authentication) {
-        return ResponseEntity.ok(new PersonalInfoDto(studentService.getStudentByAuth(authentication)));
+        return ResponseEntity.ok(new PersonalInfoDto(studentService.getByAuth(authentication)));
     }
 
     @PreAuthorize("hasRole('STUDENT')")

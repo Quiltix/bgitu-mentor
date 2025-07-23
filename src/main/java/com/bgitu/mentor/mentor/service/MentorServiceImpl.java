@@ -3,9 +3,7 @@ package com.bgitu.mentor.mentor.service;
 
 import com.bgitu.mentor.article.dto.ArticleShortDto;
 import com.bgitu.mentor.article.model.Article;
-import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
-
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.dto.MentorShortDto;
 import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
@@ -17,14 +15,13 @@ import com.bgitu.mentor.mentor.repository.MentorVoteRepository;
 import com.bgitu.mentor.mentor.repository.SpecialityRepository;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.model.Student;
-import com.bgitu.mentor.student.service.StudentServiceImpl;
+import com.bgitu.mentor.student.service.StudentService;
+import com.bgitu.mentor.user.service.AbstractBaseUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,77 +32,43 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class MentorServiceImpl {
+public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRepository> implements MentorService {
 
+    // Специфичные зависимости для ментора
     private final MentorVoteRepository mentorVoteRepository;
-
-    private final StudentServiceImpl studentService;
-
-
-    private final MentorRepository mentorRepository;
-    private final FileStorageService fileStorageService;
-    private final PasswordEncoder passwordEncoder;
     private final SpecialityRepository specialityRepository;
+    private final StudentService studentService; // Внедряем интерфейс!
 
-
-
-
-
-    public Mentor updateMentorProfile(Authentication authentication, UpdatePersonalInfo dto) {
-
-        Mentor mentor = getMentorByAuth(authentication);
-
-        if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
-            mentor.setEmail(dto.getEmail());
-        }
-
-        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-            mentor.setPassword(passwordEncoder.encode(dto.getPassword()));
-        }
-
-        return mentorRepository.save(mentor);
+    public MentorServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
+                             FileStorageService fileStorageService, MentorVoteRepository mentorVoteRepository,
+                             SpecialityRepository specialityRepository, StudentService studentService) {
+        super(mentorRepository, passwordEncoder, fileStorageService, "Ментор");
+        this.mentorVoteRepository = mentorVoteRepository;
+        this.specialityRepository = specialityRepository;
+        this.studentService = studentService;
     }
-    public Mentor updateMentorCard(Authentication authentication, UpdateMentorCardDto dto, MultipartFile avatarFile) {
 
 
-        Mentor mentor = getMentorByAuth(authentication);
 
-        if (dto.getDescription() != null) {
-            mentor.setDescription(dto.getDescription());
-        }
-        if (dto.getFirstName() != null) {
-            mentor.setFirstName(dto.getFirstName());
-        }
-        if (dto.getLastName() != null) {
-            mentor.setLastName(dto.getLastName());
-        }
 
-        if (dto.getVkUrl() != null) {
-            mentor.setVkUrl(dto.getVkUrl());
-        }
+    public Mentor updateCard(Authentication authentication, UpdateMentorCardDto dto, MultipartFile avatarFile) {
 
-        if (dto.getTelegramUrl() != null) {
-            mentor.setTelegramUrl(dto.getTelegramUrl());
-        }
+        Mentor mentor = getByAuth(authentication);
+
+        updateCardInternal(mentor, dto, avatarFile);
 
         if (dto.getSpecialityId() != null) {
             Speciality speciality = specialityRepository.findById(dto.getSpecialityId())
-                    .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
+                    .orElseThrow(() -> new EntityNotFoundException("Специальность с id=" + dto.getSpecialityId() + " не найдена"));
             mentor.setSpeciality(speciality);
         }
 
-        if (avatarFile != null && !avatarFile.isEmpty()) {
-            String avatarUrl = fileStorageService.storeAvatar(avatarFile, "mentor_" + mentor.getId());
-            mentor.setAvatarUrl(avatarUrl);
-        }
-
-        return mentorRepository.save(mentor);
+        return repository.save(mentor);
     }
 
     @Cacheable(value = "topMentors")
     public List<CardMentorDto> getTopMentors() {
-        return mentorRepository.findTop3ByOrderByRankDesc()
+        return repository.findTop3ByOrderByRankDesc()
                 .stream()
                 .map(CardMentorDto::new)
                 .toList();
@@ -115,8 +78,8 @@ public class MentorServiceImpl {
 
     public List<MentorShortDto> getAllShort(Optional<Long> specialityId) {
         List<Mentor> mentors = specialityId
-                .map(mentorRepository::findBySpecialityIdOrderByRankDesc)
-                .orElseGet(mentorRepository::findAll);
+                .map(repository::findBySpecialityIdOrderByRankDesc)
+                .orElseGet(repository::findAll);
 
         return mentors.stream()
                 .filter(mentor -> mentor.getVkUrl() != null)
@@ -126,7 +89,7 @@ public class MentorServiceImpl {
 
 
     public CardMentorDto getById(Long id) {
-        Mentor mentor = mentorRepository.findById(id)
+        Mentor mentor = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
         return new CardMentorDto(mentor);
     }
@@ -135,8 +98,8 @@ public class MentorServiceImpl {
 
     @Transactional
     public void voteMentor(Long mentorId, boolean upvote, Authentication auth) {
-        Student student = studentService.getStudentByAuth(auth);
-        Mentor mentor = mentorRepository.findById(mentorId)
+        Student student = studentService.getByAuth(auth);
+        Mentor mentor = repository.findById(mentorId)
                 .orElseThrow(() ->  new EntityNotFoundException("Ментор не найден"));
 
         if (mentorVoteRepository.existsByMentorAndStudent(mentor, student)) {
@@ -151,14 +114,14 @@ public class MentorServiceImpl {
 
         int change = upvote ? 1 : -1;
         mentor.setRank(mentor.getRank() + change);
-        mentorRepository.save(mentor);
+        repository.save(mentor);
     }
 
     public List<MentorShortDto> searchMentors(String query) {
         if (query.length()>250){
             throw new IllegalStateException("Строка для поиска слишком длинная");
         }
-        List<Mentor> mentors = mentorRepository.searchByNameOrDescription(query);
+        List<Mentor> mentors = repository.searchByNameOrDescription(query);
         return mentors.stream()
                 .map(MentorShortDto::new)
                 .collect(Collectors.toList());
@@ -166,7 +129,7 @@ public class MentorServiceImpl {
 
 
     public List<ArticleShortDto> getMentorArticles(Authentication authentication) {
-        Mentor mentor = getMentorByAuth(authentication);
+        Mentor mentor = getByAuth(authentication);
 
         List<Article> articles = mentor.getArticles();
 
@@ -176,7 +139,7 @@ public class MentorServiceImpl {
     }
 
     public List<StudentCardDto> getAllStudentsForMentor(Authentication authentication) {
-        Mentor mentor = getMentorByAuth(authentication);
+        Mentor mentor = getByAuth(authentication);
 
         return mentor.getStudents().stream()
                 .map(StudentCardDto::new)
