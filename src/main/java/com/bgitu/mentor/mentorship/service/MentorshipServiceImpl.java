@@ -23,7 +23,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MentorshipServiceImpl  {
+public class MentorshipServiceImpl implements MentorshipService {
 
     private final StudentRepository studentRepository;
     private final MentorRepository mentorRepository;
@@ -31,6 +31,7 @@ public class MentorshipServiceImpl  {
     private final StudentService studentService;
     private final MentorService mentorServiceImpl;
 
+    @Override
     public void requestMentorship(Authentication authentication, MentorshipRequestDto dto) {
         Student student = studentService.getByAuth(authentication);
 
@@ -51,6 +52,7 @@ public class MentorshipServiceImpl  {
         applicationRepository.save(app);
     }
 
+    @Override
     @Transactional
     public void respondToApplication(ApplicationDecisionDto dto) {
         Application app = applicationRepository.findById(dto.getApplicationId())
@@ -85,6 +87,7 @@ public class MentorshipServiceImpl  {
         applicationRepository.save(app);
     }
 
+    @Override
     public List<ApplicationResponseDto> getApplicationsForMentor(Authentication authentication, ApplicationStatus status) {
         Long mentorId = mentorServiceImpl.getByAuth(authentication).getId();
 
@@ -116,6 +119,7 @@ public class MentorshipServiceImpl  {
         }).toList();
     }
 
+    @Override
     @Transactional
     public void studentRejectMentorship(Authentication authentication) {
         Student student = studentService.getByAuth(authentication);
@@ -130,6 +134,7 @@ public class MentorshipServiceImpl  {
         }
     }
 
+    @Override
     @Transactional
     public void mentorRejectStudent(Authentication authentication, Long studentId) {
         Mentor mentor = mentorServiceImpl.getByAuth(authentication);
