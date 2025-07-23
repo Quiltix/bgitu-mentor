@@ -57,9 +57,9 @@ public abstract class AbstractBaseUserService<
         if (dto.getTelegramUrl() != null) user.setTelegramUrl(dto.getTelegramUrl());
 
         if (avatarFile != null && !avatarFile.isEmpty()) {
-            String avatarFileName = userTypeName.toLowerCase() + "_" + user.getId();
-            String avatarUrl = fileStorageService.storeAvatar(avatarFile, avatarFileName);
-            user.setAvatarUrl(avatarUrl);
+            String storedRelativePath = fileStorageService.store(avatarFile, "avatars");
+            String publicUrl = "/api/uploads/image/" + storedRelativePath.replace("\\", "/");
+            user.setAvatarUrl(publicUrl);
         }
     }
 }

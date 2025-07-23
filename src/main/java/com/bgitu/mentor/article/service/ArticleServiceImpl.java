@@ -50,11 +50,12 @@ public class ArticleServiceImpl implements ArticleService {
         article.setContent(dto.getContent());
         article.setAuthor(author);
         article.setSpeciality(speciality);
-        article.setRank(0); // начальный ранг
+        article.setRank(0);
 
         if (image != null && !image.isEmpty()) {
-            String imageUrl = fileStorageService.storeAvatar(image, "article_" + System.currentTimeMillis());
-            article.setImageUrl(imageUrl);
+            String storedRelativePath = fileStorageService.store(image, "articles");
+            String publicUrl = "/api/uploads/image/" + storedRelativePath.replace("\\", "/");
+            article.setImageUrl(publicUrl);
         }
 
         Article saved = articleRepository.save(article);

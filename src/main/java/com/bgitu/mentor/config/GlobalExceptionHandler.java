@@ -3,6 +3,8 @@ package com.bgitu.mentor.config;
 
 
 import com.bgitu.mentor.common.dto.MessageDto;
+import com.bgitu.mentor.common.exception.FileStorageException;
+import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +14,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.HashMap;
@@ -93,6 +97,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<MessageDto> handleIllegalStateException(IllegalStateException ex){
         log.error("IllegalStateException:{}",ex.getMessage());
+        return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<MessageDto> handleResourceNotFoundException(ResourceNotFoundException ex) {
+        log.error("ResourceNotFoundException:{}",ex.getMessage());
+        return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
+    }
+
+    @ExceptionHandler(FileStorageException.class)
+    public ResponseEntity<MessageDto> handleFileStorageException(FileStorageException ex) {
+        log.error("FileStorageException:{}",ex.getMessage());
+        return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
+    }
+
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<MessageDto> handleSecurityException(SecurityException ex) {
+        log.error("SecurityException:{}",ex.getMessage());
         return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
     }
 }
