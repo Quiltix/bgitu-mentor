@@ -1,6 +1,7 @@
 package com.bgitu.mentor.common.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -13,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+
+@Tag(name = "Files", description = "Методы для взаимодействия с файлами")
 @RestController
 @RequestMapping("/api/uploads/image")
 public class FileController {

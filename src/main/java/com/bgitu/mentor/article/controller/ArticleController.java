@@ -6,6 +6,7 @@ import com.bgitu.mentor.article.dto.ArticleShortDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.dto.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name = "Article", description = "Методы для взаимодействия со статьями")
 @RestController
 @RequestMapping("/api/articles")
 @RequiredArgsConstructor
