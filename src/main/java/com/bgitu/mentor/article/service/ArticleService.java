@@ -12,7 +12,7 @@ import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.model.Speciality;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
 import com.bgitu.mentor.mentor.repository.SpecialityRepository;
-import com.bgitu.mentor.mentor.service.MentorService;
+import com.bgitu.mentor.mentor.service.MentorServiceImpl;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ArticleService {
     private final ArticleRepository articleRepository;
-    private final MentorService mentorService;
+    private final MentorServiceImpl mentorServiceImpl;
     private final SpecialityRepository specialityRepository;
     private final FileStorageService fileStorageService;
     private final MentorRepository mentorRepository;
@@ -40,7 +40,7 @@ public class ArticleService {
     private final ArticleVoteRepository articleVoteRepository;
 
     public ArticleResponseDto createArticle(Authentication auth, ArticleCreateDto dto, MultipartFile image) {
-        Mentor author = mentorService.getMentorByAuth(auth);
+        Mentor author = mentorServiceImpl.getMentorByAuth(auth);
         Speciality speciality = specialityRepository.findById(dto.getSpecialityId())
                 .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
 
@@ -81,7 +81,7 @@ public class ArticleService {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException("Статья не найдена"));
 
-        Mentor currentMentor = mentorService.getMentorByAuth(authentication);
+        Mentor currentMentor = mentorServiceImpl.getMentorByAuth(authentication);
 
         if (!article.getAuthor().getId().equals(currentMentor.getId())) {
             throw new AccessDeniedException("Вы можете удалять только свои статьи");

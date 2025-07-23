@@ -9,13 +9,12 @@ import com.bgitu.mentor.student.dto.ApplicationStudentDto;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
 import com.bgitu.mentor.student.model.Student;
-import com.bgitu.mentor.student.service.StudentService;
+import com.bgitu.mentor.student.service.StudentServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -31,7 +30,7 @@ import java.util.List;
 @RequestMapping("/api/student")
 public class StudentController {
 
-    private final StudentService studentService;
+    private final StudentServiceImpl studentService;
 
 
 

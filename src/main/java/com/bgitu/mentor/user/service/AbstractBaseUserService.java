@@ -3,6 +3,7 @@ package com.bgitu.mentor.user.service;
 import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
+import com.bgitu.mentor.user.dto.UpdateBaseUserCardDto;
 import com.bgitu.mentor.user.model.BaseUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.Authentication;
@@ -37,7 +38,7 @@ public abstract class AbstractBaseUserService<
         T user = getByAuth(authentication);
 
         if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
-            // Здесь нужна проверка на уникальность email, если он меняется!
+
             user.setEmail(dto.getEmail());
         }
 
@@ -48,7 +49,6 @@ public abstract class AbstractBaseUserService<
         return repository.save(user);
     }
 
-    // Защищенный (protected) метод для обновления общих данных карточки
     protected void updateCardInternal(T user, UpdateBaseUserCardDto dto, MultipartFile avatarFile) {
         if (dto.getFirstName() != null) user.setFirstName(dto.getFirstName());
         if (dto.getLastName() != null) user.setLastName(dto.getLastName());

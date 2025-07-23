@@ -3,7 +3,7 @@ package com.bgitu.mentor.mentorship.service;
 
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
-import com.bgitu.mentor.mentor.service.MentorService;
+import com.bgitu.mentor.mentor.service.MentorServiceImpl;
 import com.bgitu.mentor.mentorship.dto.ApplicationDecisionDto;
 import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;
 import com.bgitu.mentor.mentorship.dto.MentorshipRequestDto;
@@ -13,7 +13,7 @@ import com.bgitu.mentor.mentorship.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.repository.ApplicationRepository;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
-import com.bgitu.mentor.student.service.StudentService;
+import com.bgitu.mentor.student.service.StudentServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -28,8 +28,8 @@ public class MentorshipService {
     private final StudentRepository studentRepository;
     private final MentorRepository mentorRepository;
     private final ApplicationRepository applicationRepository;
-    private final StudentService studentService;
-    private final MentorService mentorService;
+    private final StudentServiceImpl studentService;
+    private final MentorServiceImpl mentorServiceImpl;
 
     public void requestMentorship(Authentication authentication, MentorshipRequestDto dto) {
         Student student = studentService.getStudentByAuth(authentication);
@@ -86,7 +86,7 @@ public class MentorshipService {
     }
 
     public List<ApplicationResponseDto> getApplicationsForMentor(Authentication authentication, ApplicationStatus status) {
-        Long mentorId = mentorService.getMentorByAuth(authentication).getId();
+        Long mentorId = mentorServiceImpl.getMentorByAuth(authentication).getId();
 
         List<Application> applications;
         if (status != null) {
@@ -132,7 +132,7 @@ public class MentorshipService {
 
     @Transactional
     public void mentorRejectStudent(Authentication authentication, Long studentId) {
-        Mentor mentor = mentorService.getMentorByAuth(authentication);
+        Mentor mentor = mentorServiceImpl.getMentorByAuth(authentication);
 
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found"));

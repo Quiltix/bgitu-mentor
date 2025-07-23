@@ -8,7 +8,7 @@ import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.dto.MentorShortDto;
 import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
 import com.bgitu.mentor.mentor.model.Mentor;
-import com.bgitu.mentor.mentor.service.MentorService;
+import com.bgitu.mentor.mentor.service.MentorServiceImpl;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,14 +32,14 @@ import java.util.Optional;
 @RequestMapping("/api/mentor")
 public class MentorController {
 
-    private final MentorService mentorService;
+    private final MentorServiceImpl mentorServiceImpl;
 
 
     @Operation(summary = "Получение карточки ментора", description = "Доступно только для роли MENTOR. Возвращает полную информацию по текущему пользователю.")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/summary")
     public ResponseEntity<CardMentorDto> getCardMentor(Authentication authentication) {
-        return ResponseEntity.ok(new CardMentorDto(mentorService.getMentorByAuth(authentication)));
+        return ResponseEntity.ok(new CardMentorDto(mentorServiceImpl.getMentorByAuth(authentication)));
     }
 
     @Operation(summary = "Обновление профиля ментора", description = "Доступно только для роли MENTOR. Обновляет имя, фамилию, пароль и email.")
@@ -50,7 +50,7 @@ public class MentorController {
             @RequestBody @Valid UpdatePersonalInfo dto
     ) {
 
-        Mentor updated = mentorService.updateMentorProfile(authentication, dto);
+        Mentor updated = mentorServiceImpl.updateMentorProfile(authentication, dto);
         return ResponseEntity.ok(new PersonalInfoDto(updated));
 
     }
@@ -64,7 +64,7 @@ public class MentorController {
             @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
     ) {
 
-        Mentor updated = mentorService.updateMentorCard(authentication, dto, avatarFile);
+        Mentor updated = mentorServiceImpl.updateMentorCard(authentication, dto, avatarFile);
         return ResponseEntity.ok(new CardMentorDto(updated));
     }
 
@@ -72,28 +72,28 @@ public class MentorController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/popular")
     public ResponseEntity<List<CardMentorDto>> getTopMentors() {
-        return ResponseEntity.ok(mentorService.getTopMentors());
+        return ResponseEntity.ok(mentorServiceImpl.getTopMentors());
     }
 
     @Operation(summary = "Получение списка менторов (короткое описание)", description = "Доступно для ролей STUDENT и MENTOR. Поддерживает фильтрацию по id специальности.")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/all")
     public ResponseEntity<List<MentorShortDto>>  getAllMentorsShort(@RequestParam(required = false) Long specialityId) {
-        return  ResponseEntity.ok(mentorService.getAllShort(Optional.ofNullable(specialityId)));
+        return  ResponseEntity.ok(mentorServiceImpl.getAllShort(Optional.ofNullable(specialityId)));
     }
 
     @Operation(summary = "Получение полной карточки ментора", description = "Доступно для ролей STUDENT и MENTOR. Возвращает полную информацию по ментору по id.")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/{id}")
     public ResponseEntity<CardMentorDto> getMentorDetails(@PathVariable Long id) {
-        return ResponseEntity.ok( mentorService.getById(id));
+        return ResponseEntity.ok( mentorServiceImpl.getById(id));
     }
 
     @Operation(summary = "Получение моего профиля", description = "MENTOR. Возвращает профиль по авторизации")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/profile")
     public ResponseEntity<PersonalInfoDto> getMentorProfile(Authentication authentication) {
-        return ResponseEntity.ok(new PersonalInfoDto( mentorService.getMentorByAuth(authentication)));
+        return ResponseEntity.ok(new PersonalInfoDto( mentorServiceImpl.getMentorByAuth(authentication)));
     }
 
     @PreAuthorize("hasRole('STUDENT')")
@@ -104,7 +104,7 @@ public class MentorController {
             @RequestParam boolean upvote,
             Authentication authentication
     ) {
-        mentorService.voteMentor(id, upvote, authentication);
+        mentorServiceImpl.voteMentor(id, upvote, authentication);
         return ResponseEntity.ok(new MessageDto("Голос учтен"));
     }
 
@@ -113,21 +113,21 @@ public class MentorController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/search")
     public ResponseEntity<List<MentorShortDto>> searchMentors(@RequestParam  String query) {
-        return ResponseEntity.ok(mentorService.searchMentors(query));
+        return ResponseEntity.ok(mentorServiceImpl.searchMentors(query));
     }
 
     @Operation(summary = "Получение всех статей ментора", description = "Доступно для роли MENTOR")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/articles")
     public List<ArticleShortDto> getArticlesByMentor(Authentication authentication) {
-        return mentorService.getMentorArticles(authentication);
+        return mentorServiceImpl.getMentorArticles(authentication);
     }
 
     @Operation(summary = "Получение всех студентов ментора", description = "Доступно для роли MENTOR")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/students")
     public List<StudentCardDto> getStudents(Authentication authentication) {
-        return mentorService.getAllStudentsForMentor(authentication);
+        return mentorServiceImpl.getAllStudentsForMentor(authentication);
     }
 }
 
