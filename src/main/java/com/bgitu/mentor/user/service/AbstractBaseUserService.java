@@ -5,6 +5,7 @@ import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.user.dto.UpdateBaseUserCardDto;
 import com.bgitu.mentor.user.model.BaseUser;
+import com.bgitu.mentor.user.repository.BaseUserRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,12 +21,14 @@ public abstract class AbstractBaseUserService<
     protected final PasswordEncoder passwordEncoder;
     protected final FileStorageService fileStorageService;
     private final String userTypeName;
+    private final BaseUserRepository baseUserRepository;
 
-    protected AbstractBaseUserService(R repository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, String userTypeName) {
+    protected AbstractBaseUserService(R repository,BaseUserRepository baseUserRepository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, String userTypeName) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.fileStorageService = fileStorageService;
         this.userTypeName = userTypeName;
+        this.baseUserRepository =baseUserRepository;
     }
 
     public T getByAuth(Authentication authentication) {
@@ -36,11 +39,15 @@ public abstract class AbstractBaseUserService<
 
     public T updateProfile(Authentication authentication, UpdatePersonalInfo dto) {
         T user = getByAuth(authentication);
+        String newEmail = dto.getEmail();
 
-        if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+        if (newEmail != null && !newEmail.isBlank() && !newEmail.equalsIgnoreCase(user.getEmail())) {
+                if (baseUserRepository.existsByEmail(newEmail)) {
+                    throw new IllegalArgumentException("Этот email уже занят другим пользователем.");
+                }
+                user.setEmail(newEmail);
+            }
 
-            user.setEmail(dto.getEmail());
-        }
 
         if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
