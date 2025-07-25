@@ -1,5 +1,6 @@
 package com.bgitu.mentor.mentorship.repository;
 
+import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.mentorship.model.ApplicationStatus;
 import com.bgitu.mentor.student.model.Student;
@@ -18,5 +19,5 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     List<Application> findAllByStudent(Student student);
 
-    boolean existsByStudentIdAndMentorId(Long id, Long id1);
+    boolean existsByStudentAndMentorAndStatus(Student student, Mentor mentor, ApplicationStatus applicationStatus);
 }

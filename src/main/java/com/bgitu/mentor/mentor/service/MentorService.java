@@ -18,6 +18,8 @@ import java.util.Optional;
 public interface MentorService {
 
     Mentor getByAuth(Authentication authentication);
+    Mentor findById(Long id);
+
     Mentor updateProfile(Authentication authentication, UpdatePersonalInfo dto);
     Mentor updateCard(Authentication authentication, UpdateMentorCardDto dto, MultipartFile avatarFile);
     List<CardMentorDto> getTopMentors();

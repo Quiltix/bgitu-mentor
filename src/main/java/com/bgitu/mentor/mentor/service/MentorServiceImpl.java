@@ -3,6 +3,7 @@ package com.bgitu.mentor.mentor.service;
 
 import com.bgitu.mentor.article.dto.ArticleShortDto;
 import com.bgitu.mentor.article.model.Article;
+import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.dto.MentorShortDto;
@@ -149,6 +150,13 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
         return mentor.getStudents().stream()
                 .map(StudentCardDto::new)
                 .toList();
+    }
+
+
+    @Override
+    public Mentor findById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ментор с id=" + id + " не найден"));
     }
 
 

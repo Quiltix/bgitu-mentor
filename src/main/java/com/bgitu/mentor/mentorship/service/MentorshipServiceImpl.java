@@ -25,23 +25,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MentorshipServiceImpl implements MentorshipService {
 
-    private final StudentRepository studentRepository;
-    private final MentorRepository mentorRepository;
+
     private final ApplicationRepository applicationRepository;
     private final StudentService studentService;
-    private final MentorService mentorServiceImpl;
+    private final MentorService mentorService;
 
     @Override
-    public void requestMentorship(Authentication authentication, MentorshipRequestDto dto) {
+    @Transactional
+    public ApplicationResponseDto createApplication(Authentication authentication, MentorshipRequestDto dto) {
         Student student = studentService.getByAuth(authentication);
 
-        Mentor mentor = mentorRepository.findById(dto.getMentorId())
-                .orElseThrow(() -> new RuntimeException("Mentor not found"));
+        Mentor mentor = mentorService.findById(dto.getMentorId());
+
+        if (student.getMentor() != null) {
+            throw new IllegalStateException("У вас уже есть ментор. Сначала прекратите текущее менторство.");
+        }
 
 
-        boolean alreadyApplied = applicationRepository.existsByStudentIdAndMentorId(student.getId(), mentor.getId());
-        if (alreadyApplied) {
-            throw new IllegalArgumentException("Вы уже отправляли заявку этому ментору.");
+        if (applicationRepository.existsByStudentAndMentorAndStatus(student, mentor, ApplicationStatus.PENDING)) {
+            throw new IllegalStateException("Вы уже отправляли заявку этому ментору.");
         }
         Application app = new Application();
         app.setStudent(student);
@@ -49,7 +51,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         app.setMessage(dto.getMessage());
         app.setStatus(ApplicationStatus.PENDING);
 
-        applicationRepository.save(app);
+        return new ApplicationResponseDto(applicationRepository.save(app));
     }
 
     @Override

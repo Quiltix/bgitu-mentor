@@ -1,6 +1,7 @@
 package com.bgitu.mentor.mentorship.dto;
 
 
+import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.mentorship.model.ApplicationStatus;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -19,10 +20,10 @@ public class ApplicationResponseDto {
 
     StudentPreviewDto student;
 
-    public ApplicationResponseDto(Long id, String message, ApplicationStatus status, StudentPreviewDto student) {
-        this.id = id;
-        this.message = message;
-        this.status = status;
-        this.student = student;
+    public ApplicationResponseDto(Application application) {
+        this.id = application.getId();
+        this.message = application.getMessage();
+        this.status = application.getStatus();
+        this.student =  new StudentPreviewDto(application.getStudent()) ;
     }
 }

@@ -1,6 +1,7 @@
 package com.bgitu.mentor.mentorship.dto;
 
 
+import com.bgitu.mentor.student.model.Student;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,5 +24,15 @@ public class StudentPreviewDto {
         this.avatarUrl = avatarUrl;
         this.vkUrl = vkUrl;
         this.telegramUrl = telegramUrl;
+    }
+
+    public StudentPreviewDto(Student student) {
+        this.id = student.getId();
+        this.firstName = student.getFirstName();
+        this.lastName = student.getLastName();
+        this.description = student.getDescription();
+        this.avatarUrl = student.getAvatarUrl();
+        this.vkUrl = student.getVkUrl();
+        this.telegramUrl = student.getTelegramUrl();
     }
 }
