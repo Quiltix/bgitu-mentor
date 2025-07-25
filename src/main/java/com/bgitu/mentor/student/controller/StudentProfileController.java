@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Student Profile", description = "Методы для взаимодействия с профилем студента")
-@RequestMapping("/api/profile/student")
+@RequestMapping("/api/profiles/student")
 public class StudentProfileController {
 
 

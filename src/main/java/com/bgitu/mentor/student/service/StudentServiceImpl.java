@@ -11,6 +11,7 @@ import com.bgitu.mentor.student.dto.ApplicationStudentDto;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
+import com.bgitu.mentor.user.repository.BaseUserRepository;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,8 +27,8 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
     private final ApplicationRepository applicationRepository;
 
     public StudentServiceImpl(StudentRepository studentRepository, PasswordEncoder passwordEncoder,
-                              FileStorageService fileStorageService, ApplicationRepository applicationRepository) {
-        super(studentRepository, passwordEncoder, fileStorageService, "Студент");
+                              FileStorageService fileStorageService, ApplicationRepository applicationRepository, BaseUserRepository baseUserRepository) {
+        super(studentRepository, passwordEncoder, fileStorageService, "Студент",baseUserRepository);
         this.applicationRepository = applicationRepository;
     }
 

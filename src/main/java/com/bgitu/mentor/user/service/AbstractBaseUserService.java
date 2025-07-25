@@ -23,7 +23,7 @@ public abstract class AbstractBaseUserService<
     private final String userTypeName;
     private final BaseUserRepository baseUserRepository;
 
-    protected AbstractBaseUserService(R repository,BaseUserRepository baseUserRepository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, String userTypeName) {
+    protected AbstractBaseUserService(R repository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, String userTypeName,BaseUserRepository baseUserRepository) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.fileStorageService = fileStorageService;

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@Tag(name = "Сервис авторизации", description = "Регистрирует и авторизует пользователя, выдает jwt токен")
+@Tag(name = "Auth", description = "Регистрирует и авторизует пользователя, выдает jwt токен")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

@@ -16,6 +16,7 @@ import com.bgitu.mentor.mentor.repository.SpecialityRepository;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.service.StudentService;
+import com.bgitu.mentor.user.repository.BaseUserRepository;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -41,8 +42,9 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
     public MentorServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
                              FileStorageService fileStorageService, MentorVoteRepository mentorVoteRepository,
-                             SpecialityRepository specialityRepository, StudentService studentService) {
-        super(mentorRepository, passwordEncoder, fileStorageService, "Ментор");
+                             SpecialityRepository specialityRepository, StudentService studentService,
+                             BaseUserRepository baseUserRepository) {
+        super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", baseUserRepository);
         this.mentorVoteRepository = mentorVoteRepository;
         this.specialityRepository = specialityRepository;
         this.studentService = studentService;

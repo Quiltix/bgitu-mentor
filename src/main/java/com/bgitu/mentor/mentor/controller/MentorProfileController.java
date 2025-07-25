@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @Tag(name = "Mentor Profile", description = "Методы для взаимодействия с профилем ментора")
-@RequestMapping("/api/profile/mentor")
+@RequestMapping("/api/profiles/mentor")
 public class MentorProfileController {
 
     private final MentorService mentorService;
