@@ -4,7 +4,7 @@ package com.bgitu.mentor.mentorship.service;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
 import com.bgitu.mentor.mentor.service.MentorService;
-import com.bgitu.mentor.mentorship.dto.ApplicationDecisionDto;
+import com.bgitu.mentor.mentorship.dto.UpdateApplicationStatusDto;
 import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;
 import com.bgitu.mentor.mentorship.dto.MentorshipRequestDto;
 import com.bgitu.mentor.mentorship.dto.StudentPreviewDto;
@@ -54,7 +54,7 @@ public class MentorshipServiceImpl implements MentorshipService {
 
     @Override
     @Transactional
-    public void respondToApplication(ApplicationDecisionDto dto) {
+    public void respondToApplication(UpdateApplicationStatusDto dto) {
         Application app = applicationRepository.findById(dto.getApplicationId())
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
@@ -118,37 +118,4 @@ public class MentorshipServiceImpl implements MentorshipService {
             );
         }).toList();
     }
-
-    @Override
-    @Transactional
-    public void studentRejectMentorship(Authentication authentication) {
-        Student student = studentService.getByAuth(authentication);
-
-        Mentor mentor = student.getMentor();
-        if (mentor != null) {
-            mentor.getStudents().remove(student);
-            student.setMentor(null);
-
-            studentRepository.save(student);
-            mentorRepository.save(mentor);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void mentorRejectStudent(Authentication authentication, Long studentId) {
-        Mentor mentor = mentorServiceImpl.getByAuth(authentication);
-
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalArgumentException("Student not found"));
-
-        if (student.getMentor() != null && student.getMentor().getId().equals(mentor.getId())) {
-            student.setMentor(null);
-            mentor.getStudents().remove(student);
-
-            studentRepository.save(student);
-            mentorRepository.save(mentor);
-        }
-    }
-
 }

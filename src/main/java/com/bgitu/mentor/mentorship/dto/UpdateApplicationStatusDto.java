@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ApplicationDecisionDto {
+public class UpdateApplicationStatusDto {
 
     @NotNull
     Long applicationId;

@@ -1,7 +1,7 @@
 package com.bgitu.mentor.mentorship.controller;
 
 import com.bgitu.mentor.common.dto.MessageDto;
-import com.bgitu.mentor.mentorship.dto.ApplicationDecisionDto;
+import com.bgitu.mentor.mentorship.dto.UpdateApplicationStatusDto;
 import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;
 import com.bgitu.mentor.mentorship.dto.MentorshipRequestDto;
 import com.bgitu.mentor.mentorship.model.ApplicationStatus;
@@ -21,7 +21,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/mentorship")
+@RequestMapping("/api/mentorship/applications")
 @RequiredArgsConstructor
 @Tag(name = "Mentorships", description = "Управление заявками на менторство между студентами и менторами")
 public class MentorshipController {
@@ -47,7 +47,7 @@ public class MentorshipController {
             @ApiResponse(responseCode = "200", description = "Ответ на заявку принят"),
             @ApiResponse(responseCode = "404", description = "Заявка не найдена")
     })
-    public ResponseEntity<MessageDto> respondToApplication(@RequestBody ApplicationDecisionDto dto) {
+    public ResponseEntity<MessageDto> respondToApplication(@RequestBody UpdateApplicationStatusDto dto) {
         mentorshipService.respondToApplication(dto);
         return ResponseEntity.ok( new MessageDto("Ответ принят"));
     }
@@ -65,20 +65,4 @@ public class MentorshipController {
     ) {
         return ResponseEntity.ok(mentorshipService.getApplicationsForMentor(authentication, status));
     }
-
-
-    @PreAuthorize("hasRole('STUDENT')")
-    @PostMapping("/student/reject")
-    public ResponseEntity<MessageDto> studentRejectMentor(Authentication authentication) {
-        mentorshipService.studentRejectMentorship(authentication);
-        return ResponseEntity.ok(new MessageDto("Ментор успешно удален"));
-    }
-
-    @PreAuthorize("hasRole('MENTOR')")
-    @PostMapping("/mentor/reject/{studentId}")
-    public ResponseEntity<MessageDto> mentorRejectStudent( Authentication authentication, @PathVariable Long studentId) {
-        mentorshipService.mentorRejectStudent(authentication, studentId);
-        return ResponseEntity.ok(new MessageDto("Студент успешно удален"));
-    }
-
 }
