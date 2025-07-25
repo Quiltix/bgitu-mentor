@@ -8,9 +8,9 @@ import lombok.Setter;
 @Setter
 public class UpdateApplicationStatusDto {
 
-    @NotNull
-    Long applicationId;
+    @NotNull(message = "Решение (принять/отклонить) не может быть пустым")
+    private Boolean accepted;
 
-    @NotNull
-    Boolean accepted;
+    // Поле для будущего расширения
+    //private String reason;
 }

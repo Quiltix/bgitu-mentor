@@ -56,7 +56,7 @@ public class MentorshipServiceImpl implements MentorshipService {
 
     @Override
     @Transactional
-    public void respondToApplication(UpdateApplicationStatusDto dto) {
+    public void respondToApplication(Authentication authentication, UpdateApplicationStatusDto dto) {
         Application app = applicationRepository.findById(dto.getApplicationId())
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
