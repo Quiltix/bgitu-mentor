@@ -1,6 +1,7 @@
 package com.bgitu.mentor.mentorship.service;
 
 
+import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.model.Mentor;
 import com.bgitu.mentor.mentor.repository.MentorRepository;
 import com.bgitu.mentor.mentor.service.MentorService;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,68 +58,49 @@ public class MentorshipServiceImpl implements MentorshipService {
 
     @Override
     @Transactional
-    public void respondToApplication(Authentication authentication, UpdateApplicationStatusDto dto) {
-        Application app = applicationRepository.findById(dto.getApplicationId())
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+    public void updateApplicationStatus(Authentication authentication, Long applicationId, UpdateApplicationStatusDto dto) {
+        Mentor mentor = mentorService.getByAuth(authentication);
+        Application app = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Эта заявка не найдена"));
 
-        if (dto.getAccepted()) {
-            // 1. Принятие заявки
-            app.setStatus(ApplicationStatus.ACCEPTED);
-
-            // 2. Привязка студента к ментору
-            Student student = app.getStudent();
-            student.setMentor(app.getMentor());
-            studentRepository.save(student);
-
-            // 3. Поиск всех других заявок этого студента
-            List<Application> otherApplications = applicationRepository.findByStudentId(student.getId()).stream()
-                    .filter(a -> !a.getId().equals(app.getId()) && a.getStatus() == ApplicationStatus.PENDING)
-                    .toList();
-
-            // 4. Установка статуса EXPIRED
-            for (Application otherApp : otherApplications) {
-                otherApp.setStatus(ApplicationStatus.EXPIRED);
-            }
-
-            // 5. Сохранение всех изменённых заявок
-            applicationRepository.saveAll(otherApplications);
-        } else {
-            // Отклонение заявки
-            app.setStatus(ApplicationStatus.REJECTED);
+        // Критически важная проверка безопасности!
+        if (!app.getMentor().getId().equals(mentor.getId())) {
+            throw new SecurityException("Вы не можете отвечать на чужую заявку.");
         }
 
+        if (app.getStatus() != ApplicationStatus.PENDING) {
+            throw new IllegalStateException("Нельзя изменить статус заявки, которая уже обработана.");
+        }
+
+        if (dto.getAccepted()) {
+            approveApplication(app);
+        } else {
+            app.setStatus(ApplicationStatus.REJECTED);
+        }
         applicationRepository.save(app);
+    }
+
+    private void approveApplication(Application application) {
+        application.setStatus(ApplicationStatus.ACCEPTED);
+
+        Student student = application.getStudent();
+        student.setMentor(application.getMentor());
+
+        List<Application> otherPendingApps = applicationRepository
+                .findAllByStudentAndStatus(student, ApplicationStatus.PENDING);
+
+        otherPendingApps.forEach(otherApp -> otherApp.setStatus(ApplicationStatus.EXPIRED));
+        applicationRepository.saveAll(otherPendingApps);
     }
 
     @Override
     public List<ApplicationResponseDto> getApplicationsForMentor(Authentication authentication, ApplicationStatus status) {
-        Long mentorId = mentorServiceImpl.getByAuth(authentication).getId();
+        Mentor mentor = mentorService.getByAuth(authentication);
 
-        List<Application> applications;
-        if (status != null) {
-            applications = applicationRepository.findByMentorIdAndStatus(mentorId, status);
-        } else {
-            applications = applicationRepository.findByMentorId(mentorId);
-        }
+        List<Application> applications = (status != null)
+                ? applicationRepository.findAllByMentorAndStatus(mentor, status)
+                : applicationRepository.findAllByMentor(mentor);
 
-        return applications.stream().map(app -> {
-            Student student = app.getStudent();
-            StudentPreviewDto studentDto = new StudentPreviewDto(
-                    student.getId(),
-                    student.getFirstName(),
-                    student.getLastName(),
-                    student.getDescription(),
-                    student.getAvatarUrl(),
-                    student.getVkUrl(),
-                    student.getTelegramUrl()
-            );
-
-            return new ApplicationResponseDto(
-                    app.getId(),
-                    app.getMessage(),
-                    app.getStatus(),
-                    studentDto
-            );
-        }).toList();
+        return applications.stream().map(ApplicationResponseDto::new).collect(Collectors.toList());
     }
 }

@@ -12,7 +12,7 @@ public interface MentorshipService {
 
     ApplicationResponseDto createApplication(Authentication authentication, MentorshipRequestDto dto);
 
-    void updateApplicationStatus(Authentication authentication, UpdateApplicationStatusDto dto);
+    void updateApplicationStatus(Authentication authentication,Long ApplicationId, UpdateApplicationStatusDto dto);
 
     List<ApplicationResponseDto> getApplicationsForMentor(Authentication authentication, ApplicationStatus status);
 }

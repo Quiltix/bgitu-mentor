@@ -20,4 +20,10 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     List<Application> findAllByStudent(Student student);
 
     boolean existsByStudentAndMentorAndStatus(Student student, Mentor mentor, ApplicationStatus applicationStatus);
+
+    List<Application> findAllByStudentAndStatus(Student student, ApplicationStatus status);
+
+    List<Application> findAllByMentorAndStatus(Mentor mentor, ApplicationStatus status);
+
+    List<Application> findAllByMentor(Mentor mentor);
 }
