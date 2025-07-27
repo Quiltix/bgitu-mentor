@@ -3,17 +3,14 @@ package com.bgitu.mentor.mentorship.service;
 
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.model.Mentor;
-import com.bgitu.mentor.mentor.repository.MentorRepository;
 import com.bgitu.mentor.mentor.service.MentorService;
 import com.bgitu.mentor.mentorship.dto.UpdateApplicationStatusDto;
 import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;
 import com.bgitu.mentor.mentorship.dto.MentorshipRequestDto;
-import com.bgitu.mentor.mentorship.dto.StudentPreviewDto;
 import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.mentorship.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.repository.ApplicationRepository;
 import com.bgitu.mentor.student.model.Student;
-import com.bgitu.mentor.student.repository.StudentRepository;
 import com.bgitu.mentor.student.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -21,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,7 +68,7 @@ public class MentorshipServiceImpl implements MentorshipService {
             throw new IllegalStateException("Нельзя изменить статус заявки, которая уже обработана.");
         }
 
-        if (dto.getAccepted()) {
+        if (Boolean.TRUE.equals(dto.getAccepted())) {
             approveApplication(app);
         } else {
             app.setStatus(ApplicationStatus.REJECTED);
@@ -101,6 +97,6 @@ public class MentorshipServiceImpl implements MentorshipService {
                 ? applicationRepository.findAllByMentorAndStatus(mentor, status)
                 : applicationRepository.findAllByMentor(mentor);
 
-        return applications.stream().map(ApplicationResponseDto::new).collect(Collectors.toList());
+        return applications.stream().map(ApplicationResponseDto::new).toList();
     }
 }

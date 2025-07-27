@@ -1,14 +1,12 @@
 package com.bgitu.mentor.mentorship.controller;
 
-import com.bgitu.mentor.common.dto.MessageDto;
+
 import com.bgitu.mentor.mentorship.dto.UpdateApplicationStatusDto;
 import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;
 import com.bgitu.mentor.mentorship.dto.MentorshipRequestDto;
 import com.bgitu.mentor.mentorship.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +30,6 @@ public class MentorshipController {
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/request")
     @Operation(summary = "Отправить заявку на менторство", description = "Позволяет студенту отправить заявку выбранному ментору")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Заявка успешно отправлена"),
-            @ApiResponse(responseCode = "400", description = "Ошибка валидации или параметров запроса")
-    })
     public ResponseEntity<ApplicationResponseDto> requestMentorship(Authentication authentication, @RequestBody @Valid MentorshipRequestDto dto) {
         ApplicationResponseDto responseDto =  mentorshipService.createApplication(authentication,dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
