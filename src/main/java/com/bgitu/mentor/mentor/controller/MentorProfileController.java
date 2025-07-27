@@ -82,4 +82,15 @@ public class MentorProfileController {
     public List<StudentCardDto> getStudents(Authentication authentication) {
         return mentorService.getAllStudentsForMentor(authentication);
     }
+
+    @DeleteMapping("/students/{studentId}") // <-- DELETE на конкретного студента в списке
+    @PreAuthorize("hasRole('MENTOR')")
+    @Operation(summary = "Прекратить менторство со студентом", description = "Позволяет ментору отказаться от своего студента.")
+
+    public ResponseEntity<Void> terminateMentorshipWithStudent(
+            Authentication authentication,
+            @PathVariable Long studentId) {
+        mentorService.terminateMentorshipWithStudent(authentication, studentId);
+        return ResponseEntity.noContent().build();
+    }
 }

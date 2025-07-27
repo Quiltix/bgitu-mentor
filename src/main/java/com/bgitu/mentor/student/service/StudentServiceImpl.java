@@ -2,6 +2,7 @@ package com.bgitu.mentor.student.service;
 
 
 
+import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.model.Mentor;
@@ -13,6 +14,7 @@ import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
 import com.bgitu.mentor.user.repository.BaseUserRepository;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -65,6 +67,23 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
         return applications.stream()
                 .map(ApplicationStudentDto::new)
                 .toList();
+    }
+
+    @Transactional
+    public void terminateCurrentMentorship(Authentication authentication) {
+        Student student = getByAuth(authentication);
+        Mentor mentor = student.getMentor();
+        if (mentor == null) {
+            throw new ResourceNotFoundException("У вас нет активного ментора, чтобы от него отказаться.");
+        }
+        // Выносим общую логику разрыва связи в приватный метод
+        breakMentorshipLink(student, mentor);
+    }
+    private void breakMentorshipLink(Student student, Mentor mentor) {
+        student.setMentor(null);
+        mentor.getStudents().remove(student);
+        // studentRepository.save(student);
+        // mentorRepository.save(mentor);
     }
 
 

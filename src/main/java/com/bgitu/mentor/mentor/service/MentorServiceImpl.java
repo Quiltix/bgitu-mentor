@@ -16,6 +16,7 @@ import com.bgitu.mentor.mentor.repository.MentorVoteRepository;
 import com.bgitu.mentor.mentor.repository.SpecialityRepository;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.model.Student;
+import com.bgitu.mentor.student.repository.StudentRepository;
 import com.bgitu.mentor.student.service.StudentService;
 import com.bgitu.mentor.user.repository.BaseUserRepository;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
@@ -40,15 +41,17 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     private final MentorVoteRepository mentorVoteRepository;
     private final SpecialityRepository specialityRepository;
     private final StudentService studentService; // Внедряем интерфейс!
+    private final StudentRepository studentRepository;
 
     public MentorServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
                              FileStorageService fileStorageService, MentorVoteRepository mentorVoteRepository,
                              SpecialityRepository specialityRepository, StudentService studentService,
-                             BaseUserRepository baseUserRepository) {
+                             BaseUserRepository baseUserRepository,StudentRepository studentRepository) {
         super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", baseUserRepository);
         this.mentorVoteRepository = mentorVoteRepository;
         this.specialityRepository = specialityRepository;
         this.studentService = studentService;
+        this.studentRepository = studentRepository;
     }
 
 
@@ -159,6 +162,26 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
                 .orElseThrow(() -> new ResourceNotFoundException("Ментор с id=" + id + " не найден"));
     }
 
+    @Override
+    @Transactional
+    public void terminateMentorshipWithStudent(Authentication authentication, Long studentId) {
+
+        Mentor mentor = getByAuth(authentication);
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Студент не найден."));
+
+        if (student.getMentor() == null || !student.getMentor().getId().equals(mentor.getId())) {
+            throw new SecurityException("Студент не является вашим подопечным.");
+        }
+
+        breakMentorshipLink(student, mentor);
+    }
+
+    private void breakMentorshipLink(Student student, Mentor mentor) {
+        student.setMentor(null);
+        mentor.getStudents().remove(student);
+    }
 
 }
 

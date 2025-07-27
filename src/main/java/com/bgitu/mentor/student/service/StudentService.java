@@ -17,4 +17,5 @@ public interface StudentService {
     Student updateCard(Authentication authentication, UpdateStudentCardDto dto, MultipartFile avatarFile);
     CardMentorDto getMentorOfStudent(Authentication auth);
     List<ApplicationStudentDto> getStudentApplications(Authentication authentication);
+    void terminateCurrentMentorship(Authentication authentication);
 }

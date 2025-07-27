@@ -82,4 +82,12 @@ public class StudentProfileController {
         return studentService.getStudentApplications(authentication);
     }
 
+    @DeleteMapping("/mentor") // <-- DELETE на ресурс "ментор" внутри профиля
+    @PreAuthorize("hasRole('STUDENT')")
+    @Operation(summary = "Прекратить менторство", description = "Позволяет студенту отказаться от своего текущего ментора.")
+    public ResponseEntity<Void> terminateMentorship(Authentication authentication) {
+        studentService.terminateCurrentMentorship(authentication);
+        return ResponseEntity.noContent().build();
+    }
+
 }

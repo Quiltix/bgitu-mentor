@@ -29,5 +29,6 @@ public interface MentorService {
     List<MentorShortDto> searchMentors(String query);
     List<ArticleShortDto> getMentorArticles(Authentication authentication);
     List<StudentCardDto> getAllStudentsForMentor(Authentication authentication);
+    void terminateMentorshipWithStudent(Authentication authentication, Long studentId);
 
 }
