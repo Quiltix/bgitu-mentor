@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -32,37 +33,32 @@ public class MentorshipController {
     @PostMapping("/request")
     @Operation(summary = "Отправить заявку на менторство", description = "Позволяет студенту отправить заявку выбранному ментору")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Заявка успешно отправлена"),
+            @ApiResponse(responseCode = "201", description = "Заявка успешно отправлена"),
             @ApiResponse(responseCode = "400", description = "Ошибка валидации или параметров запроса")
     })
-    public ResponseEntity<MessageDto> requestMentorship(Authentication authentication, @RequestBody @Valid MentorshipRequestDto dto) {
-        mentorshipService.requestMentorship(authentication,dto);
-        return ResponseEntity.ok(new MessageDto("Заявка отправлена"));
+    public ResponseEntity<ApplicationResponseDto> requestMentorship(Authentication authentication, @RequestBody @Valid MentorshipRequestDto dto) {
+        ApplicationResponseDto responseDto =  mentorshipService.createApplication(authentication,dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @PreAuthorize("hasRole('MENTOR')")
-    @PostMapping("/respond")
-    @Operation(summary = "Ответить на заявку", description = "Позволяет ментору принять или отклонить заявку студента на менторство")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Ответ на заявку принят"),
-            @ApiResponse(responseCode = "404", description = "Заявка не найдена")
-    })
-    public ResponseEntity<MessageDto> respondToApplication(@RequestBody UpdateApplicationStatusDto dto) {
-        mentorshipService.respondToApplication(dto);
-        return ResponseEntity.ok( new MessageDto("Ответ принят"));
+    @PatchMapping("/{applicationId}")
+    @Operation(summary = "Ответить на заявку", description = "Ментор обновляет статус существующей заявки (Принять/Отклонить)")
+    public ResponseEntity<Void> respondToApplication(
+            Authentication authentication,
+            @PathVariable Long applicationId,
+            @RequestBody @Valid UpdateApplicationStatusDto dto) {
+        mentorshipService.updateApplicationStatus(authentication, applicationId, dto);
+        return ResponseEntity.noContent().build();
     }
 
 
     @PreAuthorize("hasRole('MENTOR')")
-    @GetMapping("/applications/me")
-    @Operation(summary = "Получить входящие заявки", description = "Возвращает список заявок, направленных этому ментору. Можно фильтровать по статусу.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Список заявок успешно получен")
-    })
+    @GetMapping
+    @Operation(summary = "Получить входящие заявки ментора", description = "Возвращает список заявок, направленных текущему ментору")
     public ResponseEntity<List<ApplicationResponseDto>> getMentorApplications(
             Authentication authentication,
-            @RequestParam(required = false) ApplicationStatus status
-    ) {
+            @RequestParam(required = false) ApplicationStatus status) {
         return ResponseEntity.ok(mentorshipService.getApplicationsForMentor(authentication, status));
     }
 }
