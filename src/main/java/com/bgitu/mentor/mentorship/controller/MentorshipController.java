@@ -28,7 +28,7 @@ public class MentorshipController {
     private final MentorshipService mentorshipService;
 
     @PreAuthorize("hasRole('STUDENT')")
-    @PostMapping("/request")
+    @PostMapping()
     @Operation(summary = "Отправить заявку на менторство", description = "Позволяет студенту отправить заявку выбранному ментору")
     public ResponseEntity<ApplicationResponseDto> requestMentorship(Authentication authentication, @RequestBody @Valid MentorshipRequestDto dto) {
         ApplicationResponseDto responseDto =  mentorshipService.createApplication(authentication,dto);
