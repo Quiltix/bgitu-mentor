@@ -1,8 +1,8 @@
 package com.bgitu.mentor.mentor.controller;
 
 import com.bgitu.mentor.common.dto.MessageDto;
-import com.bgitu.mentor.mentor.dto.CardMentorDto;
-import com.bgitu.mentor.mentor.dto.MentorShortDto;
+import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
+import com.bgitu.mentor.mentor.data.dto.MentorShortDto;
 import com.bgitu.mentor.mentor.service.MentorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

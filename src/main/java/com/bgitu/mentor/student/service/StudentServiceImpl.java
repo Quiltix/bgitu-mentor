@@ -4,8 +4,8 @@ package com.bgitu.mentor.student.service;
 
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
-import com.bgitu.mentor.mentor.dto.CardMentorDto;
-import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
+import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.mentorship.repository.ApplicationRepository;
 import com.bgitu.mentor.student.dto.ApplicationStudentDto;

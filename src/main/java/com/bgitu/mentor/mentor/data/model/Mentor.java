@@ -1,4 +1,4 @@
-package com.bgitu.mentor.mentor.model;
+package com.bgitu.mentor.mentor.data.model;
 
 import com.bgitu.mentor.article.model.Article;
 import com.bgitu.mentor.mentorship.model.Application;
@@ -7,7 +7,6 @@ import com.bgitu.mentor.user.model.BaseUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 

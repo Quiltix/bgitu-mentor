@@ -1,4 +1,4 @@
-package com.bgitu.mentor.mentor.model;
+package com.bgitu.mentor.mentor.data.model;
 
 import com.bgitu.mentor.student.model.Student;
 import jakarta.persistence.*;

@@ -2,10 +2,10 @@ package com.bgitu.mentor.mentor.service;
 
 import com.bgitu.mentor.article.dto.ArticleShortDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
-import com.bgitu.mentor.mentor.dto.CardMentorDto;
-import com.bgitu.mentor.mentor.dto.MentorShortDto;
-import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
-import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
+import com.bgitu.mentor.mentor.data.dto.MentorShortDto;
+import com.bgitu.mentor.mentor.data.dto.UpdateMentorCardDto;
+import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 
 

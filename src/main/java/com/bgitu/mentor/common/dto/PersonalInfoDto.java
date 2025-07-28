@@ -1,8 +1,7 @@
 package com.bgitu.mentor.common.dto;
 
-import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.student.model.Student;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;

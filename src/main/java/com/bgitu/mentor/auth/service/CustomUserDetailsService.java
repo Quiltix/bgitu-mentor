@@ -1,22 +1,17 @@
 package com.bgitu.mentor.auth.service;
 
-import com.bgitu.mentor.mentor.model.Mentor;
-import com.bgitu.mentor.mentor.repository.MentorRepository;
-import com.bgitu.mentor.student.model.Student;
-import com.bgitu.mentor.student.repository.StudentRepository;
+import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.user.model.BaseUser;
 import com.bgitu.mentor.user.repository.BaseUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service

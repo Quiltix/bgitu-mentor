@@ -1,7 +1,7 @@
 package com.bgitu.mentor.article.model;
 
-import com.bgitu.mentor.mentor.model.Mentor;
-import com.bgitu.mentor.mentor.model.Speciality;
+import com.bgitu.mentor.mentor.data.model.Mentor;
+import com.bgitu.mentor.mentor.data.model.Speciality;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

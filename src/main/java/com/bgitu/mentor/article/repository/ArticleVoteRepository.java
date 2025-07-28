@@ -2,7 +2,7 @@ package com.bgitu.mentor.article.repository;
 
 import com.bgitu.mentor.article.model.Article;
 import com.bgitu.mentor.article.model.ArticleVote;
-import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.student.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 

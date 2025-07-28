@@ -4,8 +4,8 @@ import com.bgitu.mentor.auth.Role;
 import com.bgitu.mentor.auth.dto.LoginRequestDto;
 import com.bgitu.mentor.auth.dto.RegisterRequestDto;
 import com.bgitu.mentor.auth.security.JwtTokenProvider;
-import com.bgitu.mentor.mentor.model.Mentor;
-import com.bgitu.mentor.mentor.repository.MentorRepository;
+import com.bgitu.mentor.mentor.data.model.Mentor;
+import com.bgitu.mentor.mentor.data.repository.MentorRepository;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
 import com.bgitu.mentor.user.model.BaseUser;
@@ -15,8 +15,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
