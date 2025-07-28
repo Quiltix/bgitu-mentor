@@ -50,7 +50,7 @@ public class MentorController {
 
 
     @PreAuthorize("hasRole('STUDENT')")
-    @PostMapping("/mentors/{id}/vote")
+    @PostMapping("/{id}/vote")
     @Operation(summary = "Лайк/дизлайк ментора", description = "Голосование за ментора (1 раз на студента)")
     public ResponseEntity<MessageDto> voteMentor(
             @PathVariable Long id,
