@@ -24,6 +24,8 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -71,27 +73,11 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
         return repository.save(mentor);
     }
 
-    @Cacheable(value = "topMentors")
-    public List<CardMentorDto> getTopMentors() {
-        return repository.findTop3ByOrderByRankDesc()
-                .stream()
-                .map(CardMentorDto::new)
-                .toList();
-    }
-
-
-
     @Override
-    public List<MentorShortDto> getAllShort(Optional<Long> specialityId) {
-        List<Mentor> mentors = specialityId
-                .map(repository::findBySpecialityIdOrderByRankDesc)
-                .orElseGet(repository::findAll);
-
-        return mentors.stream()
-                .filter(mentor -> mentor.getVkUrl() != null)
-                .map(MentorShortDto::new)
-                .toList();
+    public Page<MentorShortDto> findMentors(Long specialityId, String query, Pageable pageable) {
+        return null;
     }
+
 
     @Override
     public CardMentorDto getById(Long id) {
@@ -123,16 +109,6 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
         repository.save(mentor);
     }
 
-    @Override
-    public List<MentorShortDto> searchMentors(String query) {
-        if (query.length()>250){
-            throw new IllegalStateException("Строка для поиска слишком длинная");
-        }
-        List<Mentor> mentors = repository.searchByNameOrDescription(query);
-        return mentors.stream()
-                .map(MentorShortDto::new)
-                .toList();
-    }
 
     @Override
     public List<ArticleShortDto> getMentorArticles(Authentication authentication) {

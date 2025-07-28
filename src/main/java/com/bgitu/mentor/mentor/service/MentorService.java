@@ -9,6 +9,8 @@ import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,11 +24,10 @@ public interface MentorService {
 
     Mentor updateProfile(Authentication authentication, UpdatePersonalInfo dto);
     Mentor updateCard(Authentication authentication, UpdateMentorCardDto dto, MultipartFile avatarFile);
-    List<CardMentorDto> getTopMentors();
-    List<MentorShortDto> getAllShort(Optional<Long> specialityId);
+    Page<MentorShortDto> findMentors(Long specialityId, String query, Pageable pageable);
+
     CardMentorDto getById(Long id);
     void voteMentor(Long mentorId, boolean upvote, Authentication auth);
-    List<MentorShortDto> searchMentors(String query);
     List<ArticleShortDto> getMentorArticles(Authentication authentication);
     List<StudentCardDto> getAllStudentsForMentor(Authentication authentication);
     void terminateMentorshipWithStudent(Authentication authentication, Long studentId);
