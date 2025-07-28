@@ -36,7 +36,7 @@ public class MentorController {
 
     @Operation(summary = "Получение списка менторов (короткое описание)", description = "Доступно для ролей STUDENT и MENTOR. Поддерживает фильтрацию по id специальности.")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
-    @GetMapping("/all")
+    @GetMapping()
     public ResponseEntity<List<MentorShortDto>>  getAllMentorsShort(@RequestParam(required = false) Long specialityId) {
         return  ResponseEntity.ok(mentorService.getAllShort(Optional.ofNullable(specialityId)));
     }
