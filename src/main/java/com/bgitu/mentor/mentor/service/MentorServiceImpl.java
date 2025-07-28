@@ -31,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -91,7 +90,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
         return mentors.stream()
                 .filter(mentor -> mentor.getVkUrl() != null)
                 .map(MentorShortDto::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -132,7 +131,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
         List<Mentor> mentors = repository.searchByNameOrDescription(query);
         return mentors.stream()
                 .map(MentorShortDto::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -143,7 +142,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
         return articles.stream()
                 .map(ArticleShortDto::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
