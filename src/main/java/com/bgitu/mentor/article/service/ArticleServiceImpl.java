@@ -1,12 +1,12 @@
 package com.bgitu.mentor.article.service;
 
-import com.bgitu.mentor.article.dto.ArticleCreateDto;
-import com.bgitu.mentor.article.dto.ArticleResponseDto;
-import com.bgitu.mentor.article.dto.ArticleShortDto;
-import com.bgitu.mentor.article.model.Article;
-import com.bgitu.mentor.article.model.ArticleVote;
-import com.bgitu.mentor.article.repository.ArticleRepository;
-import com.bgitu.mentor.article.repository.ArticleVoteRepository;
+import com.bgitu.mentor.article.data.dto.ArticleCreateDto;
+import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
+import com.bgitu.mentor.article.data.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.model.Article;
+import com.bgitu.mentor.article.data.model.ArticleVote;
+import com.bgitu.mentor.article.data.repository.ArticleRepository;
+import com.bgitu.mentor.article.data.repository.ArticleVoteRepository;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.model.Speciality;

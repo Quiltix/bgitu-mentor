@@ -76,14 +76,11 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
         if (mentor == null) {
             throw new ResourceNotFoundException("У вас нет активного ментора, чтобы от него отказаться.");
         }
-        // Выносим общую логику разрыва связи в приватный метод
         breakMentorshipLink(student, mentor);
     }
     private void breakMentorshipLink(Student student, Mentor mentor) {
         student.setMentor(null);
         mentor.getStudents().remove(student);
-        // studentRepository.save(student);
-        // mentorRepository.save(mentor);
     }
 
 

@@ -1,8 +1,8 @@
 package com.bgitu.mentor.article.controller;
 
-import com.bgitu.mentor.article.dto.ArticleCreateDto;
-import com.bgitu.mentor.article.dto.ArticleResponseDto;
-import com.bgitu.mentor.article.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.dto.ArticleCreateDto;
+import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
+import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.dto.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;

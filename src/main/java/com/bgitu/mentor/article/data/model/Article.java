@@ -1,4 +1,4 @@
-package com.bgitu.mentor.article.model;
+package com.bgitu.mentor.article.data.model;
 
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.model.Speciality;

@@ -1,7 +1,7 @@
 package com.bgitu.mentor.mentor.controller;
 
 
-import com.bgitu.mentor.article.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.mentor.data.dto.CardMentorDto;

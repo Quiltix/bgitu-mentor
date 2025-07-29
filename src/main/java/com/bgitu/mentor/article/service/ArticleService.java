@@ -1,8 +1,8 @@
 package com.bgitu.mentor.article.service;
 
-import com.bgitu.mentor.article.dto.ArticleCreateDto;
-import com.bgitu.mentor.article.dto.ArticleResponseDto;
-import com.bgitu.mentor.article.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.dto.ArticleCreateDto;
+import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
+import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 

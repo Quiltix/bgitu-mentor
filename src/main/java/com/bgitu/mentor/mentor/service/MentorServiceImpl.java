@@ -1,8 +1,8 @@
 package com.bgitu.mentor.mentor.service;
 
 
-import com.bgitu.mentor.article.dto.ArticleShortDto;
-import com.bgitu.mentor.article.model.Article;
+import com.bgitu.mentor.article.data.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.MentorSpecifications;

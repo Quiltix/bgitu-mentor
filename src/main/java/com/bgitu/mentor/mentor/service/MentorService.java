@@ -1,6 +1,6 @@
 package com.bgitu.mentor.mentor.service;
 
-import com.bgitu.mentor.article.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.data.dto.MentorShortDto;
@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MentorService {
 

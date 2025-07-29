@@ -1,6 +1,6 @@
 package com.bgitu.mentor.mentor.data.model;
 
-import com.bgitu.mentor.article.model.Article;
+import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.user.model.BaseUser;
