@@ -14,10 +14,6 @@ public interface ArticleVoteRepository extends JpaRepository<ArticleVote, Long> 
 
     boolean existsByArticleIdAndStudentId(Long articleId, Long studentId);
 
-    Optional<ArticleVote> findByArticleAndStudent(Article article, Student student);
-
-    Optional<ArticleVote> findByArticleAndMentor(Article article, Mentor mentor);
-
     void deleteAllByArticleId(Long articleId);
 
 }

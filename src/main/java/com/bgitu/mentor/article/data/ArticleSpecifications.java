@@ -8,6 +8,10 @@ import org.springframework.data.jpa.domain.Specification;
 
 public final class ArticleSpecifications {
 
+    private ArticleSpecifications() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Specification<Article> hasSpeciality(Long specialityId){
         return  (root, query, criteriaBuilder) ->
         {
