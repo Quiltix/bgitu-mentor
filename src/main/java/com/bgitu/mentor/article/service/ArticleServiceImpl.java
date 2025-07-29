@@ -1,5 +1,6 @@
 package com.bgitu.mentor.article.service;
 
+import com.bgitu.mentor.article.data.ArticleSpecifications;
 import com.bgitu.mentor.article.data.dto.ArticleCreateDto;
 import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleShortDto;
@@ -16,21 +17,21 @@ import com.bgitu.mentor.mentor.service.MentorService;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
+    private static final String ARTICLE_NOT_FOUND_TEXT = "Статья не найдена";
     private final ArticleRepository articleRepository;
     private final MentorService mentorServiceImpl;
     private final SpecialityRepository specialityRepository;
@@ -65,26 +66,14 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public ArticleResponseDto getById(Long id) {
         Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Статья не найдена"));
+                .orElseThrow(() -> new IllegalArgumentException(ARTICLE_NOT_FOUND_TEXT));
         return new ArticleResponseDto(article);
-    }
-
-    @Override
-    @Transactional
-    public List<ArticleShortDto> getAllArticles(Optional<Long> specialityId) {
-        List<Article> articles = specialityId
-                .map(articleRepository::findBySpecialityIdOrderByRankDesc)
-                .orElseGet(articleRepository::findAllByOrderByRankDesc);
-
-        return articles.stream()
-                .map(ArticleShortDto::new)
-                .collect(Collectors.toList());
     }
 
     @Override
     public void deleteArticle(Long articleId, Authentication authentication) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException("Статья не найдена"));
+                .orElseThrow(() -> new EntityNotFoundException(ARTICLE_NOT_FOUND_TEXT));
 
         Mentor currentMentor = mentorServiceImpl.getByAuth(authentication);
 
@@ -99,7 +88,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public void changeArticleRank(Long articleId, boolean like, Authentication auth) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException("Статья не найдена"));
+                .orElseThrow(() -> new EntityNotFoundException(ARTICLE_NOT_FOUND_TEXT));
 
         Optional<Mentor> mentorOpt = mentorRepository.findByEmail(auth.getName());
         Optional<Student> studentOpt = studentRepository.findByEmail(auth.getName());
@@ -137,50 +126,24 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    @Cacheable(value = "topArticles")
-    @Transactional
-    public List<ArticleShortDto> getTop3Articles() {
-        List<Article> topArticles = articleRepository.findTop3ByOrderByRankDesc();
-        return topArticles.stream()
-                .map(ArticleShortDto::new)
-                .collect(Collectors.toList());
-    }
+    public Page<ArticleShortDto> findArticles(Long specialityId, String query, Pageable pageable){
 
-    @Override
-    public List<ArticleShortDto> searchArticles(String query) {
-        if (query.length()>250){
-            throw new IllegalStateException("Сократите строку поиска до 250 символов");
+        Specification<Article> specification = Specification.not(null);
+
+        if (specialityId != null){
+            specification.and(ArticleSpecifications.hasSpeciality(specialityId));
         }
-        return articleRepository.searchByTitleOrContent(query)
-                .stream()
-                .map(ArticleShortDto::new)
-                .collect(Collectors.toList());
-    }
 
-    @Override
-    public ArticleResponseDto getById(Long id, Authentication auth) {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Статья не найдена"));
-
-        boolean canVote = true;
-
-        if (auth != null) {
-            String email = auth.getName();
-
-            if (studentRepository.existsByEmail(email)) {
-                Student student = studentRepository.findByEmail(email)
-                        .orElseThrow(() -> new IllegalArgumentException("Студент не найден"));
-
-                canVote = articleVoteRepository.findByArticleAndStudent(article, student).isEmpty();
-            } else if (mentorRepository.existsByEmail(email)) {
-                Mentor mentor = mentorRepository.findByEmail(email)
-                        .orElseThrow(() -> new IllegalArgumentException("Ментор не найден"));
-
-                canVote = articleVoteRepository.findByArticleAndMentor(article, mentor).isEmpty();
+        if (query != null && !query.isBlank()) {
+            if (query.length() > 250) {
+                throw new IllegalStateException("Сократите строку поиска до 250 символов");
             }
+            specification.and(ArticleSpecifications.titleOrContentContains(query));
         }
+        Page<Article> articlePages = articleRepository.findAll(specification, pageable);
 
-        return new ArticleResponseDto(article, canVote);
+        return articlePages.map(ArticleShortDto::new);
     }
+
 }
 
