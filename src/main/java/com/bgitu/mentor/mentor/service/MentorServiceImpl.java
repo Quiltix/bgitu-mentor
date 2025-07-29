@@ -5,6 +5,7 @@ import com.bgitu.mentor.article.dto.ArticleShortDto;
 import com.bgitu.mentor.article.model.Article;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
+import com.bgitu.mentor.mentor.data.MentorSpecifications;
 import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.data.dto.MentorShortDto;
 import com.bgitu.mentor.mentor.data.dto.UpdateMentorCardDto;
@@ -23,16 +24,15 @@ import com.bgitu.mentor.user.service.AbstractBaseUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -41,7 +41,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     // Специфичные зависимости для ментора
     private final MentorVoteRepository mentorVoteRepository;
     private final SpecialityRepository specialityRepository;
-    private final StudentService studentService; // Внедряем интерфейс!
+    private final StudentService studentService;
     private final StudentRepository studentRepository;
 
     public MentorServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
@@ -75,7 +75,23 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
     @Override
     public Page<MentorShortDto> findMentors(Long specialityId, String query, Pageable pageable) {
-        return null;
+
+        Specification<Mentor> specification = Specification.not(null);
+
+        if (specialityId != null) {
+            specification.and(MentorSpecifications.hasSpeciality(specialityId));
+        }
+
+        if (query != null && !query.isBlank()) {
+            if (query.length() > 250) {
+                throw new IllegalStateException("Строка для поиска слишком длинная");
+            }
+            specification.and(MentorSpecifications.nameOrDescriptionContains(query));
+        }
+
+        Page<Mentor> mentorPage = repository.findAll(specification, pageable);
+
+        return mentorPage.map(MentorShortDto::new);
     }
 
 
