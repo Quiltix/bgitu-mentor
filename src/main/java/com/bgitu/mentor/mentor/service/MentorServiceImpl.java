@@ -17,8 +17,8 @@ import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
-import com.bgitu.mentor.user.repository.BaseUserRepository;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
+import com.bgitu.mentor.user.service.UserService;
 import com.bgitu.mentor.vote.service.MentorVoteHandler;
 import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,8 +47,8 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     public MentorServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
                              FileStorageService fileStorageService, VotingService votingService,
                              SpecialityRepository specialityRepository, MentorVoteHandler mentorVoteHandler,
-                             BaseUserRepository baseUserRepository,StudentRepository studentRepository) {
-        super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", baseUserRepository);
+                             UserService userService, StudentRepository studentRepository) {
+        super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", userService);
         this.mentorVoteHandler = mentorVoteHandler;
         this.specialityRepository = specialityRepository;
         this.votingService = votingService;

@@ -5,8 +5,7 @@ import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.user.dto.UpdateBaseUserCardDto;
 import com.bgitu.mentor.user.model.BaseUser;
-import com.bgitu.mentor.user.repository.BaseUserRepository;
-import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,20 +15,20 @@ import org.springframework.web.multipart.MultipartFile;
 public abstract class AbstractBaseUserService<
         T extends BaseUser,
         R extends JpaRepository<T, Long>
-        > implements UserService{
+        > {
 
+    protected final UserService userService;
     protected final R repository;
     protected final PasswordEncoder passwordEncoder;
     protected final FileStorageService fileStorageService;
     private final String userTypeName;
-    private final BaseUserRepository baseUserRepository;
 
-    protected AbstractBaseUserService(R repository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, String userTypeName,BaseUserRepository baseUserRepository) {
+    protected AbstractBaseUserService(R repository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, String userTypeName, UserService userService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.fileStorageService = fileStorageService;
         this.userTypeName = userTypeName;
-        this.baseUserRepository =baseUserRepository;
+        this.userService = userService;
     }
 
     public T getByAuth(Authentication authentication) {
@@ -43,7 +42,7 @@ public abstract class AbstractBaseUserService<
         String newEmail = dto.getEmail();
 
         if (newEmail != null && !newEmail.isBlank() && !newEmail.equalsIgnoreCase(user.getEmail())) {
-                if (baseUserRepository.existsByEmail(newEmail)) {
+                if (userService.existsByEmail(newEmail)) {
                     throw new IllegalArgumentException("Этот email уже занят другим пользователем.");
                 }
                 user.setEmail(newEmail);
@@ -71,7 +70,4 @@ public abstract class AbstractBaseUserService<
         }
     }
 
-    public BaseUser findById(Long userId){
-        return baseUserRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
-    }
 }

@@ -8,6 +8,6 @@ public interface UserService {
 
     BaseUser findById(Long userId);
 
-
+    boolean existsByEmail(String email);
     BaseUser getByAuth(Authentication authentication);
 }

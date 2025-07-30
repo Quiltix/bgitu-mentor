@@ -37,4 +37,8 @@ public class Article implements Votable {
     public void setRank(Integer rank) {
         this.rank = rank;
     }
+    @Override
+    public Integer getRank() {
+        return rank;
+    }
 }
