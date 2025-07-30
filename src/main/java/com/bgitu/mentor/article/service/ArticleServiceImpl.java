@@ -5,6 +5,7 @@ import com.bgitu.mentor.article.data.dto.ArticleCreateDto;
 import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.article.data.model.Article;
+import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.vote.data.model.ArticleVote;
 import com.bgitu.mentor.article.data.repository.ArticleRepository;
 import com.bgitu.mentor.vote.data.repository.ArticleVoteRepository;
@@ -16,6 +17,8 @@ import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
 import com.bgitu.mentor.mentor.service.MentorService;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
+import com.bgitu.mentor.vote.service.ArticleVoteHandler;
+import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,9 +39,9 @@ public class ArticleServiceImpl implements ArticleService {
     private final MentorService mentorServiceImpl;
     private final SpecialityRepository specialityRepository;
     private final FileStorageService fileStorageService;
-    private final MentorRepository mentorRepository;
-    private final StudentRepository studentRepository;
     private final ArticleVoteRepository articleVoteRepository;
+    private final VotingService votingService;
+    private final ArticleVoteHandler articleVoteHandler;
 
     @Override
     public ArticleResponseDto createArticle(Authentication auth, ArticleCreateDto dto, MultipartFile image) {
@@ -87,42 +90,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public void changeArticleRank(Long articleId, boolean like, Authentication auth) {
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException(ARTICLE_NOT_FOUND_TEXT));
 
-        Optional<Mentor> mentorOpt = mentorRepository.findByEmail(auth.getName());
-        Optional<Student> studentOpt = studentRepository.findByEmail(auth.getName());
-
-        if (mentorOpt.isPresent()) {
-            Mentor mentor = mentorOpt.get();
-            if (articleVoteRepository.existsByArticleIdAndMentorId(articleId, mentor.getId())) {
-                throw new IllegalStateException("Вы уже голосовали за эту статью");
-            }
-
-            ArticleVote vote = new ArticleVote();
-            vote.setArticle(article);
-            vote.setMentor(mentor);
-            vote.setUpvote(like);
-            articleVoteRepository.save(vote);
-
-        } else if (studentOpt.isPresent()) {
-            Student student = studentOpt.get();
-            if (articleVoteRepository.existsByArticleIdAndStudentId(articleId, student.getId())) {
-                throw new IllegalStateException("Вы уже голосовали за эту статью");
-            }
-
-            ArticleVote vote = new ArticleVote();
-            vote.setArticle(article);
-            vote.setStudent(student);
-            vote.setUpvote(like);
-            articleVoteRepository.save(vote);
-
-        } else {
-            throw new AccessDeniedException("Пользователь не найден");
-        }
-
-        article.setRank(article.getRank() + (like ? 1 : -1));
-        articleRepository.save(article);
+        Long userId = SecurityUtils.getCurrentUserId(auth);
+        votingService.vote(articleId, userId, like, articleVoteHandler);
     }
 
     @Override
