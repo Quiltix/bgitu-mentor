@@ -6,17 +6,13 @@ import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.common.SecurityUtils;
-import com.bgitu.mentor.vote.data.model.ArticleVote;
 import com.bgitu.mentor.article.data.repository.ArticleRepository;
 import com.bgitu.mentor.vote.data.repository.ArticleVoteRepository;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.model.Speciality;
-import com.bgitu.mentor.mentor.data.repository.MentorRepository;
 import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
 import com.bgitu.mentor.mentor.service.MentorService;
-import com.bgitu.mentor.student.model.Student;
-import com.bgitu.mentor.student.repository.StudentRepository;
 import com.bgitu.mentor.vote.service.ArticleVoteHandler;
 import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,7 +25,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
