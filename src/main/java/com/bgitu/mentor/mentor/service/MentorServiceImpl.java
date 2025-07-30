@@ -3,6 +3,7 @@ package com.bgitu.mentor.mentor.service;
 
 import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.article.data.model.Article;
+import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.MentorSpecifications;
@@ -10,17 +11,16 @@ import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.data.dto.MentorShortDto;
 import com.bgitu.mentor.mentor.data.dto.UpdateMentorCardDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
-import com.bgitu.mentor.vote.data.model.MentorVote;
 import com.bgitu.mentor.mentor.data.model.Speciality;
 import com.bgitu.mentor.mentor.data.repository.MentorRepository;
-import com.bgitu.mentor.vote.data.repository.MentorVoteRepository;
 import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
-import com.bgitu.mentor.student.service.StudentService;
 import com.bgitu.mentor.user.repository.BaseUserRepository;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
+import com.bgitu.mentor.vote.service.MentorVoteHandler;
+import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -39,19 +39,19 @@ import java.util.List;
 public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRepository> implements MentorService {
 
     // Специфичные зависимости для ментора
-    private final MentorVoteRepository mentorVoteRepository;
     private final SpecialityRepository specialityRepository;
-    private final StudentService studentService;
+    private final VotingService votingService;
+    private final MentorVoteHandler mentorVoteHandler;
     private final StudentRepository studentRepository;
 
     public MentorServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
-                             FileStorageService fileStorageService, MentorVoteRepository mentorVoteRepository,
-                             SpecialityRepository specialityRepository, StudentService studentService,
+                             FileStorageService fileStorageService, VotingService votingService,
+                             SpecialityRepository specialityRepository, MentorVoteHandler mentorVoteHandler,
                              BaseUserRepository baseUserRepository,StudentRepository studentRepository) {
         super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", baseUserRepository);
-        this.mentorVoteRepository = mentorVoteRepository;
+        this.mentorVoteHandler = mentorVoteHandler;
         this.specialityRepository = specialityRepository;
-        this.studentService = studentService;
+        this.votingService = votingService;
         this.studentRepository = studentRepository;
     }
 
@@ -106,23 +106,8 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     @Override
     @Transactional
     public void voteMentor(Long mentorId, boolean upvote, Authentication auth) {
-        Student student = studentService.getByAuth(auth);
-        Mentor mentor = repository.findById(mentorId)
-                .orElseThrow(() ->  new EntityNotFoundException("Ментор не найден"));
-
-        if (mentorVoteRepository.existsByMentorAndStudent(mentor, student)) {
-            throw new IllegalStateException("Вы уже голосовали за этого ментора");
-        }
-
-        MentorVote vote = new MentorVote();
-        vote.setMentor(mentor);
-        vote.setStudent(student);
-        vote.setUpvote(upvote);
-        mentorVoteRepository.save(vote);
-
-        int change = upvote ? 1 : -1;
-        mentor.setRank(mentor.getRank() + change);
-        repository.save(mentor);
+        Long userId = SecurityUtils.getCurrentUserId(auth);
+        votingService.vote(mentorId, userId, upvote, mentorVoteHandler);
     }
 
 
