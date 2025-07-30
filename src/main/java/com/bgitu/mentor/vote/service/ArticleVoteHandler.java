@@ -24,16 +24,16 @@ public class ArticleVoteHandler implements VoteHandler<Article>{
     }
 
     @Override
-    public Article findVotableEntity(Long EntityId) {
-        return articleRepository.findById(EntityId)
+    public Article findVotableEntity(Long entityId) {
+        return articleRepository.findById(entityId)
                 .orElseThrow(() -> new EntityNotFoundException("Статья не найдена"));
     }
 
     @Override
-    public void saveVote(BaseUser user, Article Entity, boolean upVote) {
+    public void saveVote(BaseUser user, Article entity, boolean upVote) {
         ArticleVote vote = new ArticleVote();
         vote.setUser(user);
-        vote.setArticle(Entity);
+        vote.setArticle(entity);
         vote.setUpvote(upVote);
         voteRepository.save(vote);
 
