@@ -1,0 +1,15 @@
+package com.bgitu.mentor.vote.service;
+
+import com.bgitu.mentor.user.model.BaseUser;
+import com.bgitu.mentor.vote.data.model.Votable;
+
+public interface VoteHandler<T extends Votable>{
+
+    boolean hasVoted(BaseUser user, Long entityId);
+
+    T findVotableEntity(Long EntityId);
+
+    void saveVote(BaseUser user, T Entity, boolean upVote);
+
+    void saveVotableEntity(T entity);
+}

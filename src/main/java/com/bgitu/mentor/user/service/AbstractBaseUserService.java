@@ -6,6 +6,7 @@ import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.user.dto.UpdateBaseUserCardDto;
 import com.bgitu.mentor.user.model.BaseUser;
 import com.bgitu.mentor.user.repository.BaseUserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 public abstract class AbstractBaseUserService<
         T extends BaseUser,
         R extends JpaRepository<T, Long>
-        > {
+        > implements UserService{
 
     protected final R repository;
     protected final PasswordEncoder passwordEncoder;
@@ -68,5 +69,9 @@ public abstract class AbstractBaseUserService<
             String publicUrl = "/api/uploads/image/" + storedRelativePath.replace("\\", "/");
             user.setAvatarUrl(publicUrl);
         }
+    }
+
+    public BaseUser findById(Long userId){
+        return baseUserRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
     }
 }

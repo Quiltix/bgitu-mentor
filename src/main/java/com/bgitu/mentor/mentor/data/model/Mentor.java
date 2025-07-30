@@ -4,6 +4,7 @@ import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.user.model.BaseUser;
+import com.bgitu.mentor.vote.data.model.MentorVote;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

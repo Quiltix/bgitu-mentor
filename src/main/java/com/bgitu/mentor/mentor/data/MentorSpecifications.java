@@ -9,6 +9,9 @@ import jakarta.persistence.criteria.Join;
 
 public final class MentorSpecifications {
 
+    private MentorSpecifications() {
+        throw new IllegalStateException("Utility class");
+    }
     // Спецификация для фильтрации по специальности
     public static Specification<Mentor> hasSpeciality(Long specialityId) {
         return (root, query, criteriaBuilder) -> {
