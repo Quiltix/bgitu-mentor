@@ -2,7 +2,7 @@ package com.bgitu.mentor.student.controller;
 
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
-import com.bgitu.mentor.mentor.dto.CardMentorDto;
+import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
 import com.bgitu.mentor.student.dto.ApplicationStudentDto;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
@@ -32,7 +32,7 @@ public class StudentProfileController {
 
     @Operation(summary = "Получение карточки студента", description = "Доступно только для роли STUDENT. Возвращает полную информацию по текущему студенту.")
     @PreAuthorize("hasRole('STUDENT')")
-    @GetMapping("/summary")
+    @GetMapping()
     public ResponseEntity<StudentCardDto> getCardStudent(Authentication authentication){
         return ResponseEntity.ok(new StudentCardDto(studentService.getByAuth(authentication)));
     }
@@ -40,7 +40,7 @@ public class StudentProfileController {
 
     @Operation(summary = "Обновление карточки студента", description = "Доступно только для роли STUDENT. Позволяет редактировать описание и загрузить новый аватар.")
     @PreAuthorize("hasRole('STUDENT')")
-    @PatchMapping(value = "/summary", consumes = "multipart/form-data")
+    @PatchMapping( consumes = "multipart/form-data")
     public ResponseEntity<StudentCardDto> updateStudentCard(
             Authentication authentication,
             @RequestPart("card") UpdateStudentCardDto dto,
@@ -52,14 +52,14 @@ public class StudentProfileController {
 
     @Operation(summary = "Получение моего профиля", description = "STUDENT. Возвращает профиль по авторизации")
     @PreAuthorize("hasRole('STUDENT')")
-    @GetMapping("/profile")
+    @GetMapping("/settings")
     public ResponseEntity<PersonalInfoDto> getMentorProfile(Authentication authentication) {
         return ResponseEntity.ok(new PersonalInfoDto(studentService.getByAuth(authentication)));
     }
 
     @Operation(summary = "Обновление профиля студента", description = "Доступно только для роли STUDENT. Позволяет редактировать имя, фамилию и email.")
     @PreAuthorize("hasRole('STUDENT')")
-    @PatchMapping("/profile")
+    @PatchMapping("/settings")
     public ResponseEntity<PersonalInfoDto> updateMentorProfile(
             Authentication authentication,
             @RequestBody @Valid UpdatePersonalInfo dto

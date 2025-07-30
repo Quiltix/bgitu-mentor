@@ -1,12 +1,12 @@
 package com.bgitu.mentor.mentor.controller;
 
 
-import com.bgitu.mentor.article.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
-import com.bgitu.mentor.mentor.dto.CardMentorDto;
-import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
-import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
+import com.bgitu.mentor.mentor.data.dto.UpdateMentorCardDto;
+import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.service.MentorService;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,14 +31,14 @@ public class MentorProfileController {
 
     @Operation(summary = "Получение карточки ментора", description = "Доступно только для роли MENTOR. Возвращает полную информацию по текущему пользователю.")
     @PreAuthorize("hasRole('MENTOR')")
-    @GetMapping("/summary")
+    @GetMapping()
     public ResponseEntity<CardMentorDto> getCardMentor(Authentication authentication) {
         return ResponseEntity.ok(new CardMentorDto(mentorService.getByAuth(authentication)));
     }
 
     @Operation(summary = "Обновление карточки ментора", description = "Доступно только для роли MENTOR. Позволяет редактировать описание, направление и аватар.")
     @PreAuthorize("hasRole('MENTOR')")
-    @PatchMapping(value = "/summary", consumes = "multipart/form-data")
+    @PatchMapping(consumes = "multipart/form-data")
     public ResponseEntity<CardMentorDto> updateMentorCard(
             Authentication authentication,
             @RequestPart("card") UpdateMentorCardDto dto,
@@ -51,7 +51,7 @@ public class MentorProfileController {
 
     @Operation(summary = "Обновление профиля ментора", description = "Доступно только для роли MENTOR. Обновляет имя, фамилию, пароль и email.")
     @PreAuthorize("hasRole('MENTOR')")
-    @PatchMapping("/profile")
+    @PatchMapping("/settings")
     public ResponseEntity<PersonalInfoDto> updateMentorProfile(
             Authentication authentication,
             @RequestBody @Valid UpdatePersonalInfo dto
@@ -64,7 +64,7 @@ public class MentorProfileController {
 
     @Operation(summary = "Получение моего профиля", description = "MENTOR. Возвращает профиль по авторизации")
     @PreAuthorize("hasRole('MENTOR')")
-    @GetMapping("/profile")
+    @GetMapping("/settings")
     public ResponseEntity<PersonalInfoDto> getMentorProfile(Authentication authentication) {
         return ResponseEntity.ok(new PersonalInfoDto(mentorService.getByAuth(authentication)));
     }
@@ -83,7 +83,7 @@ public class MentorProfileController {
         return mentorService.getAllStudentsForMentor(authentication);
     }
 
-    @DeleteMapping("/students/{studentId}") // <-- DELETE на конкретного студента в списке
+    @DeleteMapping("/students/{studentId}")
     @PreAuthorize("hasRole('MENTOR')")
     @Operation(summary = "Прекратить менторство со студентом", description = "Позволяет ментору отказаться от своего студента.")
 

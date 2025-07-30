@@ -1,56 +1,57 @@
 package com.bgitu.mentor.mentor.service;
 
 
-import com.bgitu.mentor.article.dto.ArticleShortDto;
-import com.bgitu.mentor.article.model.Article;
+import com.bgitu.mentor.article.data.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.model.Article;
+import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
-import com.bgitu.mentor.mentor.dto.CardMentorDto;
-import com.bgitu.mentor.mentor.dto.MentorShortDto;
-import com.bgitu.mentor.mentor.dto.UpdateMentorCardDto;
-import com.bgitu.mentor.mentor.model.Mentor;
-import com.bgitu.mentor.mentor.model.MentorVote;
-import com.bgitu.mentor.mentor.model.Speciality;
-import com.bgitu.mentor.mentor.repository.MentorRepository;
-import com.bgitu.mentor.mentor.repository.MentorVoteRepository;
-import com.bgitu.mentor.mentor.repository.SpecialityRepository;
+import com.bgitu.mentor.mentor.data.MentorSpecifications;
+import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
+import com.bgitu.mentor.mentor.data.dto.MentorShortDto;
+import com.bgitu.mentor.mentor.data.dto.UpdateMentorCardDto;
+import com.bgitu.mentor.mentor.data.model.Mentor;
+import com.bgitu.mentor.mentor.data.model.Speciality;
+import com.bgitu.mentor.mentor.data.repository.MentorRepository;
+import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
-import com.bgitu.mentor.student.service.StudentService;
-import com.bgitu.mentor.user.repository.BaseUserRepository;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
+import com.bgitu.mentor.user.service.UserService;
+import com.bgitu.mentor.vote.service.MentorVoteHandler;
+import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRepository> implements MentorService {
 
     // Специфичные зависимости для ментора
-    private final MentorVoteRepository mentorVoteRepository;
     private final SpecialityRepository specialityRepository;
-    private final StudentService studentService; // Внедряем интерфейс!
+    private final VotingService votingService;
+    private final MentorVoteHandler mentorVoteHandler;
     private final StudentRepository studentRepository;
 
     public MentorServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
-                             FileStorageService fileStorageService, MentorVoteRepository mentorVoteRepository,
-                             SpecialityRepository specialityRepository, StudentService studentService,
-                             BaseUserRepository baseUserRepository,StudentRepository studentRepository) {
-        super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", baseUserRepository);
-        this.mentorVoteRepository = mentorVoteRepository;
+                             FileStorageService fileStorageService, VotingService votingService,
+                             SpecialityRepository specialityRepository, MentorVoteHandler mentorVoteHandler,
+                             UserService userService, StudentRepository studentRepository) {
+        super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", userService);
+        this.mentorVoteHandler = mentorVoteHandler;
         this.specialityRepository = specialityRepository;
-        this.studentService = studentService;
+        this.votingService = votingService;
         this.studentRepository = studentRepository;
     }
 
@@ -72,27 +73,27 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
         return repository.save(mentor);
     }
 
-    @Cacheable(value = "topMentors")
-    public List<CardMentorDto> getTopMentors() {
-        return repository.findTop3ByOrderByRankDesc()
-                .stream()
-                .map(CardMentorDto::new)
-                .toList();
-    }
-
-
-
     @Override
-    public List<MentorShortDto> getAllShort(Optional<Long> specialityId) {
-        List<Mentor> mentors = specialityId
-                .map(repository::findBySpecialityIdOrderByRankDesc)
-                .orElseGet(repository::findAll);
+    public Page<MentorShortDto> findMentors(Long specialityId, String query, Pageable pageable) {
 
-        return mentors.stream()
-                .filter(mentor -> mentor.getVkUrl() != null)
-                .map(MentorShortDto::new)
-                .collect(Collectors.toList());
+        Specification<Mentor> specification = Specification.not(null);
+
+        if (specialityId != null) {
+            specification.and(MentorSpecifications.hasSpeciality(specialityId));
+        }
+
+        if (query != null && !query.isBlank()) {
+            if (query.length() > 250) {
+                throw new IllegalStateException("Строка для поиска слишком длинная");
+            }
+            specification.and(MentorSpecifications.nameOrDescriptionContains(query));
+        }
+
+        Page<Mentor> mentorPage = repository.findAll(specification, pageable);
+
+        return mentorPage.map(MentorShortDto::new);
     }
+
 
     @Override
     public CardMentorDto getById(Long id) {
@@ -105,35 +106,10 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     @Override
     @Transactional
     public void voteMentor(Long mentorId, boolean upvote, Authentication auth) {
-        Student student = studentService.getByAuth(auth);
-        Mentor mentor = repository.findById(mentorId)
-                .orElseThrow(() ->  new EntityNotFoundException("Ментор не найден"));
-
-        if (mentorVoteRepository.existsByMentorAndStudent(mentor, student)) {
-            throw new IllegalStateException("Вы уже голосовали за этого ментора");
-        }
-
-        MentorVote vote = new MentorVote();
-        vote.setMentor(mentor);
-        vote.setStudent(student);
-        vote.setUpvote(upvote);
-        mentorVoteRepository.save(vote);
-
-        int change = upvote ? 1 : -1;
-        mentor.setRank(mentor.getRank() + change);
-        repository.save(mentor);
+        Long userId = SecurityUtils.getCurrentUserId(auth);
+        votingService.vote(mentorId, userId, upvote, mentorVoteHandler);
     }
 
-    @Override
-    public List<MentorShortDto> searchMentors(String query) {
-        if (query.length()>250){
-            throw new IllegalStateException("Строка для поиска слишком длинная");
-        }
-        List<Mentor> mentors = repository.searchByNameOrDescription(query);
-        return mentors.stream()
-                .map(MentorShortDto::new)
-                .collect(Collectors.toList());
-    }
 
     @Override
     public List<ArticleShortDto> getMentorArticles(Authentication authentication) {
@@ -143,7 +119,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
         return articles.stream()
                 .map(ArticleShortDto::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

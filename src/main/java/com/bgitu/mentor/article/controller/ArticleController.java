@@ -1,14 +1,16 @@
 package com.bgitu.mentor.article.controller;
 
-import com.bgitu.mentor.article.dto.ArticleCreateDto;
-import com.bgitu.mentor.article.dto.ArticleResponseDto;
-import com.bgitu.mentor.article.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.dto.ArticleCreateDto;
+import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
+import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.dto.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,8 +18,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
 
 @Tag(name = "Article", description = "Методы для взаимодействия со статьями")
 @RestController
@@ -47,11 +47,20 @@ public class ArticleController {
 
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping
-    @Operation(summary = "Получить все статьи", description = "Возвращает статьи, отсортированные по убыванию ранга. Можно фильтровать по специальности.")
-    public ResponseEntity<List<ArticleShortDto>> getAllArticles(
-            @RequestParam(name = "specialityId", required = false) Long specialityId
+    @Operation(
+            summary = "Получить список статей с фильтрацией и пагинацией",
+            description = "Возвращает пагинированный список статей. " +
+                    "Фильтры: `specialityId`, `query`. " +
+                    "Сортировка: `sort=rank,desc`. " +
+                    "Пагинация: `page`, `size`."
+    )
+    public ResponseEntity<Page<ArticleShortDto>> findArticles(
+            @RequestParam(required = false) Long specialityId,
+            @RequestParam(required = false) String query,
+            Pageable pageable
     ) {
-        return ResponseEntity.ok(articleService.getAllArticles(Optional.ofNullable(specialityId)));
+        return ResponseEntity.ok(articleService.findArticles(specialityId, query, pageable));
+
     }
 
 
@@ -74,26 +83,6 @@ public class ArticleController {
         articleService.changeArticleRank(id, like,authentication);
         return ResponseEntity.ok(new MessageDto(like ? "Статья лайкнута" : "Статья дизлайкнута"));
     }
-
-
-
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
-    @GetMapping("/top")
-    @Operation(summary = "Получить топ-3 статьи", description = "Возвращает 3 лучшие статьи по рейтингу")
-    public ResponseEntity<List<ArticleShortDto>> getTop3Articles() {
-        return ResponseEntity.ok(articleService.getTop3Articles());
-    }
-
-    @Operation(summary = "Поиск статей", description = "Доступно для всех ролей. Ищет по названию и содержанию статьи.")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
-    @GetMapping("/search")
-    public ResponseEntity<List<ArticleShortDto>> searchArticles(@RequestParam String query) {
-        return ResponseEntity.ok(articleService.searchArticles(query));
-    }
-
-
-
-
 
 }
 

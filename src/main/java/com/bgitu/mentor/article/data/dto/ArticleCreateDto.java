@@ -1,4 +1,4 @@
-package com.bgitu.mentor.article.dto;
+package com.bgitu.mentor.article.data.dto;
 
 
 import jakarta.validation.constraints.NotBlank;

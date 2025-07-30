@@ -1,13 +1,14 @@
-package com.bgitu.mentor.mentor.model;
+package com.bgitu.mentor.mentor.data.model;
 
-import com.bgitu.mentor.article.model.Article;
+import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.user.model.BaseUser;
+import com.bgitu.mentor.vote.data.model.MentorVote;
+import com.bgitu.mentor.vote.data.model.Votable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "mentor")
-public class Mentor extends BaseUser {
+public class Mentor extends BaseUser implements Votable{
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,6 +36,11 @@ public class Mentor extends BaseUser {
 
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private List<Article> articles;
+
+    @Override
+    public Integer getRank() {
+        return rank;
+    }
 
 
 }

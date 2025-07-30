@@ -2,7 +2,7 @@ package com.bgitu.mentor.mentorship.service;
 
 
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
-import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.service.MentorService;
 import com.bgitu.mentor.mentorship.dto.UpdateApplicationStatusDto;
 import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;

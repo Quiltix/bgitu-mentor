@@ -1,6 +1,6 @@
-package com.bgitu.mentor.mentor.dto;
+package com.bgitu.mentor.mentor.data.dto;
 
-import com.bgitu.mentor.mentor.model.Mentor;
+import com.bgitu.mentor.mentor.data.model.Mentor;
 import lombok.Getter;
 import lombok.Setter;
 
