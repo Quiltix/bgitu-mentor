@@ -5,6 +5,7 @@ import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.user.model.BaseUser;
 import com.bgitu.mentor.vote.data.model.MentorVote;
+import com.bgitu.mentor.vote.data.model.Votable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "mentor")
-public class Mentor extends BaseUser {
+public class Mentor extends BaseUser implements Votable{
 
 
     @ManyToOne(fetch = FetchType.LAZY)

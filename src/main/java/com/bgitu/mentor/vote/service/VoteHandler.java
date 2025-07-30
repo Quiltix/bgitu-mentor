@@ -7,9 +7,9 @@ public interface VoteHandler<T extends Votable>{
 
     boolean hasVoted(BaseUser user, Long entityId);
 
-    T findVotableEntity(Long EntityId);
+    T findVotableEntity(Long entityId);
 
-    void saveVote(BaseUser user, T Entity, boolean upVote);
+    void saveVote(BaseUser user, T entity, boolean upVote);
 
     void saveVotableEntity(T entity);
 }

@@ -9,6 +9,9 @@ public interface ArticleVoteRepository extends JpaRepository<ArticleVote, Long> 
 
     boolean existsByArticleIdAndStudentId(Long articleId, Long studentId);
 
+
+    boolean existsByArticleIdAndUserId(Long articleId, Long userId);
+
     void deleteAllByArticleId(Long articleId);
 
 }

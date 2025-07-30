@@ -7,5 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface MentorVoteRepository extends JpaRepository<MentorVote, Long> {
+
     boolean existsByMentorAndStudent(Mentor mentor, Student student);
+
+
+    boolean existsByArticleIdAndUserId(Long entityId, Long id);
 }

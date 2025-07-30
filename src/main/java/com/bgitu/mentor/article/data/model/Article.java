@@ -2,6 +2,7 @@ package com.bgitu.mentor.article.data.model;
 
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.model.Speciality;
+import com.bgitu.mentor.vote.data.model.Votable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Article {
+public class Article implements Votable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,4 +32,9 @@ public class Article {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private Mentor author;  // односторонняя связь
+
+    @Override
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
 }
