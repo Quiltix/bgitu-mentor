@@ -14,6 +14,7 @@ import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.model.Speciality;
 import com.bgitu.mentor.mentor.data.repository.MentorRepository;
 import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
+import com.bgitu.mentor.mentorship.service.MentorshipLifecycleService;
 import com.bgitu.mentor.student.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
@@ -41,17 +42,20 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     private final VotingService votingService;
     private final MentorVoteHandler mentorVoteHandler;
     private final UserFinder userFinder;
+    private final MentorshipLifecycleService mentorshipLifecycleService;
 
 
     public MentorServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
                              FileStorageService fileStorageService, VotingService votingService,
                              SpecialityRepository specialityRepository, MentorVoteHandler mentorVoteHandler,
-                             UserService userService, UserFinder userFinder) {
+                             UserService userService, UserFinder userFinder,
+                             MentorshipLifecycleService mentorshipLifecycleService) {
         super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", userService);
         this.mentorVoteHandler = mentorVoteHandler;
         this.specialityRepository = specialityRepository;
         this.votingService = votingService;
         this.userFinder = userFinder;
+        this.mentorshipLifecycleService = mentorshipLifecycleService;
     }
 
 
@@ -148,22 +152,19 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     @Override
     @Transactional
     public void terminateMentorshipWithStudent(Long mentorId, Long studentId) {
-
         Mentor mentor = userFinder.findMentorById(mentorId);
-
         Student student = userFinder.findStudentById(studentId);
 
+        // Проверка безопасности остается в этом сервисном методе, так как
+        // она относится к бизнес-правилу этого конкретного use-case.
         if (student.getMentor() == null || !student.getMentor().getId().equals(mentor.getId())) {
             throw new SecurityException("Студент не является вашим подопечным.");
         }
 
-        breakMentorshipLink(student, mentor);
+        // Делегируем фактическое действие нашему новому, специализированному сервису.
+        mentorshipLifecycleService.terminateLink(mentor, student);
     }
 
-    private void breakMentorshipLink(Student student, Mentor mentor) {
-        student.setMentor(null);
-        mentor.getStudents().remove(student);
-    }
 
 }
 

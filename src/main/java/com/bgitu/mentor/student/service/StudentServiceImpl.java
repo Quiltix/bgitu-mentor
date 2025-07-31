@@ -10,6 +10,7 @@ import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.mentorship.repository.ApplicationRepository;
+import com.bgitu.mentor.mentorship.service.MentorshipLifecycleService;
 import com.bgitu.mentor.student.dto.ApplicationOfStudentResponseDto;
 import com.bgitu.mentor.student.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.dto.StudentDetailsUpdateRequestDto;
@@ -31,13 +32,17 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
 
     private final ApplicationRepository applicationRepository;
     private final UserFinder userFinder;
+    private final MentorshipLifecycleService mentorshipLifecycleService;
+
 
     public StudentServiceImpl(StudentRepository studentRepository, PasswordEncoder passwordEncoder,
                               FileStorageService fileStorageService, ApplicationRepository applicationRepository,
-                              UserService userService, UserFinder userFinder) {
+                              UserService userService, UserFinder userFinder,
+                              MentorshipLifecycleService mentorshipLifecycleService) {
         super(studentRepository, passwordEncoder, fileStorageService, "Студент",userService);
         this.applicationRepository = applicationRepository;
         this.userFinder = userFinder;
+        this.mentorshipLifecycleService = mentorshipLifecycleService;
     }
 
 
@@ -84,14 +89,18 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
                 .toList();
     }
 
+    @Override // <-- Добавляем @Override, так как метод теперь в интерфейсе
     @Transactional
     public void terminateCurrentMentorship(Long studentId) {
         Student student = userFinder.findStudentById(studentId);
-        Mentor mentor = student.getMentor();
-        if (mentor == null) {
+        Mentor currentMentor = student.getMentor();
+
+
+        if (currentMentor == null) {
             throw new ResourceNotFoundException("У вас нет активного ментора, чтобы от него отказаться.");
         }
-        breakMentorshipLink(student, mentor);
+
+        mentorshipLifecycleService.terminateLink(currentMentor, student);
     }
 
     @Override
@@ -106,12 +115,6 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
         Student student = userFinder.findStudentById(studentId);
         return new PersonalInfoDto(student);
     }
-
-    private void breakMentorshipLink(Student student, Mentor mentor) {
-        student.setMentor(null);
-        mentor.getStudents().remove(student);
-    }
-
 
 
 }

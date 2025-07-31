@@ -24,6 +24,7 @@ public class MentorshipServiceImpl implements MentorshipService {
 
     private final ApplicationRepository applicationRepository;
     private final UserFinder userFinder;
+    private final MentorshipLifecycleService mentorshipLifecycleService;
 
     @Override
     @Transactional
@@ -53,13 +54,9 @@ public class MentorshipServiceImpl implements MentorshipService {
     @Transactional
     public void updateApplicationStatus(Long mentorId, Long applicationId, ApplicationDecisionRequestDto dto) {
         Mentor mentor = userFinder.findMentorById(mentorId);
-        Application app = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Эта заявка не найдена"));
+        Application app = findAndVerifyApplicationOwner(applicationId, mentor);
 
-        // Критически важная проверка безопасности!
-        if (!app.getMentor().getId().equals(mentor.getId())) {
-            throw new SecurityException("Вы не можете отвечать на чужую заявку.");
-        }
+
 
         if (app.getStatus() != ApplicationStatus.PENDING) {
             throw new IllegalStateException("Нельзя изменить статус заявки, которая уже обработана.");
@@ -73,17 +70,23 @@ public class MentorshipServiceImpl implements MentorshipService {
         applicationRepository.save(app);
     }
 
+
     private void approveApplication(Application application) {
         application.setStatus(ApplicationStatus.ACCEPTED);
 
-        Student student = application.getStudent();
-        student.setMentor(application.getMentor());
+        mentorshipLifecycleService.establishLink(application.getMentor(), application.getStudent());
 
         List<Application> otherPendingApps = applicationRepository
-                .findAllByStudentAndStatus(student, ApplicationStatus.PENDING);
+                .findAllByStudentAndStatus(application.getStudent(), ApplicationStatus.PENDING);
 
         otherPendingApps.forEach(otherApp -> otherApp.setStatus(ApplicationStatus.EXPIRED));
-        applicationRepository.saveAll(otherPendingApps);
+
+        // Сохраняем все измененные заявки (включая текущую)
+        applicationRepository.save(application);
+
+        if (!otherPendingApps.isEmpty()) {
+            applicationRepository.saveAll(otherPendingApps);
+        }
     }
 
     @Override
@@ -95,5 +98,15 @@ public class MentorshipServiceImpl implements MentorshipService {
                 : applicationRepository.findAllByMentor(mentor);
 
         return applications.stream().map(ApplicationDetailsResponseDto::new).toList();
+    }
+
+    private Application findAndVerifyApplicationOwner(Long applicationId, Mentor mentor) {
+        Application app = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Заявка с id=" + applicationId + " не найдена"));
+
+        if (!app.getMentor().getId().equals(mentor.getId())) {
+            throw new SecurityException("Вы не можете отвечать на чужую заявку.");
+        }
+        return app;
     }
 }
