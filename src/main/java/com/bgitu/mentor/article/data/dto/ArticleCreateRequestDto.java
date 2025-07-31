@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ArticleCreateDto {
+public class ArticleCreateRequestDto {
 
     @Size(max = 250, message = "Сократите название до 250 символов")
     @NotBlank(message = "У статьи должно быть название")

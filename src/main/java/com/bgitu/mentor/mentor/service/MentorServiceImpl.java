@@ -1,7 +1,7 @@
 package com.bgitu.mentor.mentor.service;
 
 
-import com.bgitu.mentor.article.data.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
@@ -119,13 +119,13 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
 
     @Override
-    public List<ArticleShortDto> getMentorArticles(Long mentorId) {
+    public List<ArticleSummaryResponseDto> getMentorArticles(Long mentorId) {
         Mentor mentor = userFinder.findMentorById(mentorId);
 
         List<Article> articles = mentor.getArticles();
 
         return articles.stream()
-                .map(ArticleShortDto::new)
+                .map(ArticleSummaryResponseDto::new)
                 .toList();
     }
 

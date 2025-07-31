@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ArticleShortDto {
+public class ArticleSummaryResponseDto {
     private Long id;
     private String title;
     private String content;
@@ -18,7 +18,7 @@ public class ArticleShortDto {
     private String specialityName;
     private String authorFullName;
 
-    public ArticleShortDto(Article article) {
+    public ArticleSummaryResponseDto(Article article) {
         this.id = article.getId();
         this.title = article.getTitle();
         this.imageUrl = article.getImageUrl();

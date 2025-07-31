@@ -1,9 +1,9 @@
 package com.bgitu.mentor.article.service;
 
 import com.bgitu.mentor.article.data.ArticleSpecifications;
-import com.bgitu.mentor.article.data.dto.ArticleCreateDto;
-import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
-import com.bgitu.mentor.article.data.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.dto.ArticleCreateRequestDto;
+import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
+import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.article.data.repository.ArticleRepository;
 import com.bgitu.mentor.user.service.UserFinder;
@@ -37,7 +37,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleVoteHandler articleVoteHandler;
 
     @Override
-    public ArticleResponseDto createArticle(Long authorId, ArticleCreateDto dto, MultipartFile image) {
+    public ArticleDetailsResponseDto createArticle(Long authorId, ArticleCreateRequestDto dto, MultipartFile image) {
         Mentor author = userFinder.findMentorById(authorId);
         Speciality speciality = specialityRepository.findById(dto.getSpecialityId())
                 .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
@@ -56,14 +56,14 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         Article saved = articleRepository.save(article);
-        return new ArticleResponseDto(saved);
+        return new ArticleDetailsResponseDto(saved);
     }
 
     @Override
-    public ArticleResponseDto getById(Long id) {
+    public ArticleDetailsResponseDto getById(Long id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(ARTICLE_NOT_FOUND_TEXT));
-        return new ArticleResponseDto(article);
+        return new ArticleDetailsResponseDto(article);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleShortDto> findArticles(Long specialityId, String query, Pageable pageable){
+    public Page<ArticleSummaryResponseDto> findArticles(Long specialityId, String query, Pageable pageable){
 
         Specification<Article> specification = Specification.not(null);
 
@@ -104,7 +104,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
         Page<Article> articlePages = articleRepository.findAll(specification, pageable);
 
-        return articlePages.map(ArticleShortDto::new);
+        return articlePages.map(ArticleSummaryResponseDto::new);
     }
 
 }

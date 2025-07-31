@@ -1,8 +1,8 @@
 package com.bgitu.mentor.article.controller;
 
-import com.bgitu.mentor.article.data.dto.ArticleCreateDto;
-import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
-import com.bgitu.mentor.article.data.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.dto.ArticleCreateRequestDto;
+import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
+import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.MessageDto;
@@ -30,9 +30,9 @@ public class ArticleController {
     @PreAuthorize("hasRole('MENTOR')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Создание статьи", description = "Позволяет ментору опубликовать статью")
-    public ResponseEntity<ArticleResponseDto> createArticle(
+    public ResponseEntity<ArticleDetailsResponseDto> createArticle(
             Authentication auth,
-            @RequestPart("data")  @Valid ArticleCreateDto dto,
+            @RequestPart("data")  @Valid ArticleCreateRequestDto dto,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         Long authorId = SecurityUtils.getCurrentUserId(auth);
@@ -43,7 +43,7 @@ public class ArticleController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/{id}")
     @Operation(summary = "Получить статью", description = "Получить статью по её ID")
-    public ResponseEntity<ArticleResponseDto> getArticleById(@PathVariable Long id) {
+    public ResponseEntity<ArticleDetailsResponseDto> getArticleById(@PathVariable Long id) {
         return ResponseEntity.ok(articleService.getById(id));
     }
 
@@ -56,7 +56,7 @@ public class ArticleController {
                     "Сортировка: `sort=rank,desc`. " +
                     "Пагинация: `page`, `size`."
     )
-    public ResponseEntity<Page<ArticleShortDto>> findArticles(
+    public ResponseEntity<Page<ArticleSummaryResponseDto>> findArticles(
             @RequestParam(required = false) Long specialityId,
             @RequestParam(required = false) String query,
             Pageable pageable

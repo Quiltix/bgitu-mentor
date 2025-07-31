@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ArticleResponseDto {
+public class ArticleDetailsResponseDto {
     private Long id;
     private String title;
     private String content;
@@ -17,7 +17,7 @@ public class ArticleResponseDto {
     private String authorFullName;
     private Boolean canVote;
 
-    public ArticleResponseDto(Article article) {
+    public ArticleDetailsResponseDto(Article article) {
         this.id = article.getId();
         this.title = article.getTitle();
         this.content = article.getContent();
@@ -27,7 +27,7 @@ public class ArticleResponseDto {
         this.authorFullName = article.getAuthor().getFirstName() + " " + article.getAuthor().getLastName();
     }
 
-    public ArticleResponseDto(Article article, Boolean canVote) {
+    public ArticleDetailsResponseDto(Article article, Boolean canVote) {
         this.id = article.getId();
         this.title = article.getTitle();
         this.content = article.getContent();

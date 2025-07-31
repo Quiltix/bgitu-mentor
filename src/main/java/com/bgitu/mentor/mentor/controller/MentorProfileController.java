@@ -1,7 +1,7 @@
 package com.bgitu.mentor.mentor.controller;
 
 
-import com.bgitu.mentor.article.data.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
@@ -75,7 +75,7 @@ public class MentorProfileController {
     @Operation(summary = "Получение всех статей ментора", description = "Доступно для роли MENTOR")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/articles")
-    public List<ArticleShortDto> getArticlesByMentor(Authentication authentication) {
+    public List<ArticleSummaryResponseDto> getArticlesByMentor(Authentication authentication) {
         Long mentorId = SecurityUtils.getCurrentUserId(authentication);
         return mentorService.getMentorArticles(mentorId);
     }

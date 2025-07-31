@@ -1,6 +1,6 @@
 package com.bgitu.mentor.mentor.service;
 
-import com.bgitu.mentor.article.data.dto.ArticleShortDto;
+import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
@@ -21,7 +21,7 @@ public interface MentorService {
     PersonalInfoDto updateProfile(Long mentorId, UpdatePersonalInfo dto);
     CardMentorDto updateCard(Long mentorId, UpdateMentorCardDto dto, MultipartFile avatarFile);
     void terminateMentorshipWithStudent(Long mentorId, Long studentId);
-    List<ArticleShortDto> getMentorArticles(Long mentorId);
+    List<ArticleSummaryResponseDto> getMentorArticles(Long mentorId);
     PersonalInfoDto getPersonalInfo(Long mentorId);
 
     //Для взаимодействия
