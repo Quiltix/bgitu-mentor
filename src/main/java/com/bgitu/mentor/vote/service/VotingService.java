@@ -1,7 +1,7 @@
 package com.bgitu.mentor.vote.service;
 
 
-import com.bgitu.mentor.user.model.BaseUser;
+import com.bgitu.mentor.user.data.model.BaseUser;
 import com.bgitu.mentor.user.service.UserService;
 import com.bgitu.mentor.vote.data.model.Votable;
 import lombok.RequiredArgsConstructor;

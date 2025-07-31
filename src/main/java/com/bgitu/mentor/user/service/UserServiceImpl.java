@@ -1,8 +1,8 @@
 package com.bgitu.mentor.user.service;
 
 import com.bgitu.mentor.common.SecurityUtils;
-import com.bgitu.mentor.user.model.BaseUser;
-import com.bgitu.mentor.user.repository.BaseUserRepository;
+import com.bgitu.mentor.user.data.model.BaseUser;
+import com.bgitu.mentor.user.data.repository.BaseUserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -20,11 +20,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь с id=" + userId + " не найден"));
     }
 
-    @Override
-    public BaseUser getByAuth(Authentication authentication) {
-        Long userId = SecurityUtils.getCurrentUserId(authentication);
-        return findById(userId);
-    }
     @Override
     public boolean existsByEmail(String email) {
         return baseUserRepository.existsByEmail(email);

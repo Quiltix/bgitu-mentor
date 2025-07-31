@@ -8,7 +8,7 @@ import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
 import com.bgitu.mentor.mentor.service.MentorProfileService;
-import com.bgitu.mentor.student.dto.StudentDetailsResponseDto;
+import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

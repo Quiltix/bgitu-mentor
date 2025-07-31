@@ -1,9 +1,9 @@
 package com.bgitu.mentor.mentorship.service;
 
-import com.bgitu.mentor.mentorship.dto.ApplicationDecisionRequestDto;
-import com.bgitu.mentor.mentorship.dto.ApplicationDetailsResponseDto;
-import com.bgitu.mentor.mentorship.dto.ApplicationCreateRequestDto;
-import com.bgitu.mentor.mentorship.model.ApplicationStatus;
+import com.bgitu.mentor.mentorship.data.dto.ApplicationDecisionRequestDto;
+import com.bgitu.mentor.mentorship.data.dto.ApplicationDetailsResponseDto;
+import com.bgitu.mentor.mentorship.data.dto.ApplicationCreateRequestDto;
+import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 
 import java.util.List;
 

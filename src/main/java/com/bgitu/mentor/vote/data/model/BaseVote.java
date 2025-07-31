@@ -1,7 +1,7 @@
 package com.bgitu.mentor.vote.data.model;
 
 
-import com.bgitu.mentor.user.model.BaseUser;
+import com.bgitu.mentor.user.data.model.BaseUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.bgitu.mentor.user.dto;
+package com.bgitu.mentor.user.data.dto;
 
 import jakarta.validation.constraints.Size;
 import lombok.Getter;

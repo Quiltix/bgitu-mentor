@@ -1,7 +1,7 @@
-package com.bgitu.mentor.student.dto;
+package com.bgitu.mentor.student.data.dto;
 
-import com.bgitu.mentor.mentorship.model.Application;
-import com.bgitu.mentor.mentorship.model.ApplicationStatus;
+import com.bgitu.mentor.mentorship.data.model.Application;
+import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 import lombok.Getter;
 import lombok.Setter;
 

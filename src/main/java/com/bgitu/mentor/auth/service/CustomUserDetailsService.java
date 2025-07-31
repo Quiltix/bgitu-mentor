@@ -1,8 +1,8 @@
 package com.bgitu.mentor.auth.service;
 
 import com.bgitu.mentor.mentor.data.model.Mentor;
-import com.bgitu.mentor.user.model.BaseUser;
-import com.bgitu.mentor.user.repository.BaseUserRepository;
+import com.bgitu.mentor.user.data.model.BaseUser;
+import com.bgitu.mentor.user.data.repository.BaseUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userIdString) throws UsernameNotFoundException {
-        Long userId;
+        long userId;
         try {
             userId = Long.parseLong(userIdString);
         } catch (NumberFormatException e) {

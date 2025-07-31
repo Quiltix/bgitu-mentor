@@ -6,7 +6,7 @@ import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 
 import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
-import com.bgitu.mentor.student.dto.StudentDetailsResponseDto;
+import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 
 
 import org.springframework.web.multipart.MultipartFile;

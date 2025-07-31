@@ -4,7 +4,7 @@ import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.article.data.repository.ArticleRepository;
 import com.bgitu.mentor.vote.data.model.ArticleVote;
 import com.bgitu.mentor.vote.data.repository.ArticleVoteRepository;
-import com.bgitu.mentor.user.model.BaseUser;
+import com.bgitu.mentor.user.data.model.BaseUser;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

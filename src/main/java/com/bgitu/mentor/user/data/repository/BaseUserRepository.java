@@ -1,6 +1,6 @@
-package com.bgitu.mentor.user.repository;
+package com.bgitu.mentor.user.data.repository;
 
-import com.bgitu.mentor.user.model.BaseUser;
+import com.bgitu.mentor.user.data.model.BaseUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

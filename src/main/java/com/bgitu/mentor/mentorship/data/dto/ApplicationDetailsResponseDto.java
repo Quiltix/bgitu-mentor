@@ -1,8 +1,8 @@
-package com.bgitu.mentor.mentorship.dto;
+package com.bgitu.mentor.mentorship.data.dto;
 
 
-import com.bgitu.mentor.mentorship.model.Application;
-import com.bgitu.mentor.mentorship.model.ApplicationStatus;
+import com.bgitu.mentor.mentorship.data.model.Application;
+import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;

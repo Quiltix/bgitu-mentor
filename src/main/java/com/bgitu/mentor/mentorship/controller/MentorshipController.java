@@ -2,10 +2,10 @@ package com.bgitu.mentor.mentorship.controller;
 
 
 import com.bgitu.mentor.common.SecurityUtils;
-import com.bgitu.mentor.mentorship.dto.ApplicationDecisionRequestDto;
-import com.bgitu.mentor.mentorship.dto.ApplicationDetailsResponseDto;
-import com.bgitu.mentor.mentorship.dto.ApplicationCreateRequestDto;
-import com.bgitu.mentor.mentorship.model.ApplicationStatus;
+import com.bgitu.mentor.mentorship.data.dto.ApplicationDecisionRequestDto;
+import com.bgitu.mentor.mentorship.data.dto.ApplicationDetailsResponseDto;
+import com.bgitu.mentor.mentorship.data.dto.ApplicationCreateRequestDto;
+import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

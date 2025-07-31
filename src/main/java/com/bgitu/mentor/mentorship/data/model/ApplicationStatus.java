@@ -1,4 +1,4 @@
-package com.bgitu.mentor.mentorship.model;
+package com.bgitu.mentor.mentorship.data.model;
 
 public enum ApplicationStatus {
     PENDING,

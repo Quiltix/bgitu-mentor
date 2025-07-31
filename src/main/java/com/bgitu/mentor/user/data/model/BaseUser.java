@@ -1,4 +1,4 @@
-package com.bgitu.mentor.user.model;
+package com.bgitu.mentor.user.data.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

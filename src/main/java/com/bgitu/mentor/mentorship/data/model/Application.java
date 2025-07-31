@@ -1,7 +1,7 @@
-package com.bgitu.mentor.mentorship.model;
+package com.bgitu.mentor.mentorship.data.model;
 
 import com.bgitu.mentor.mentor.data.model.Mentor;
-import com.bgitu.mentor.student.model.Student;
+import com.bgitu.mentor.student.data.model.Student;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

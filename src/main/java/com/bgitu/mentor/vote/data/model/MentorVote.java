@@ -1,7 +1,6 @@
 package com.bgitu.mentor.vote.data.model;
 
 import com.bgitu.mentor.mentor.data.model.Mentor;
-import com.bgitu.mentor.student.model.Student;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

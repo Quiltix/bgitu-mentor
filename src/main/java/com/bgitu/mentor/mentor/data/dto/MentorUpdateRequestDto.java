@@ -1,7 +1,7 @@
 package com.bgitu.mentor.mentor.data.dto;
 
 
-import com.bgitu.mentor.user.dto.BaseUserUpdateRequestDto;
+import com.bgitu.mentor.user.data.dto.BaseUserUpdateRequestDto;
 import lombok.Getter;
 import lombok.Setter;
 

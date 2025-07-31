@@ -4,8 +4,8 @@ package com.bgitu.mentor.user.service;
 import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
-import com.bgitu.mentor.user.dto.BaseUserUpdateRequestDto;
-import com.bgitu.mentor.user.model.BaseUser;
+import com.bgitu.mentor.user.data.dto.BaseUserUpdateRequestDto;
+import com.bgitu.mentor.user.data.model.BaseUser;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

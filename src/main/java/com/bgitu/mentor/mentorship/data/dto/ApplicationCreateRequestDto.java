@@ -1,4 +1,4 @@
-package com.bgitu.mentor.mentorship.dto;
+package com.bgitu.mentor.mentorship.data.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

@@ -3,7 +3,7 @@ package com.bgitu.mentor.vote.service;
 
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.repository.MentorRepository;
-import com.bgitu.mentor.user.model.BaseUser;
+import com.bgitu.mentor.user.data.model.BaseUser;
 import com.bgitu.mentor.vote.data.model.MentorVote;
 import com.bgitu.mentor.vote.data.repository.MentorVoteRepository;
 import jakarta.persistence.EntityNotFoundException;
