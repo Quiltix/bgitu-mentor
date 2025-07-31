@@ -32,11 +32,8 @@ import java.util.List;
 public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, MentorRepository> implements MentorProfileService {
 
     private final SpecialityRepository specialityRepository;
-
     private final UserFinder userFinder;
     private final MentorshipLifecycleService mentorshipLifecycleService;
-
-
     public MentorProfileServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
                                     FileStorageService fileStorageService,
                                     SpecialityRepository specialityRepository,
@@ -45,7 +42,6 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
         super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", userService);
 
         this.specialityRepository = specialityRepository;
-
         this.userFinder = userFinder;
         this.mentorshipLifecycleService = mentorshipLifecycleService;
     }
@@ -84,6 +80,7 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
     public MentorDetailsResponseDto getMyCard(Long id) {
         Mentor mentor = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
+
         return new MentorDetailsResponseDto(mentor);
     }
 
@@ -121,16 +118,12 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
     public void terminateMentorshipWithStudent(Long mentorId, Long studentId) {
         Mentor mentor = userFinder.findMentorById(mentorId);
         Student student = userFinder.findStudentById(studentId);
-
-        // Проверка безопасности остается в этом сервисном методе, так как
-        // она относится к бизнес-правилу этого конкретного use-case.
         if (student.getMentor() == null || !student.getMentor().getId().equals(mentor.getId())) {
             throw new SecurityException("Студент не является вашим подопечным.");
         }
-
-        // Делегируем фактическое действие нашему новому, специализированному сервису.
         mentorshipLifecycleService.terminateLink(mentor, student);
     }
+
 
 
 }

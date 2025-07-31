@@ -6,9 +6,9 @@ import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.repository.MentorRepository;
-import com.bgitu.mentor.user.service.UserFinder;
 import com.bgitu.mentor.vote.service.MentorVoteHandler;
 import com.bgitu.mentor.vote.service.VotingService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,6 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService{
     private final MentorRepository mentorRepository;
     private final VotingService votingService;
     private final MentorVoteHandler mentorVoteHandler;
-    private final UserFinder userFinder;
 
     @Override
     public Page<MentorSummaryResponseDto> findMentors(Long specialityId, String query, Pageable pageable) {
@@ -48,7 +47,8 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService{
 
     @Override
     public MentorDetailsResponseDto getMentorDetails(Long mentorId) {
-        Mentor mentor = userFinder.findMentorById(mentorId);
+        Mentor mentor = mentorRepository.findById(mentorId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
 
         return new MentorDetailsResponseDto(mentor);
     }
