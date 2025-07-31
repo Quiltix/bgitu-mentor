@@ -1,14 +1,14 @@
 package com.bgitu.mentor.user.service;
 
-import com.bgitu.mentor.common.SecurityUtils;
+
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
+import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.user.dto.UpdateBaseUserCardDto;
 import com.bgitu.mentor.user.model.BaseUser;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,14 +31,10 @@ public abstract class AbstractBaseUserService<
         this.userService = userService;
     }
 
-    public T getByAuth(Authentication authentication) {
-        Long userId = SecurityUtils.getCurrentUserId(authentication);
-        return repository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException(userTypeName + " с id=" + userId + " не найден"));
-    }
 
-    public T updateProfile(Authentication authentication, UpdatePersonalInfo dto) {
-        T user = getByAuth(authentication);
+    protected T updateProfileInternal(Long userId, UpdatePersonalInfo dto) {
+        T user = repository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(userTypeName + " с id=" + userId + " не найден"));
         String newEmail = dto.getEmail();
 
         if (newEmail != null && !newEmail.isBlank() && !newEmail.equalsIgnoreCase(user.getEmail())) {

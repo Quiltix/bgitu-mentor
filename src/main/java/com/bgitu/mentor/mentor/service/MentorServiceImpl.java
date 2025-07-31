@@ -3,7 +3,8 @@ package com.bgitu.mentor.mentor.service;
 
 import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.article.data.model.Article;
-import com.bgitu.mentor.common.exception.ResourceNotFoundException;
+import com.bgitu.mentor.common.dto.PersonalInfoDto;
+import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.MentorSpecifications;
 import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
@@ -51,6 +52,15 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
         this.specialityRepository = specialityRepository;
         this.votingService = votingService;
         this.userFinder = userFinder;
+    }
+
+
+    @Override
+    public PersonalInfoDto updateProfile(Long mentorId, UpdatePersonalInfo dto) {
+
+        Mentor updatedMentor = super.updateProfileInternal(mentorId, dto);
+
+        return new PersonalInfoDto(updatedMentor);
     }
 
 
