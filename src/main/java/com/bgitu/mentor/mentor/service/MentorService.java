@@ -11,24 +11,24 @@ import com.bgitu.mentor.student.dto.StudentCardDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface MentorService {
 
-    Mentor getByAuth(Authentication authentication);
-    Mentor findById(Long id);
+    //Методы для профиля
+    Mentor updateProfile(Long mentorId, UpdatePersonalInfo dto);
+    CardMentorDto updateCard(Long mentorId, UpdateMentorCardDto dto, MultipartFile avatarFile);
+    void terminateMentorshipWithStudent(Long mentorId, Long studentId);
+    List<ArticleShortDto> getMentorArticles(Long mentorId);
 
-    Mentor updateProfile(Authentication authentication, UpdatePersonalInfo dto);
-    Mentor updateCard(Authentication authentication, UpdateMentorCardDto dto, MultipartFile avatarFile);
-    Page<MentorShortDto> findMentors(Long specialityId, String query, Pageable pageable);
-
-    CardMentorDto getById(Long id);
+    //Для взаимодействия
     void voteMentor(Long mentorId, boolean upvote, Long userId);
-    List<ArticleShortDto> getMentorArticles(Authentication authentication);
-    List<StudentCardDto> getAllStudentsForMentor(Authentication authentication);
-    void terminateMentorshipWithStudent(Authentication authentication, Long studentId);
+    List<StudentCardDto> getAllStudentsForMentor(Long mentorId);
+
+    //Для публичного каталога
+    CardMentorDto getPublicCardById(Long id);
+    Page<MentorShortDto> findMentors(Long specialityId, String query, Pageable pageable);
 
 }

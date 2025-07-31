@@ -15,8 +15,8 @@ import com.bgitu.mentor.mentor.data.repository.MentorRepository;
 import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.model.Student;
-import com.bgitu.mentor.student.repository.StudentRepository;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
+import com.bgitu.mentor.user.service.UserFinder;
 import com.bgitu.mentor.user.service.UserService;
 import com.bgitu.mentor.vote.service.MentorVoteHandler;
 import com.bgitu.mentor.vote.service.VotingService;
@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,25 +39,26 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     private final SpecialityRepository specialityRepository;
     private final VotingService votingService;
     private final MentorVoteHandler mentorVoteHandler;
-    private final StudentRepository studentRepository;
+    private final UserFinder userFinder;
+
 
     public MentorServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
                              FileStorageService fileStorageService, VotingService votingService,
                              SpecialityRepository specialityRepository, MentorVoteHandler mentorVoteHandler,
-                             UserService userService, StudentRepository studentRepository) {
+                             UserService userService, UserFinder userFinder) {
         super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", userService);
         this.mentorVoteHandler = mentorVoteHandler;
         this.specialityRepository = specialityRepository;
         this.votingService = votingService;
-        this.studentRepository = studentRepository;
+        this.userFinder = userFinder;
     }
 
 
 
     @Override
-    public Mentor updateCard(Authentication authentication, UpdateMentorCardDto dto, MultipartFile avatarFile) {
+    public CardMentorDto updateCard(Long mentorId, UpdateMentorCardDto dto, MultipartFile avatarFile) {
 
-        Mentor mentor = getByAuth(authentication);
+        Mentor mentor = userFinder.findMentorById(mentorId);
 
         updateCardInternal(mentor, dto, avatarFile);
 
@@ -68,7 +68,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
             mentor.setSpeciality(speciality);
         }
 
-        return repository.save(mentor);
+        return new CardMentorDto(repository.save(mentor));
     }
 
     @Override
@@ -94,7 +94,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
 
     @Override
-    public CardMentorDto getById(Long id) {
+    public CardMentorDto getPublicCardById(Long id) {
         Mentor mentor = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
         return new CardMentorDto(mentor);
@@ -109,8 +109,8 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
 
     @Override
-    public List<ArticleShortDto> getMentorArticles(Authentication authentication) {
-        Mentor mentor = getByAuth(authentication);
+    public List<ArticleShortDto> getMentorArticles(Long mentorId) {
+        Mentor mentor = userFinder.findMentorById(mentorId);
 
         List<Article> articles = mentor.getArticles();
 
@@ -120,29 +120,21 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     }
 
     @Override
-    public List<StudentCardDto> getAllStudentsForMentor(Authentication authentication) {
-        Mentor mentor = getByAuth(authentication);
+    public List<StudentCardDto> getAllStudentsForMentor(Long mentorId) {
+        Mentor mentor = userFinder.findMentorById(mentorId);
 
         return mentor.getStudents().stream()
                 .map(StudentCardDto::new)
                 .toList();
     }
 
-
-    @Override
-    public Mentor findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ментор с id=" + id + " не найден"));
-    }
-
     @Override
     @Transactional
-    public void terminateMentorshipWithStudent(Authentication authentication, Long studentId) {
+    public void terminateMentorshipWithStudent(Long mentorId, Long studentId) {
 
-        Mentor mentor = getByAuth(authentication);
+        Mentor mentor = userFinder.findMentorById(mentorId);
 
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Студент не найден."));
+        Student student = userFinder.findStudentById(studentId);
 
         if (student.getMentor() == null || !student.getMentor().getId().equals(mentor.getId())) {
             throw new SecurityException("Студент не является вашим подопечным.");

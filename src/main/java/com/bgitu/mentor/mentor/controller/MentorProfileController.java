@@ -2,6 +2,7 @@ package com.bgitu.mentor.mentor.controller;
 
 
 import com.bgitu.mentor.article.data.dto.ArticleShortDto;
+import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
@@ -33,6 +34,7 @@ public class MentorProfileController {
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping()
     public ResponseEntity<CardMentorDto> getCardMentor(Authentication authentication) {
+        Long mentorId = SecurityUtils.getCurrentUserId(authentication);
         return ResponseEntity.ok(new CardMentorDto(mentorService.getByAuth(authentication)));
     }
 
@@ -45,8 +47,8 @@ public class MentorProfileController {
             @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
     ) {
 
-        Mentor updated = mentorService.updateCard(authentication, dto, avatarFile);
-        return ResponseEntity.ok(new CardMentorDto(updated));
+
+        return ResponseEntity.ok(mentorService.updateCard(authentication, dto, avatarFile));
     }
 
     @Operation(summary = "Обновление профиля ментора", description = "Доступно только для роли MENTOR. Обновляет имя, фамилию, пароль и email.")

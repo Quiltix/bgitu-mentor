@@ -45,7 +45,7 @@ public class MentorController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/{id}")
     public ResponseEntity<CardMentorDto> getMentorDetails(@PathVariable Long id) {
-        return ResponseEntity.ok( mentorService.getById(id));
+        return ResponseEntity.ok( mentorService.getPublicCardById(id));
     }
 
 
