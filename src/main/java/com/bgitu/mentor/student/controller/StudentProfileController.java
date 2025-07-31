@@ -1,12 +1,12 @@
 package com.bgitu.mentor.student.controller;
 
+import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
 import com.bgitu.mentor.student.dto.ApplicationStudentDto;
 import com.bgitu.mentor.student.dto.StudentCardDto;
 import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
-import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +34,8 @@ public class StudentProfileController {
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping()
     public ResponseEntity<StudentCardDto> getCardStudent(Authentication authentication){
-        return ResponseEntity.ok(new StudentCardDto(studentService.getByAuth(authentication)));
+        Long studentId = SecurityUtils.getCurrentUserId(authentication);
+        return ResponseEntity.ok(studentService.getPublicCardById(studentId));
     }
 
 
@@ -46,15 +47,16 @@ public class StudentProfileController {
             @RequestPart("card") UpdateStudentCardDto dto,
             @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
     ) {
-        Student updated = studentService.updateCard(authentication, dto, avatarFile);
-        return ResponseEntity.ok(new StudentCardDto(updated));
+        Long studentId = SecurityUtils.getCurrentUserId(authentication);
+        return ResponseEntity.ok(studentService.updateCard(studentId, dto, avatarFile));
     }
 
     @Operation(summary = "Получение моего профиля", description = "STUDENT. Возвращает профиль по авторизации")
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/settings")
     public ResponseEntity<PersonalInfoDto> getMentorProfile(Authentication authentication) {
-        return ResponseEntity.ok(new PersonalInfoDto(studentService.getByAuth(authentication)));
+        Long studentId = SecurityUtils.getCurrentUserId(authentication);
+        return ResponseEntity.ok(studentService.getPersonalInfo(studentId));
     }
 
     @Operation(summary = "Обновление профиля студента", description = "Доступно только для роли STUDENT. Позволяет редактировать имя, фамилию и email.")
@@ -64,29 +66,32 @@ public class StudentProfileController {
             Authentication authentication,
             @RequestBody @Valid UpdatePersonalInfo dto
     ) {
-        Student updated = studentService.updateProfile(authentication, dto);
-        return ResponseEntity.ok(new PersonalInfoDto(updated));
+        Long studentId = SecurityUtils.getCurrentUserId(authentication);
+        return ResponseEntity.ok(studentService.updateProfile(studentId, dto));
     }
 
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/mentor")
     @Operation(summary = "Получить информацию о менторе студента", description = "Доступно для роли STUDENT")
     public ResponseEntity<CardMentorDto> getStudentMentor(Authentication authentication) {
-        return ResponseEntity.ok(studentService.getMentorOfStudent(authentication));
+        Long studentId = SecurityUtils.getCurrentUserId(authentication);
+        return ResponseEntity.ok(studentService.getMentorOfStudent(studentId));
     }
 
     @Operation(summary = "Получение всех заявок студента", description = "Доступно только студенту")
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/applications")
     public List<ApplicationStudentDto> getStudentApplications(Authentication authentication) {
-        return studentService.getStudentApplications(authentication);
+        Long studentId = SecurityUtils.getCurrentUserId(authentication);
+        return studentService.getStudentApplications(studentId);
     }
 
     @DeleteMapping("/mentor") // <-- DELETE на ресурс "ментор" внутри профиля
     @PreAuthorize("hasRole('STUDENT')")
     @Operation(summary = "Прекратить менторство", description = "Позволяет студенту отказаться от своего текущего ментора.")
     public ResponseEntity<Void> terminateMentorship(Authentication authentication) {
-        studentService.terminateCurrentMentorship(authentication);
+        Long studentId = SecurityUtils.getCurrentUserId(authentication);
+        studentService.terminateCurrentMentorship(studentId);
         return ResponseEntity.noContent().build();
     }
 
