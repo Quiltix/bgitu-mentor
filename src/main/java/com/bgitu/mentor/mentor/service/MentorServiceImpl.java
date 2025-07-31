@@ -130,6 +130,13 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     }
 
     @Override
+    public PersonalInfoDto getPersonalInfo(Long mentorId) {
+        Mentor mentor = userFinder.findMentorById(mentorId);
+
+        return new PersonalInfoDto(mentor);
+    }
+
+    @Override
     public List<StudentCardDto> getAllStudentsForMentor(Long mentorId) {
         Mentor mentor = userFinder.findMentorById(mentorId);
 

@@ -22,6 +22,7 @@ public interface MentorService {
     CardMentorDto updateCard(Long mentorId, UpdateMentorCardDto dto, MultipartFile avatarFile);
     void terminateMentorshipWithStudent(Long mentorId, Long studentId);
     List<ArticleShortDto> getMentorArticles(Long mentorId);
+    PersonalInfoDto getPersonalInfo(Long mentorId);
 
     //Для взаимодействия
     void voteMentor(Long mentorId, boolean upvote, Long userId);
