@@ -1,8 +1,8 @@
 package com.bgitu.mentor.student.controller;
 
 import com.bgitu.mentor.common.SecurityUtils;
-import com.bgitu.mentor.common.dto.PersonalInfoDto;
-import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
+import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
+import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.student.dto.ApplicationOfStudentResponseDto;
 import com.bgitu.mentor.student.dto.StudentDetailsResponseDto;
@@ -54,7 +54,7 @@ public class StudentProfileController {
     @Operation(summary = "Получение моего профиля", description = "STUDENT. Возвращает профиль по авторизации")
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/settings")
-    public ResponseEntity<PersonalInfoDto> getMentorProfile(Authentication authentication) {
+    public ResponseEntity<UserCredentialsResponseDto> getMentorProfile(Authentication authentication) {
         Long studentId = SecurityUtils.getCurrentUserId(authentication);
         return ResponseEntity.ok(studentService.getPersonalInfo(studentId));
     }
@@ -62,9 +62,9 @@ public class StudentProfileController {
     @Operation(summary = "Обновление профиля студента", description = "Доступно только для роли STUDENT. Позволяет редактировать имя, фамилию и email.")
     @PreAuthorize("hasRole('STUDENT')")
     @PatchMapping("/settings")
-    public ResponseEntity<PersonalInfoDto> updateMentorProfile(
+    public ResponseEntity<UserCredentialsResponseDto> updateMentorProfile(
             Authentication authentication,
-            @RequestBody @Valid UpdatePersonalInfo dto
+            @RequestBody @Valid UserCredentialsUpdateRequestDto dto
     ) {
         Long studentId = SecurityUtils.getCurrentUserId(authentication);
         return ResponseEntity.ok(studentService.updateProfile(studentId, dto));

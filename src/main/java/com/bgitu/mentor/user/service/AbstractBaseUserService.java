@@ -1,7 +1,7 @@
 package com.bgitu.mentor.user.service;
 
 
-import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
+import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.user.dto.BaseUserUpdateRequestDto;
@@ -32,7 +32,7 @@ public abstract class AbstractBaseUserService<
     }
 
 
-    protected T updateProfileInternal(Long userId, UpdatePersonalInfo dto) {
+    protected T updateProfileInternal(Long userId, UserCredentialsUpdateRequestDto dto) {
         T user = repository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(userTypeName + " с id=" + userId + " не найден"));
         String newEmail = dto.getEmail();

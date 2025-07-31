@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdatePersonalInfo {
+public class UserCredentialsUpdateRequestDto {
 
     @Email(message = "Email должен быть корректным")
     private String email;

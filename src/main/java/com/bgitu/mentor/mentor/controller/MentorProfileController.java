@@ -3,11 +3,11 @@ package com.bgitu.mentor.mentor.controller;
 
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.common.SecurityUtils;
-import com.bgitu.mentor.common.dto.PersonalInfoDto;
-import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
+import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
+import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
-import com.bgitu.mentor.mentor.service.MentorService;
+import com.bgitu.mentor.mentor.service.MentorProfileService;
 import com.bgitu.mentor.student.dto.StudentDetailsResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,14 +27,14 @@ import java.util.List;
 @RequestMapping("/api/profiles/mentor")
 public class MentorProfileController {
 
-    private final MentorService mentorService;
+    private final MentorProfileService mentorService;
 
     @Operation(summary = "Получение карточки ментора", description = "Доступно только для роли MENTOR. Возвращает полную информацию по текущему пользователю.")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping()
     public ResponseEntity<MentorDetailsResponseDto> getCardMentor(Authentication authentication) {
         Long mentorId = SecurityUtils.getCurrentUserId(authentication);
-        return ResponseEntity.ok(mentorService.getPublicCardById(mentorId));
+        return ResponseEntity.ok(mentorService.getMyCard(mentorId));
     }
 
     @Operation(summary = "Обновление карточки ментора", description = "Доступно только для роли MENTOR. Позволяет редактировать описание, направление и аватар.")
@@ -54,9 +54,9 @@ public class MentorProfileController {
     @Operation(summary = "Обновление профиля ментора", description = "Доступно только для роли MENTOR. Обновляет имя, фамилию, пароль и email.")
     @PreAuthorize("hasRole('MENTOR')")
     @PatchMapping("/settings")
-    public ResponseEntity<PersonalInfoDto> updateMentorProfile(
+    public ResponseEntity<UserCredentialsResponseDto> updateMentorProfile(
             Authentication authentication,
-            @RequestBody @Valid UpdatePersonalInfo dto
+            @RequestBody @Valid UserCredentialsUpdateRequestDto dto
     ) {
 
         Long mentorId = SecurityUtils.getCurrentUserId(authentication);
@@ -67,7 +67,7 @@ public class MentorProfileController {
     @Operation(summary = "Получение моего профиля", description = "MENTOR. Возвращает профиль по авторизации")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/settings")
-    public ResponseEntity<PersonalInfoDto> getMentorProfile(Authentication authentication) {
+    public ResponseEntity<UserCredentialsResponseDto> getMentorProfile(Authentication authentication) {
         Long mentorId = SecurityUtils.getCurrentUserId(authentication);
         return ResponseEntity.ok(mentorService.getPersonalInfo(mentorId));
     }
@@ -77,7 +77,7 @@ public class MentorProfileController {
     @GetMapping("/articles")
     public List<ArticleSummaryResponseDto> getArticlesByMentor(Authentication authentication) {
         Long mentorId = SecurityUtils.getCurrentUserId(authentication);
-        return mentorService.getMentorArticles(mentorId);
+        return mentorService.getMyArticles(mentorId);
     }
 
     @Operation(summary = "Получение всех студентов ментора", description = "Доступно для роли MENTOR")
@@ -85,7 +85,7 @@ public class MentorProfileController {
     @GetMapping("/students")
     public List<StudentDetailsResponseDto> getStudents(Authentication authentication) {
         Long mentorId = SecurityUtils.getCurrentUserId(authentication);
-        return mentorService.getAllStudentsForMentor(mentorId);
+        return mentorService.getMyStudents(mentorId);
     }
 
     @DeleteMapping("/students/{studentId}")

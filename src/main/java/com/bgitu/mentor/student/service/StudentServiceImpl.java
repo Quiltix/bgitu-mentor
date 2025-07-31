@@ -2,8 +2,8 @@ package com.bgitu.mentor.student.service;
 
 
 
-import com.bgitu.mentor.common.dto.PersonalInfoDto;
-import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
+import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
+import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
@@ -57,11 +57,11 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
     }
 
     @Override
-    public PersonalInfoDto updateProfile(Long studentId, UpdatePersonalInfo dto) {
+    public UserCredentialsResponseDto updateProfile(Long studentId, UserCredentialsUpdateRequestDto dto) {
 
         Student updatedStudent = super.updateProfileInternal(studentId, dto);
 
-        return new PersonalInfoDto(updatedStudent);
+        return new UserCredentialsResponseDto(updatedStudent);
     }
 
 
@@ -111,9 +111,9 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
     }
 
     @Override
-    public PersonalInfoDto getPersonalInfo(Long studentId) {
+    public UserCredentialsResponseDto getPersonalInfo(Long studentId) {
         Student student = userFinder.findStudentById(studentId);
-        return new PersonalInfoDto(student);
+        return new UserCredentialsResponseDto(student);
     }
 
 

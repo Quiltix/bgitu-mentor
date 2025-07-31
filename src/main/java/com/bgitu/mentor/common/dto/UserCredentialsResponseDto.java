@@ -8,18 +8,18 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PersonalInfoDto {
+public class UserCredentialsResponseDto {
 
     @Email(message = "Email должен быть корректным")
     private String email;
 
 
 
-    public PersonalInfoDto(Mentor mentor) {
+    public UserCredentialsResponseDto(Mentor mentor) {
         this.email = mentor.getEmail();
 
     }
-    public PersonalInfoDto(Student student) {
+    public UserCredentialsResponseDto(Student student) {
         this.email = student.getEmail();
 
     }

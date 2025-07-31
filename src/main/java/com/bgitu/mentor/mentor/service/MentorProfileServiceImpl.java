@@ -3,12 +3,10 @@ package com.bgitu.mentor.mentor.service;
 
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.data.model.Article;
-import com.bgitu.mentor.common.dto.PersonalInfoDto;
-import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
+import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
+import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.common.service.FileStorageService;
-import com.bgitu.mentor.mentor.data.MentorSpecifications;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
-import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.model.Speciality;
@@ -20,14 +18,9 @@ import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
 import com.bgitu.mentor.user.service.UserFinder;
 import com.bgitu.mentor.user.service.UserService;
-import com.bgitu.mentor.vote.service.MentorVoteHandler;
-import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,35 +29,34 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRepository> implements MentorService {
+public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, MentorRepository> implements MentorProfileService {
 
     private final SpecialityRepository specialityRepository;
-    private final VotingService votingService;
-    private final MentorVoteHandler mentorVoteHandler;
+
     private final UserFinder userFinder;
     private final MentorshipLifecycleService mentorshipLifecycleService;
 
 
-    public MentorServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
-                             FileStorageService fileStorageService, VotingService votingService,
-                             SpecialityRepository specialityRepository, MentorVoteHandler mentorVoteHandler,
-                             UserService userService, UserFinder userFinder,
-                             MentorshipLifecycleService mentorshipLifecycleService) {
+    public MentorProfileServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
+                                    FileStorageService fileStorageService,
+                                    SpecialityRepository specialityRepository,
+                                    UserService userService, UserFinder userFinder,
+                                    MentorshipLifecycleService mentorshipLifecycleService) {
         super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", userService);
-        this.mentorVoteHandler = mentorVoteHandler;
+
         this.specialityRepository = specialityRepository;
-        this.votingService = votingService;
+
         this.userFinder = userFinder;
         this.mentorshipLifecycleService = mentorshipLifecycleService;
     }
 
 
     @Override
-    public PersonalInfoDto updateProfile(Long mentorId, UpdatePersonalInfo dto) {
+    public UserCredentialsResponseDto updateProfile(Long mentorId, UserCredentialsUpdateRequestDto dto) {
 
         Mentor updatedMentor = super.updateProfileInternal(mentorId, dto);
 
-        return new PersonalInfoDto(updatedMentor);
+        return new UserCredentialsResponseDto(updatedMentor);
     }
 
 
@@ -85,45 +77,20 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
         return new MentorDetailsResponseDto(repository.save(mentor));
     }
 
-    @Override
-    public Page<MentorSummaryResponseDto> findMentors(Long specialityId, String query, Pageable pageable) {
 
-        Specification<Mentor> specification = Specification.not(null);
-
-        if (specialityId != null) {
-            specification.and(MentorSpecifications.hasSpeciality(specialityId));
-        }
-
-        if (query != null && !query.isBlank()) {
-            if (query.length() > 250) {
-                throw new IllegalStateException("Строка для поиска слишком длинная");
-            }
-            specification.and(MentorSpecifications.nameOrDescriptionContains(query));
-        }
-
-        Page<Mentor> mentorPage = repository.findAll(specification, pageable);
-
-        return mentorPage.map(MentorSummaryResponseDto::new);
-    }
 
 
     @Override
-    public MentorDetailsResponseDto getPublicCardById(Long id) {
+    public MentorDetailsResponseDto getMyCard(Long id) {
         Mentor mentor = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
         return new MentorDetailsResponseDto(mentor);
     }
 
 
-    @Override
-    @Transactional
-    public void voteMentor(Long mentorId, boolean upvote, Long userId) {
-        votingService.vote(mentorId, userId, upvote, mentorVoteHandler);
-    }
-
 
     @Override
-    public List<ArticleSummaryResponseDto> getMentorArticles(Long mentorId) {
+    public List<ArticleSummaryResponseDto> getMyArticles(Long mentorId) {
         Mentor mentor = userFinder.findMentorById(mentorId);
 
         List<Article> articles = mentor.getArticles();
@@ -134,14 +101,14 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     }
 
     @Override
-    public PersonalInfoDto getPersonalInfo(Long mentorId) {
+    public UserCredentialsResponseDto getPersonalInfo(Long mentorId) {
         Mentor mentor = userFinder.findMentorById(mentorId);
 
-        return new PersonalInfoDto(mentor);
+        return new UserCredentialsResponseDto(mentor);
     }
 
     @Override
-    public List<StudentDetailsResponseDto> getAllStudentsForMentor(Long mentorId) {
+    public List<StudentDetailsResponseDto> getMyStudents(Long mentorId) {
         Mentor mentor = userFinder.findMentorById(mentorId);
 
         return mentor.getStudents().stream()

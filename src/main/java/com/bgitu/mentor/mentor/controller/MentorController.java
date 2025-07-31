@@ -4,7 +4,7 @@ import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.MessageDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
-import com.bgitu.mentor.mentor.service.MentorService;
+import com.bgitu.mentor.mentor.service.MentorDirectoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/mentors")
 public class MentorController {
 
-    private final MentorService mentorService;
+    private final MentorDirectoryService mentorService;
 
 
     @Operation(summary = "Получение списка менторов (короткое описание) с фильтрацией и пагинацией", description = "Возвращает пагинированный список менторов. " +
@@ -45,7 +45,7 @@ public class MentorController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/{id}")
     public ResponseEntity<MentorDetailsResponseDto> getMentorDetails(@PathVariable Long id) {
-        return ResponseEntity.ok( mentorService.getPublicCardById(id));
+        return ResponseEntity.ok( mentorService.getMentorDetails(id));
     }
 
 
@@ -58,7 +58,7 @@ public class MentorController {
             Authentication authentication
     ) {
         Long userId = SecurityUtils.getCurrentUserId(authentication);
-        mentorService.voteMentor(id, upvote, userId);
+        mentorService.voteForMentor(id, upvote, userId);
         return ResponseEntity.ok(new MessageDto("Голос учтен"));
     }
 
