@@ -6,11 +6,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdateApplicationStatusDto {
+public class ApplicationDecisionRequestDto {
 
     @NotNull(message = "Решение (принять/отклонить) не может быть пустым")
     private Boolean accepted;
 
-    // Поле для будущего расширения
-    //private String reason;
+
 }

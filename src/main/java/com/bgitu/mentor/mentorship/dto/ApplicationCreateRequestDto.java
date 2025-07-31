@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MentorshipRequestDto {
+public class ApplicationCreateRequestDto {
 
     @NotNull
     Long mentorId;

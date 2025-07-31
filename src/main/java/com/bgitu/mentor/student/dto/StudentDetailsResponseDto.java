@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StudentCardDto {
+public class StudentDetailsResponseDto {
 
     private Long id;
 
@@ -24,7 +24,7 @@ public class StudentCardDto {
     private String vkUrl;
     private String telegramUrl;
 
-    public StudentCardDto(Student student) {
+    public StudentDetailsResponseDto(Student student) {
         this.id = student.getId();
         this.firstName = student.getFirstName();
         this.lastName = student.getLastName();

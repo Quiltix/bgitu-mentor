@@ -3,10 +3,10 @@ package com.bgitu.mentor.student.controller;
 import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
-import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
-import com.bgitu.mentor.student.dto.ApplicationStudentDto;
-import com.bgitu.mentor.student.dto.StudentCardDto;
-import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
+import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
+import com.bgitu.mentor.student.dto.ApplicationOfStudentResponseDto;
+import com.bgitu.mentor.student.dto.StudentDetailsResponseDto;
+import com.bgitu.mentor.student.dto.StudentDetailsUpdateRequestDto;
 import com.bgitu.mentor.student.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,7 +33,7 @@ public class StudentProfileController {
     @Operation(summary = "Получение карточки студента", description = "Доступно только для роли STUDENT. Возвращает полную информацию по текущему студенту.")
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping()
-    public ResponseEntity<StudentCardDto> getCardStudent(Authentication authentication){
+    public ResponseEntity<StudentDetailsResponseDto> getCardStudent(Authentication authentication){
         Long studentId = SecurityUtils.getCurrentUserId(authentication);
         return ResponseEntity.ok(studentService.getPublicCardById(studentId));
     }
@@ -42,9 +42,9 @@ public class StudentProfileController {
     @Operation(summary = "Обновление карточки студента", description = "Доступно только для роли STUDENT. Позволяет редактировать описание и загрузить новый аватар.")
     @PreAuthorize("hasRole('STUDENT')")
     @PatchMapping( consumes = "multipart/form-data")
-    public ResponseEntity<StudentCardDto> updateStudentCard(
+    public ResponseEntity<StudentDetailsResponseDto> updateStudentCard(
             Authentication authentication,
-            @RequestPart("card") UpdateStudentCardDto dto,
+            @RequestPart("card") StudentDetailsUpdateRequestDto dto,
             @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
     ) {
         Long studentId = SecurityUtils.getCurrentUserId(authentication);
@@ -73,7 +73,7 @@ public class StudentProfileController {
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/mentor")
     @Operation(summary = "Получить информацию о менторе студента", description = "Доступно для роли STUDENT")
-    public ResponseEntity<CardMentorDto> getStudentMentor(Authentication authentication) {
+    public ResponseEntity<MentorDetailsResponseDto> getStudentMentor(Authentication authentication) {
         Long studentId = SecurityUtils.getCurrentUserId(authentication);
         return ResponseEntity.ok(studentService.getMentorOfStudent(studentId));
     }
@@ -81,7 +81,7 @@ public class StudentProfileController {
     @Operation(summary = "Получение всех заявок студента", description = "Доступно только студенту")
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/applications")
-    public List<ApplicationStudentDto> getStudentApplications(Authentication authentication) {
+    public List<ApplicationOfStudentResponseDto> getStudentApplications(Authentication authentication) {
         Long studentId = SecurityUtils.getCurrentUserId(authentication);
         return studentService.getStudentApplications(studentId);
     }

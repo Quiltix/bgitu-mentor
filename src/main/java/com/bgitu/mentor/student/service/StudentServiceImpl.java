@@ -6,13 +6,13 @@ import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
-import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
+import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.mentorship.repository.ApplicationRepository;
-import com.bgitu.mentor.student.dto.ApplicationStudentDto;
-import com.bgitu.mentor.student.dto.StudentCardDto;
-import com.bgitu.mentor.student.dto.UpdateStudentCardDto;
+import com.bgitu.mentor.student.dto.ApplicationOfStudentResponseDto;
+import com.bgitu.mentor.student.dto.StudentDetailsResponseDto;
+import com.bgitu.mentor.student.dto.StudentDetailsUpdateRequestDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.student.repository.StudentRepository;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
@@ -43,12 +43,12 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
 
 
     @Override
-    public StudentCardDto updateCard(Long studentId, UpdateStudentCardDto dto, MultipartFile avatarFile) {
+    public StudentDetailsResponseDto updateCard(Long studentId, StudentDetailsUpdateRequestDto dto, MultipartFile avatarFile) {
         Student student = userFinder.findStudentById(studentId);
 
         updateCardInternal(student, dto, avatarFile);
 
-        return new StudentCardDto(repository.save(student));
+        return new StudentDetailsResponseDto(repository.save(student));
     }
 
     @Override
@@ -61,7 +61,7 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
 
 
     @Override
-    public CardMentorDto getMentorOfStudent(Long studentId) {
+    public MentorDetailsResponseDto getMentorOfStudent(Long studentId) {
         Student student = userFinder.findStudentById(studentId);
 
         Mentor mentor = student.getMentor();
@@ -69,18 +69,18 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
             throw new IllegalStateException("У студента пока нет назначенного ментора");
         }
 
-        return new CardMentorDto(mentor);
+        return new MentorDetailsResponseDto(mentor);
     }
 
     @Override
-    public List<ApplicationStudentDto> getStudentApplications(Long studentId) {
+    public List<ApplicationOfStudentResponseDto> getStudentApplications(Long studentId) {
 
         Student student = userFinder.findStudentById(studentId);
 
         List<Application> applications = applicationRepository.findAllByStudent(student);
 
         return applications.stream()
-                .map(ApplicationStudentDto::new)
+                .map(ApplicationOfStudentResponseDto::new)
                 .toList();
     }
 
@@ -95,10 +95,10 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
     }
 
     @Override
-    public StudentCardDto getPublicCardById(Long studentId) {
+    public StudentDetailsResponseDto getPublicCardById(Long studentId) {
 
         Student student = userFinder.findStudentById(studentId);
-        return new StudentCardDto(student);
+        return new StudentDetailsResponseDto(student);
     }
 
     @Override

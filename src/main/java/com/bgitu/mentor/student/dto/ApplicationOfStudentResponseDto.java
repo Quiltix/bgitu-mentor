@@ -7,14 +7,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ApplicationStudentDto {
+public class ApplicationOfStudentResponseDto {
     private Long id;
     private String message;
     private String mentorFullName;
     private String mentorSpeciality;
     private ApplicationStatus status;
 
-    public ApplicationStudentDto(Application application) {
+    public ApplicationOfStudentResponseDto(Application application) {
         this.id = application.getId();
         this.message = application.getMessage();
         this.status = application.getStatus();

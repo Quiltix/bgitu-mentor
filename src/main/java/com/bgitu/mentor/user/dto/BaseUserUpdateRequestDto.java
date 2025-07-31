@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdateBaseUserCardDto {
+public class BaseUserUpdateRequestDto {
 
     @Size(max = 30, message = "Имя не больше 30 символов")
     private String firstName;

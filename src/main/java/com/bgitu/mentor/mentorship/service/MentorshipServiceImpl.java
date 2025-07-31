@@ -3,9 +3,9 @@ package com.bgitu.mentor.mentorship.service;
 
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.data.model.Mentor;
-import com.bgitu.mentor.mentorship.dto.UpdateApplicationStatusDto;
-import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;
-import com.bgitu.mentor.mentorship.dto.MentorshipRequestDto;
+import com.bgitu.mentor.mentorship.dto.ApplicationDecisionRequestDto;
+import com.bgitu.mentor.mentorship.dto.ApplicationDetailsResponseDto;
+import com.bgitu.mentor.mentorship.dto.ApplicationCreateRequestDto;
 import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.mentorship.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.repository.ApplicationRepository;
@@ -27,7 +27,7 @@ public class MentorshipServiceImpl implements MentorshipService {
 
     @Override
     @Transactional
-    public ApplicationResponseDto createApplication(Long studentId, MentorshipRequestDto dto) {
+    public ApplicationDetailsResponseDto createApplication(Long studentId, ApplicationCreateRequestDto dto) {
         Student student = userFinder.findStudentById(studentId);
 
         Mentor mentor = userFinder.findMentorById(dto.getMentorId());
@@ -46,12 +46,12 @@ public class MentorshipServiceImpl implements MentorshipService {
         app.setMessage(dto.getMessage());
         app.setStatus(ApplicationStatus.PENDING);
 
-        return new ApplicationResponseDto(applicationRepository.save(app));
+        return new ApplicationDetailsResponseDto(applicationRepository.save(app));
     }
 
     @Override
     @Transactional
-    public void updateApplicationStatus(Long mentorId, Long applicationId, UpdateApplicationStatusDto dto) {
+    public void updateApplicationStatus(Long mentorId, Long applicationId, ApplicationDecisionRequestDto dto) {
         Mentor mentor = userFinder.findMentorById(mentorId);
         Application app = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Эта заявка не найдена"));
@@ -87,13 +87,13 @@ public class MentorshipServiceImpl implements MentorshipService {
     }
 
     @Override
-    public List<ApplicationResponseDto> getApplicationsForMentor(Long mentorId, ApplicationStatus status) {
+    public List<ApplicationDetailsResponseDto> getApplicationsForMentor(Long mentorId, ApplicationStatus status) {
         Mentor mentor = userFinder.findMentorById(mentorId);
 
         List<Application> applications = (status != null)
                 ? applicationRepository.findAllByMentorAndStatus(mentor, status)
                 : applicationRepository.findAllByMentor(mentor);
 
-        return applications.stream().map(ApplicationResponseDto::new).toList();
+        return applications.stream().map(ApplicationDetailsResponseDto::new).toList();
     }
 }

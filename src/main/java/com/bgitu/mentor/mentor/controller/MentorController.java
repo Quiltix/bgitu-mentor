@@ -2,8 +2,8 @@ package com.bgitu.mentor.mentor.controller;
 
 import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.MessageDto;
-import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
-import com.bgitu.mentor.mentor.data.dto.MentorShortDto;
+import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
+import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
 import com.bgitu.mentor.mentor.service.MentorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +34,7 @@ public class MentorController {
     )
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping()
-    public ResponseEntity<Page<MentorShortDto>>  getAllMentorsShort(
+    public ResponseEntity<Page<MentorSummaryResponseDto>>  getAllMentorsShort(
             @RequestParam(required = false) Long specialityId,
             @RequestParam(required = false) String query,
             Pageable pageable) {
@@ -44,7 +44,7 @@ public class MentorController {
     @Operation(summary = "Получение полной карточки ментора", description = "Доступно для ролей STUDENT и MENTOR. Возвращает полную информацию по ментору по id.")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/{id}")
-    public ResponseEntity<CardMentorDto> getMentorDetails(@PathVariable Long id) {
+    public ResponseEntity<MentorDetailsResponseDto> getMentorDetails(@PathVariable Long id) {
         return ResponseEntity.ok( mentorService.getPublicCardById(id));
     }
 

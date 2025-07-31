@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MentorShortDto {
+public class MentorSummaryResponseDto {
     private Long id;
     private String firstName;
     private String lastName;
@@ -15,7 +15,7 @@ public class MentorShortDto {
     private Integer rank;
     private String shortDescription;
 
-    public MentorShortDto(Mentor mentor) {
+    public MentorSummaryResponseDto(Mentor mentor) {
         this.id = mentor.getId();
         this.firstName = mentor.getFirstName();
         this.lastName = mentor.getLastName();

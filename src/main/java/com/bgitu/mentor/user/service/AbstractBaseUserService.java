@@ -4,7 +4,7 @@ package com.bgitu.mentor.user.service;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
-import com.bgitu.mentor.user.dto.UpdateBaseUserCardDto;
+import com.bgitu.mentor.user.dto.BaseUserUpdateRequestDto;
 import com.bgitu.mentor.user.model.BaseUser;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -52,7 +52,7 @@ public abstract class AbstractBaseUserService<
         return repository.save(user);
     }
 
-    protected void updateCardInternal(T user, UpdateBaseUserCardDto dto, MultipartFile avatarFile) {
+    protected void updateCardInternal(T user, BaseUserUpdateRequestDto dto, MultipartFile avatarFile) {
         if (dto.getFirstName() != null) user.setFirstName(dto.getFirstName());
         if (dto.getLastName() != null) user.setLastName(dto.getLastName());
         if (dto.getDescription() != null) user.setDescription(dto.getDescription());

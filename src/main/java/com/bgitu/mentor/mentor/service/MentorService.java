@@ -3,10 +3,10 @@ package com.bgitu.mentor.mentor.service;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
-import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
-import com.bgitu.mentor.mentor.data.dto.MentorShortDto;
-import com.bgitu.mentor.mentor.data.dto.UpdateMentorCardDto;
-import com.bgitu.mentor.student.dto.StudentCardDto;
+import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
+import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
+import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
+import com.bgitu.mentor.student.dto.StudentDetailsResponseDto;
 
 
 import org.springframework.data.domain.Page;
@@ -19,17 +19,17 @@ public interface MentorService {
 
     //Методы для профиля
     PersonalInfoDto updateProfile(Long mentorId, UpdatePersonalInfo dto);
-    CardMentorDto updateCard(Long mentorId, UpdateMentorCardDto dto, MultipartFile avatarFile);
+    MentorDetailsResponseDto updateCard(Long mentorId, MentorUpdateRequestDto dto, MultipartFile avatarFile);
     void terminateMentorshipWithStudent(Long mentorId, Long studentId);
     List<ArticleSummaryResponseDto> getMentorArticles(Long mentorId);
     PersonalInfoDto getPersonalInfo(Long mentorId);
 
     //Для взаимодействия
     void voteMentor(Long mentorId, boolean upvote, Long userId);
-    List<StudentCardDto> getAllStudentsForMentor(Long mentorId);
+    List<StudentDetailsResponseDto> getAllStudentsForMentor(Long mentorId);
 
     //Для публичного каталога
-    CardMentorDto getPublicCardById(Long id);
-    Page<MentorShortDto> findMentors(Long specialityId, String query, Pageable pageable);
+    MentorDetailsResponseDto getPublicCardById(Long id);
+    Page<MentorSummaryResponseDto> findMentors(Long specialityId, String query, Pageable pageable);
 
 }

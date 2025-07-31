@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ApplicationResponseDto {
+public class ApplicationDetailsResponseDto {
 
     Long id;
 
@@ -20,7 +20,7 @@ public class ApplicationResponseDto {
 
     StudentPreviewDto student;
 
-    public ApplicationResponseDto(Application application) {
+    public ApplicationDetailsResponseDto(Application application) {
         this.id = application.getId();
         this.message = application.getMessage();
         this.status = application.getStatus();

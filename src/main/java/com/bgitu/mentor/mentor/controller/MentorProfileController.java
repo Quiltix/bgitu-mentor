@@ -5,10 +5,10 @@ import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
-import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
-import com.bgitu.mentor.mentor.data.dto.UpdateMentorCardDto;
+import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
+import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
 import com.bgitu.mentor.mentor.service.MentorService;
-import com.bgitu.mentor.student.dto.StudentCardDto;
+import com.bgitu.mentor.student.dto.StudentDetailsResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,7 +32,7 @@ public class MentorProfileController {
     @Operation(summary = "Получение карточки ментора", description = "Доступно только для роли MENTOR. Возвращает полную информацию по текущему пользователю.")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping()
-    public ResponseEntity<CardMentorDto> getCardMentor(Authentication authentication) {
+    public ResponseEntity<MentorDetailsResponseDto> getCardMentor(Authentication authentication) {
         Long mentorId = SecurityUtils.getCurrentUserId(authentication);
         return ResponseEntity.ok(mentorService.getPublicCardById(mentorId));
     }
@@ -40,9 +40,9 @@ public class MentorProfileController {
     @Operation(summary = "Обновление карточки ментора", description = "Доступно только для роли MENTOR. Позволяет редактировать описание, направление и аватар.")
     @PreAuthorize("hasRole('MENTOR')")
     @PatchMapping(consumes = "multipart/form-data")
-    public ResponseEntity<CardMentorDto> updateMentorCard(
+    public ResponseEntity<MentorDetailsResponseDto> updateMentorCard(
             Authentication authentication,
-            @RequestPart("card") UpdateMentorCardDto dto,
+            @RequestPart("card") MentorUpdateRequestDto dto,
             @RequestPart(value = "avatar", required = false) MultipartFile avatarFile
     ) {
 
@@ -83,7 +83,7 @@ public class MentorProfileController {
     @Operation(summary = "Получение всех студентов ментора", description = "Доступно для роли MENTOR")
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/students")
-    public List<StudentCardDto> getStudents(Authentication authentication) {
+    public List<StudentDetailsResponseDto> getStudents(Authentication authentication) {
         Long mentorId = SecurityUtils.getCurrentUserId(authentication);
         return mentorService.getAllStudentsForMentor(mentorId);
     }

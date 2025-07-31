@@ -9,7 +9,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class CardMentorDto {
+public class MentorDetailsResponseDto {
     private Long id;
     private String firstName;
     private String lastName;
@@ -20,7 +20,7 @@ public class CardMentorDto {
     private String speciality;
     Integer rank;
 
-    public CardMentorDto(Mentor mentor) {
+    public MentorDetailsResponseDto(Mentor mentor) {
         this.id = mentor.getId();
         this.firstName = mentor.getFirstName();
         this.lastName = mentor.getLastName();

@@ -1,17 +1,17 @@
 package com.bgitu.mentor.mentorship.service;
 
-import com.bgitu.mentor.mentorship.dto.UpdateApplicationStatusDto;
-import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;
-import com.bgitu.mentor.mentorship.dto.MentorshipRequestDto;
+import com.bgitu.mentor.mentorship.dto.ApplicationDecisionRequestDto;
+import com.bgitu.mentor.mentorship.dto.ApplicationDetailsResponseDto;
+import com.bgitu.mentor.mentorship.dto.ApplicationCreateRequestDto;
 import com.bgitu.mentor.mentorship.model.ApplicationStatus;
 
 import java.util.List;
 
 public interface MentorshipService {
 
-    ApplicationResponseDto createApplication(Long studentId, MentorshipRequestDto dto);
+    ApplicationDetailsResponseDto createApplication(Long studentId, ApplicationCreateRequestDto dto);
 
-    void updateApplicationStatus(Long mentorId, Long applicationId, UpdateApplicationStatusDto dto);
+    void updateApplicationStatus(Long mentorId, Long applicationId, ApplicationDecisionRequestDto dto);
 
-    List<ApplicationResponseDto> getApplicationsForMentor(Long mentorId, ApplicationStatus status);
+    List<ApplicationDetailsResponseDto> getApplicationsForMentor(Long mentorId, ApplicationStatus status);
 }

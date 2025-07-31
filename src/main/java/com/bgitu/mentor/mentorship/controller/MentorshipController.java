@@ -2,9 +2,9 @@ package com.bgitu.mentor.mentorship.controller;
 
 
 import com.bgitu.mentor.common.SecurityUtils;
-import com.bgitu.mentor.mentorship.dto.UpdateApplicationStatusDto;
-import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;
-import com.bgitu.mentor.mentorship.dto.MentorshipRequestDto;
+import com.bgitu.mentor.mentorship.dto.ApplicationDecisionRequestDto;
+import com.bgitu.mentor.mentorship.dto.ApplicationDetailsResponseDto;
+import com.bgitu.mentor.mentorship.dto.ApplicationCreateRequestDto;
 import com.bgitu.mentor.mentorship.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.service.MentorshipService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,9 +31,9 @@ public class MentorshipController {
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping()
     @Operation(summary = "Отправить заявку на менторство", description = "Позволяет студенту отправить заявку выбранному ментору")
-    public ResponseEntity<ApplicationResponseDto> requestMentorship(Authentication authentication, @RequestBody @Valid MentorshipRequestDto dto) {
+    public ResponseEntity<ApplicationDetailsResponseDto> requestMentorship(Authentication authentication, @RequestBody @Valid ApplicationCreateRequestDto dto) {
         Long studentId = SecurityUtils.getCurrentUserId(authentication);
-        ApplicationResponseDto responseDto =  mentorshipService.createApplication(studentId, dto);
+        ApplicationDetailsResponseDto responseDto =  mentorshipService.createApplication(studentId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
@@ -43,7 +43,7 @@ public class MentorshipController {
     public ResponseEntity<Void> respondToApplication(
             Authentication authentication,
             @PathVariable Long applicationId,
-            @RequestBody @Valid UpdateApplicationStatusDto dto) {
+            @RequestBody @Valid ApplicationDecisionRequestDto dto) {
         Long mentorId = SecurityUtils.getCurrentUserId(authentication);
         mentorshipService.updateApplicationStatus(mentorId, applicationId, dto);
         return ResponseEntity.ok().build();
@@ -53,7 +53,7 @@ public class MentorshipController {
     @PreAuthorize("hasRole('MENTOR')")
     @GetMapping
     @Operation(summary = "Получить входящие заявки ментора", description = "Возвращает список заявок, направленных текущему ментору")
-    public ResponseEntity<List<ApplicationResponseDto>> getMentorApplications(
+    public ResponseEntity<List<ApplicationDetailsResponseDto>> getMentorApplications(
             Authentication authentication,
             @RequestParam(required = false) ApplicationStatus status) {
         Long mentorId = SecurityUtils.getCurrentUserId(authentication);

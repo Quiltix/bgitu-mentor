@@ -7,14 +7,14 @@ import com.bgitu.mentor.common.dto.PersonalInfoDto;
 import com.bgitu.mentor.common.dto.UpdatePersonalInfo;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.MentorSpecifications;
-import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
-import com.bgitu.mentor.mentor.data.dto.MentorShortDto;
-import com.bgitu.mentor.mentor.data.dto.UpdateMentorCardDto;
+import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
+import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
+import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.model.Speciality;
 import com.bgitu.mentor.mentor.data.repository.MentorRepository;
 import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
-import com.bgitu.mentor.student.dto.StudentCardDto;
+import com.bgitu.mentor.student.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.model.Student;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
 import com.bgitu.mentor.user.service.UserFinder;
@@ -66,7 +66,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
 
     @Override
-    public CardMentorDto updateCard(Long mentorId, UpdateMentorCardDto dto, MultipartFile avatarFile) {
+    public MentorDetailsResponseDto updateCard(Long mentorId, MentorUpdateRequestDto dto, MultipartFile avatarFile) {
 
         Mentor mentor = userFinder.findMentorById(mentorId);
 
@@ -78,11 +78,11 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
             mentor.setSpeciality(speciality);
         }
 
-        return new CardMentorDto(repository.save(mentor));
+        return new MentorDetailsResponseDto(repository.save(mentor));
     }
 
     @Override
-    public Page<MentorShortDto> findMentors(Long specialityId, String query, Pageable pageable) {
+    public Page<MentorSummaryResponseDto> findMentors(Long specialityId, String query, Pageable pageable) {
 
         Specification<Mentor> specification = Specification.not(null);
 
@@ -99,15 +99,15 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
         Page<Mentor> mentorPage = repository.findAll(specification, pageable);
 
-        return mentorPage.map(MentorShortDto::new);
+        return mentorPage.map(MentorSummaryResponseDto::new);
     }
 
 
     @Override
-    public CardMentorDto getPublicCardById(Long id) {
+    public MentorDetailsResponseDto getPublicCardById(Long id) {
         Mentor mentor = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
-        return new CardMentorDto(mentor);
+        return new MentorDetailsResponseDto(mentor);
     }
 
 
@@ -137,11 +137,11 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
     }
 
     @Override
-    public List<StudentCardDto> getAllStudentsForMentor(Long mentorId) {
+    public List<StudentDetailsResponseDto> getAllStudentsForMentor(Long mentorId) {
         Mentor mentor = userFinder.findMentorById(mentorId);
 
         return mentor.getStudents().stream()
-                .map(StudentCardDto::new)
+                .map(StudentDetailsResponseDto::new)
                 .toList();
     }
 
