@@ -38,7 +38,6 @@ import java.util.List;
 @Service
 public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRepository> implements MentorService {
 
-    // Специфичные зависимости для ментора
     private final SpecialityRepository specialityRepository;
     private final VotingService votingService;
     private final MentorVoteHandler mentorVoteHandler;

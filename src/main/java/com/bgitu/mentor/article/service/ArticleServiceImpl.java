@@ -5,7 +5,6 @@ import com.bgitu.mentor.article.data.dto.ArticleCreateDto;
 import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.article.data.model.Article;
-import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.article.data.repository.ArticleRepository;
 import com.bgitu.mentor.vote.data.repository.ArticleVoteRepository;
 import com.bgitu.mentor.common.service.FileStorageService;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,8 +37,8 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleVoteHandler articleVoteHandler;
 
     @Override
-    public ArticleResponseDto createArticle(Authentication auth, ArticleCreateDto dto, MultipartFile image) {
-        Mentor author = mentorServiceImpl.getByAuth(auth);
+    public ArticleResponseDto createArticle(Long authorId, ArticleCreateDto dto, MultipartFile image) {
+        Mentor author = mentorServiceImpl.findById(authorId);
         Speciality speciality = specialityRepository.findById(dto.getSpecialityId())
                 .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
 
@@ -69,11 +67,11 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void deleteArticle(Long articleId, Authentication authentication) {
+    public void deleteArticle(Long articleId,Long userId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException(ARTICLE_NOT_FOUND_TEXT));
 
-        Mentor currentMentor = mentorServiceImpl.getByAuth(authentication);
+        Mentor currentMentor = mentorServiceImpl.findById(userId);
 
         if (!article.getAuthor().getId().equals(currentMentor.getId())) {
             throw new AccessDeniedException("Вы можете удалять только свои статьи");
@@ -84,9 +82,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void changeArticleRank(Long articleId, boolean like, Authentication auth) {
+    public void changeArticleRank(Long articleId, boolean like, Long userId) {
 
-        Long userId = SecurityUtils.getCurrentUserId(auth);
         votingService.vote(articleId, userId, like, articleVoteHandler);
     }
 

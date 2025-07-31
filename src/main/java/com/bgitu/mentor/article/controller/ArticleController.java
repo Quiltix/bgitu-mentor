@@ -4,6 +4,7 @@ import com.bgitu.mentor.article.data.dto.ArticleCreateDto;
 import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.article.service.ArticleService;
+import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +35,8 @@ public class ArticleController {
             @RequestPart("data")  @Valid ArticleCreateDto dto,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
-        return ResponseEntity.ok(articleService.createArticle(auth, dto, image));
+        Long authorId = SecurityUtils.getCurrentUserId(auth);
+        return ResponseEntity.ok(articleService.createArticle(authorId, dto, image));
     }
 
 
@@ -68,7 +70,9 @@ public class ArticleController {
     @PreAuthorize("hasRole('MENTOR')")
     @Operation(summary = "Удалить статью", description = "Удаляет статью, если вы её автор")
     public ResponseEntity<MessageDto> deleteArticle(@PathVariable Long id, Authentication authentication) {
-        articleService.deleteArticle(id, authentication);
+        Long userId = SecurityUtils.getCurrentUserId(authentication);
+
+        articleService.deleteArticle(id, userId);
         return ResponseEntity.ok(new MessageDto("Статья удалена"));
     }
 
@@ -80,7 +84,8 @@ public class ArticleController {
             @RequestParam boolean like,
             Authentication authentication
     ) {
-        articleService.changeArticleRank(id, like,authentication);
+        Long userId = SecurityUtils.getCurrentUserId(authentication);
+        articleService.changeArticleRank(id, like, userId);
         return ResponseEntity.ok(new MessageDto(like ? "Статья лайкнута" : "Статья дизлайкнута"));
     }
 
