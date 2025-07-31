@@ -3,7 +3,6 @@ package com.bgitu.mentor.mentorship.service;
 
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.data.model.Mentor;
-import com.bgitu.mentor.mentor.service.MentorService;
 import com.bgitu.mentor.mentorship.dto.UpdateApplicationStatusDto;
 import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;
 import com.bgitu.mentor.mentorship.dto.MentorshipRequestDto;
@@ -11,9 +10,8 @@ import com.bgitu.mentor.mentorship.model.Application;
 import com.bgitu.mentor.mentorship.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.repository.ApplicationRepository;
 import com.bgitu.mentor.student.model.Student;
-import com.bgitu.mentor.student.service.StudentService;
+import com.bgitu.mentor.user.service.UserFinder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +23,14 @@ public class MentorshipServiceImpl implements MentorshipService {
 
 
     private final ApplicationRepository applicationRepository;
-    private final StudentService studentService;
-    private final MentorService mentorService;
+    private final UserFinder userFinder;
 
     @Override
     @Transactional
-    public ApplicationResponseDto createApplication(Authentication authentication, MentorshipRequestDto dto) {
-        Student student = studentService.getByAuth(authentication);
+    public ApplicationResponseDto createApplication(Long studentId, MentorshipRequestDto dto) {
+        Student student = userFinder.findStudentById(studentId);
 
-        Mentor mentor = mentorService.findById(dto.getMentorId());
+        Mentor mentor = userFinder.findMentorById(dto.getMentorId());
 
         if (student.getMentor() != null) {
             throw new IllegalStateException("У вас уже есть ментор. Сначала прекратите текущее менторство.");
@@ -54,8 +51,8 @@ public class MentorshipServiceImpl implements MentorshipService {
 
     @Override
     @Transactional
-    public void updateApplicationStatus(Authentication authentication, Long applicationId, UpdateApplicationStatusDto dto) {
-        Mentor mentor = mentorService.getByAuth(authentication);
+    public void updateApplicationStatus(Long mentorId, Long applicationId, UpdateApplicationStatusDto dto) {
+        Mentor mentor = userFinder.findMentorById(mentorId);
         Application app = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Эта заявка не найдена"));
 
@@ -90,8 +87,8 @@ public class MentorshipServiceImpl implements MentorshipService {
     }
 
     @Override
-    public List<ApplicationResponseDto> getApplicationsForMentor(Authentication authentication, ApplicationStatus status) {
-        Mentor mentor = mentorService.getByAuth(authentication);
+    public List<ApplicationResponseDto> getApplicationsForMentor(Long mentorId, ApplicationStatus status) {
+        Mentor mentor = userFinder.findMentorById(mentorId);
 
         List<Application> applications = (status != null)
                 ? applicationRepository.findAllByMentorAndStatus(mentor, status)

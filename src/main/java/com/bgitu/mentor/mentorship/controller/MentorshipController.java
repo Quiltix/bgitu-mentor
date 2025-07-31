@@ -1,6 +1,7 @@
 package com.bgitu.mentor.mentorship.controller;
 
 
+import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.mentorship.dto.UpdateApplicationStatusDto;
 import com.bgitu.mentor.mentorship.dto.ApplicationResponseDto;
 import com.bgitu.mentor.mentorship.dto.MentorshipRequestDto;
@@ -31,7 +32,8 @@ public class MentorshipController {
     @PostMapping()
     @Operation(summary = "Отправить заявку на менторство", description = "Позволяет студенту отправить заявку выбранному ментору")
     public ResponseEntity<ApplicationResponseDto> requestMentorship(Authentication authentication, @RequestBody @Valid MentorshipRequestDto dto) {
-        ApplicationResponseDto responseDto =  mentorshipService.createApplication(authentication,dto);
+        Long studentId = SecurityUtils.getCurrentUserId(authentication);
+        ApplicationResponseDto responseDto =  mentorshipService.createApplication(studentId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
@@ -42,8 +44,9 @@ public class MentorshipController {
             Authentication authentication,
             @PathVariable Long applicationId,
             @RequestBody @Valid UpdateApplicationStatusDto dto) {
-        mentorshipService.updateApplicationStatus(authentication, applicationId, dto);
-        return ResponseEntity.noContent().build();
+        Long mentorId = SecurityUtils.getCurrentUserId(authentication);
+        mentorshipService.updateApplicationStatus(mentorId, applicationId, dto);
+        return ResponseEntity.ok().build();
     }
 
 
@@ -53,6 +56,7 @@ public class MentorshipController {
     public ResponseEntity<List<ApplicationResponseDto>> getMentorApplications(
             Authentication authentication,
             @RequestParam(required = false) ApplicationStatus status) {
-        return ResponseEntity.ok(mentorshipService.getApplicationsForMentor(authentication, status));
+        Long mentorId = SecurityUtils.getCurrentUserId(authentication);
+        return ResponseEntity.ok(mentorshipService.getApplicationsForMentor(mentorId, status));
     }
 }
