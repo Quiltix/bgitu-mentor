@@ -26,7 +26,7 @@ public interface MentorService {
     Page<MentorShortDto> findMentors(Long specialityId, String query, Pageable pageable);
 
     CardMentorDto getById(Long id);
-    void voteMentor(Long mentorId, boolean upvote, Authentication auth);
+    void voteMentor(Long mentorId, boolean upvote, Long userId);
     List<ArticleShortDto> getMentorArticles(Authentication authentication);
     List<StudentCardDto> getAllStudentsForMentor(Authentication authentication);
     void terminateMentorshipWithStudent(Authentication authentication, Long studentId);

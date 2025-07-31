@@ -3,7 +3,6 @@ package com.bgitu.mentor.mentor.service;
 
 import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.article.data.model.Article;
-import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.MentorSpecifications;
@@ -104,8 +103,7 @@ public class MentorServiceImpl extends AbstractBaseUserService<Mentor, MentorRep
 
     @Override
     @Transactional
-    public void voteMentor(Long mentorId, boolean upvote, Authentication auth) {
-        Long userId = SecurityUtils.getCurrentUserId(auth);
+    public void voteMentor(Long mentorId, boolean upvote, Long userId) {
         votingService.vote(mentorId, userId, upvote, mentorVoteHandler);
     }
 

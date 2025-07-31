@@ -12,7 +12,6 @@ import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.model.Speciality;
 import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
-import com.bgitu.mentor.mentor.service.MentorService;
 import com.bgitu.mentor.vote.service.ArticleVoteHandler;
 import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;

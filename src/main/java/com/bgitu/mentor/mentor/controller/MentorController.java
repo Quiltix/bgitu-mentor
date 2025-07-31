@@ -1,5 +1,6 @@
 package com.bgitu.mentor.mentor.controller;
 
+import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.MessageDto;
 import com.bgitu.mentor.mentor.data.dto.CardMentorDto;
 import com.bgitu.mentor.mentor.data.dto.MentorShortDto;
@@ -56,7 +57,8 @@ public class MentorController {
             @RequestParam boolean upvote,
             Authentication authentication
     ) {
-        mentorService.voteMentor(id, upvote, authentication);
+        Long userId = SecurityUtils.getCurrentUserId(authentication);
+        mentorService.voteMentor(id, upvote, userId);
         return ResponseEntity.ok(new MessageDto("Голос учтен"));
     }
 
