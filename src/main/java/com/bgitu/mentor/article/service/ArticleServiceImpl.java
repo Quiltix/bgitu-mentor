@@ -6,6 +6,7 @@ import com.bgitu.mentor.article.data.dto.ArticleResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleShortDto;
 import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.article.data.repository.ArticleRepository;
+import com.bgitu.mentor.user.service.UserFinder;
 import com.bgitu.mentor.vote.data.repository.ArticleVoteRepository;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.model.Mentor;
@@ -29,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ArticleServiceImpl implements ArticleService {
     private static final String ARTICLE_NOT_FOUND_TEXT = "Статья не найдена";
     private final ArticleRepository articleRepository;
-    private final MentorService mentorServiceImpl;
+    private final UserFinder userFinder;
     private final SpecialityRepository specialityRepository;
     private final FileStorageService fileStorageService;
     private final ArticleVoteRepository articleVoteRepository;
@@ -38,7 +39,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public ArticleResponseDto createArticle(Long authorId, ArticleCreateDto dto, MultipartFile image) {
-        Mentor author = mentorServiceImpl.findById(authorId);
+        Mentor author = userFinder.findMentorById(authorId);
         Speciality speciality = specialityRepository.findById(dto.getSpecialityId())
                 .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
 
@@ -71,7 +72,7 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException(ARTICLE_NOT_FOUND_TEXT));
 
-        Mentor currentMentor = mentorServiceImpl.findById(userId);
+        Mentor currentMentor = userFinder.findMentorById(userId);
 
         if (!article.getAuthor().getId().equals(currentMentor.getId())) {
             throw new AccessDeniedException("Вы можете удалять только свои статьи");
