@@ -1,5 +1,6 @@
 package com.bgitu.mentor.article.service;
 
+import com.bgitu.mentor.article.data.ArticleMapper;
 import com.bgitu.mentor.article.data.ArticleSpecifications;
 import com.bgitu.mentor.article.data.dto.ArticleCreateRequestDto;
 import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
@@ -27,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
-    private static final String ARTICLE_NOT_FOUND_TEXT = "Статья не найдена";
     private final ArticleRepository articleRepository;
     private final UserFinder userFinder;
     private final SpecialityRepository specialityRepository;
@@ -35,6 +35,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleVoteRepository articleVoteRepository;
     private final VotingService votingService;
     private final ArticleVoteHandler articleVoteHandler;
+    private final ArticleMapper articleMapper;
 
     @Override
     public ArticleDetailsResponseDto createArticle(Long authorId, ArticleCreateRequestDto dto, MultipartFile image) {
@@ -55,21 +56,18 @@ public class ArticleServiceImpl implements ArticleService {
             article.setImageUrl(publicUrl);
         }
 
-        Article saved = articleRepository.save(article);
-        return new ArticleDetailsResponseDto(saved);
+        return articleMapper.toDetailsDto(articleRepository.save(article));
     }
 
     @Override
     public ArticleDetailsResponseDto getById(Long id) {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(ARTICLE_NOT_FOUND_TEXT));
-        return new ArticleDetailsResponseDto(article);
+        Article article = findById(id);
+        return articleMapper.toDetailsDto(article);
     }
 
     @Override
     public void deleteArticle(Long articleId,Long userId) {
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException(ARTICLE_NOT_FOUND_TEXT));
+        Article article = findById(articleId);
 
         Mentor currentMentor = userFinder.findMentorById(userId);
 
@@ -104,7 +102,12 @@ public class ArticleServiceImpl implements ArticleService {
         }
         Page<Article> articlePages = articleRepository.findAll(specification, pageable);
 
-        return articlePages.map(ArticleSummaryResponseDto::new);
+        return articlePages.map(articleMapper::toSummaryDto);
+    }
+
+    private Article findById(Long articleId){
+        return articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException("Статья не найдена"));
     }
 
 }
