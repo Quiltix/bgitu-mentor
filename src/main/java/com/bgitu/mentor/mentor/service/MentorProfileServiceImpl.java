@@ -6,6 +6,7 @@ import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
 import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.common.service.FileStorageService;
+import com.bgitu.mentor.mentor.data.MentorMapper;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
@@ -34,16 +35,19 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
     private final SpecialityRepository specialityRepository;
     private final UserFinder userFinder;
     private final MentorshipLifecycleService mentorshipLifecycleService;
+    private final MentorMapper mentorMapper;
     public MentorProfileServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
                                     FileStorageService fileStorageService,
                                     SpecialityRepository specialityRepository,
                                     UserService userService, UserFinder userFinder,
-                                    MentorshipLifecycleService mentorshipLifecycleService) {
+                                    MentorshipLifecycleService mentorshipLifecycleService,
+                                    MentorMapper mentorMapper) {
         super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", userService);
 
         this.specialityRepository = specialityRepository;
         this.userFinder = userFinder;
         this.mentorshipLifecycleService = mentorshipLifecycleService;
+        this.mentorMapper = mentorMapper;
     }
 
 
@@ -52,7 +56,7 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
 
         Mentor updatedMentor = super.updateProfileInternal(mentorId, dto);
 
-        return new UserCredentialsResponseDto(updatedMentor);
+        return mentorMapper.toCredentialsDto(updatedMentor);
     }
 
 
@@ -70,7 +74,7 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
             mentor.setSpeciality(speciality);
         }
 
-        return new MentorDetailsResponseDto(repository.save(mentor));
+        return mentorMapper.toDetailsDto(repository.save(mentor));
     }
 
 
@@ -81,7 +85,7 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
         Mentor mentor = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
 
-        return new MentorDetailsResponseDto(mentor);
+        return mentorMapper.toDetailsDto(mentor);
     }
 
 
@@ -101,7 +105,7 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
     public UserCredentialsResponseDto getPersonalInfo(Long mentorId) {
         Mentor mentor = userFinder.findMentorById(mentorId);
 
-        return new UserCredentialsResponseDto(mentor);
+        return mentorMapper.toCredentialsDto(mentor);
     }
 
     @Override
