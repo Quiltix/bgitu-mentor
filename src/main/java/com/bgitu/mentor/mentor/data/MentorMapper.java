@@ -4,7 +4,6 @@ import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
-import com.bgitu.mentor.mentor.data.model.Speciality;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -17,17 +16,12 @@ public interface MentorMapper {
     MentorDetailsResponseDto toDetailsDto(Mentor mentor);
 
     @Mapping(source = "description", target = "shortDescription", qualifiedByName = "trimDescription")
-    @Mapping(source = "speciality.name", target = "specialityName",qualifiedByName = "specialityToName")
+    @Mapping(source = "speciality.name", target = "specialityName")
     MentorSummaryResponseDto toSummaryDto(Mentor mentor);
 
 
     UserCredentialsResponseDto toCredentialsDto(Mentor mentor);
 
-    @Named("specialityToName")
-    default String specialityToName(Speciality speciality) {
-        // Проверяем на null прямо здесь
-        return (speciality != null) ? speciality.getName() : null;
-    }
 
     @Named("trimDescription")
     default String trimDescription(String description) {
