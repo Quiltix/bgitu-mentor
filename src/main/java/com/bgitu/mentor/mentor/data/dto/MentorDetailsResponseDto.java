@@ -19,16 +19,4 @@ public class MentorDetailsResponseDto {
     private String telegramUrl;
     private String speciality;
     Integer rank;
-
-    public MentorDetailsResponseDto(Mentor mentor) {
-        this.id = mentor.getId();
-        this.firstName = mentor.getFirstName();
-        this.lastName = mentor.getLastName();
-        this.description = mentor.getDescription();
-        this.avatarUrl = mentor.getAvatarUrl();
-        this.vkUrl = mentor.getVkUrl();
-        this.telegramUrl = mentor.getTelegramUrl();
-        this.speciality = mentor.getSpeciality() != null ? mentor.getSpeciality().getName() : null;
-        this.rank = mentor.getRank();
-    }
 }

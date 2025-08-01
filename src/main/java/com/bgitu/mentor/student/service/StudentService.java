@@ -14,10 +14,10 @@ import java.util.List;
 public interface StudentService {
     UserCredentialsResponseDto updateProfile(Long studentId, UserCredentialsUpdateRequestDto dto);
     StudentDetailsResponseDto updateCard(Long studentId, StudentDetailsUpdateRequestDto dto, MultipartFile avatarFile);
-    MentorDetailsResponseDto getMentorOfStudent(Long studentId);
-    List<ApplicationOfStudentResponseDto> getStudentApplications(Long studentId);
     void terminateCurrentMentorship(Long studentId);
 
+    List<ApplicationOfStudentResponseDto> getStudentApplications(Long studentId);
+    MentorDetailsResponseDto getMentorOfStudent(Long studentId);
     StudentDetailsResponseDto getPublicCardById(Long studentId);
     UserCredentialsResponseDto getPersonalInfo(Long studentId);
 }

@@ -1,6 +1,7 @@
 package com.bgitu.mentor.mentor.service;
 
 
+import com.bgitu.mentor.mentor.data.MentorMapper;
 import com.bgitu.mentor.mentor.data.MentorSpecifications;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
@@ -23,6 +24,7 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService{
     private final MentorRepository mentorRepository;
     private final VotingService votingService;
     private final MentorVoteHandler mentorVoteHandler;
+    private final MentorMapper mentorMapper;
 
     @Override
     public Page<MentorSummaryResponseDto> findMentors(Long specialityId, String query, Pageable pageable) {
@@ -42,7 +44,7 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService{
 
         Page<Mentor> mentorPage = mentorRepository.findAll(specification, pageable);
 
-        return mentorPage.map(MentorSummaryResponseDto::new);
+        return mentorPage.map(mentorMapper::toSummaryDto);
     }
 
     @Override
@@ -50,7 +52,7 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService{
         Mentor mentor = mentorRepository.findById(mentorId)
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
 
-        return new MentorDetailsResponseDto(mentor);
+        return mentorMapper.toDetailsDto(mentor);
     }
 
     @Override

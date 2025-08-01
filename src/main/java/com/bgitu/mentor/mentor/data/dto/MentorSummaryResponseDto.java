@@ -11,22 +11,9 @@ public class MentorSummaryResponseDto {
     private String firstName;
     private String lastName;
     private String avatarUrl;
-    private String speciality;
+    private String specialityName;
     private Integer rank;
     private String shortDescription;
 
-    public MentorSummaryResponseDto(Mentor mentor) {
-        this.id = mentor.getId();
-        this.firstName = mentor.getFirstName();
-        this.lastName = mentor.getLastName();
-        this.avatarUrl = mentor.getAvatarUrl();
-        this.speciality = mentor.getSpeciality() != null ? mentor.getSpeciality().getName() : null;
-        this.rank = mentor.getRank();
-        this.shortDescription = trimDescription(mentor.getDescription());
-    }
 
-    private String trimDescription(String description) {
-        if (description == null) return null;
-        return description.length() > 100 ? description.substring(0, 97) + "..." : description;
-    }
 }
