@@ -24,8 +24,7 @@ public class JwtTokenProvider {
         this.jwtSecret = Keys.hmacShaKeyFor(secret.getBytes());
 
     }
-    // --- ИЗМЕНЕНО ---
-    // Метод теперь принимает Long id вместо String email
+
     public String generateToken(Long userId, Role role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);

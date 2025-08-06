@@ -1,0 +1,17 @@
+package com.bgitu.mentor.student.data;
+
+
+import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
+import com.bgitu.mentor.student.data.model.Student;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface StudentMapper {
+
+    StudentDetailsResponseDto toDetailsDto(Student student);
+
+
+
+
+
+}

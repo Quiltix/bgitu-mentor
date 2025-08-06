@@ -15,10 +15,6 @@ public class UserCredentialsResponseDto {
 
 
 
-    public UserCredentialsResponseDto(Mentor mentor) {
-        this.email = mentor.getEmail();
-
-    }
     public UserCredentialsResponseDto(Student student) {
         this.email = student.getEmail();
 

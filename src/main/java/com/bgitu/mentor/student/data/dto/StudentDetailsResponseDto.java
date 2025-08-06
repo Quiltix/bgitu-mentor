@@ -23,14 +23,4 @@ public class StudentDetailsResponseDto {
 
     private String vkUrl;
     private String telegramUrl;
-
-    public StudentDetailsResponseDto(Student student) {
-        this.id = student.getId();
-        this.firstName = student.getFirstName();
-        this.lastName = student.getLastName();
-        this.description = student.getDescription();
-        this.avatarUrl = student.getAvatarUrl();
-        this.vkUrl = student.getVkUrl();
-        this.telegramUrl = student.getTelegramUrl();
-    }
 }

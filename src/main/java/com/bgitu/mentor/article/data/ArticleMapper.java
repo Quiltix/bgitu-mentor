@@ -9,6 +9,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface ArticleMapper {
 
@@ -23,6 +25,7 @@ public interface ArticleMapper {
     @Mapping(source = "author", target = "authorFullName", qualifiedByName = "authorToFullName")
     ArticleSummaryResponseDto toSummaryDto(Article article);
 
+    List<ArticleSummaryResponseDto> toSummaryDtoList(List<Article> articles);
 
     default ArticleDetailsResponseDto toDetailsDto(Article article) {
         return toDetailsDto(article, null);
@@ -39,6 +42,7 @@ public interface ArticleMapper {
         return null;
 
     }
+
 
 
     @Named("authorToFullName")
