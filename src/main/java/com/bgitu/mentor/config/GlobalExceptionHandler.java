@@ -2,8 +2,7 @@ package com.bgitu.mentor.config;
 
 
 
-import com.bgitu.mentor.common.dto.MessageDto;
-import com.bgitu.mentor.common.exception.FileStorageException;
+import com.bgitu.mentor.common.dto.ErrorResponseDto;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,7 +13,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,98 +21,79 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<MessageDto> handleValidationExceptions(MethodArgumentNotValidException ex){
-        log.error("MethodArgumentNotValidException:{}", String.valueOf(ex));
-        return ResponseEntity.badRequest().body(new MessageDto(Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage()));
-    }
+    // --- 400 Bad Request: Ошибки, связанные с некорректными данными от клиента ---
+    @ExceptionHandler({
+            MethodArgumentNotValidException.class,
+            HttpMessageNotReadableException.class,
+            IllegalArgumentException.class,
+            IllegalStateException.class,
+            BadCredentialsException.class
+    })
+    public ResponseEntity<ErrorResponseDto> handleClientInputExceptions(Exception ex, WebRequest request) {
+        log.warn("Client Error (400 Bad Request): {}", ex.getMessage());
 
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<MessageDto> handleUserNotFoundExceptions(UsernameNotFoundException ex){
-        log.error("UsernameNotFoundException:{}",ex);
-        return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<MessageDto> handleAccessDeniedExceptions(AccessDeniedException ex){
-        log.error("AccessDeniedException:{}", String.valueOf(ex));
-        return ResponseEntity.status(401).body(new MessageDto(ex.getMessage()));
-    }
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<MessageDto> handleEntityNotFoundExceptions(EntityNotFoundException ex){
-        log.error("Entity not found exception:{}", String.valueOf(ex));
-        return ResponseEntity.status(400).body(new MessageDto(ex.getMessage()));
-    }
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<MessageDto> handleIllegalArgumentExceptionExceptions(IllegalArgumentException ex){
-        log.error("IllegalArgumentExceptionExceptions:{}", ex.getMessage());
-        return ResponseEntity.status(400).body(new MessageDto(ex.getMessage()));
-    }
-
-    @ExceptionHandler(EntityExistsException.class)
-    public ResponseEntity<MessageDto> handleEntityExistsExceptionExceptions(EntityExistsException ex){
-        log.error("EntityExistsException:{}", ex.getMessage());
-        return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
-
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<MessageDto> handleBadCredentialsExceptionExceptions(BadCredentialsException ex){
-        log.error("BadCredentialsExceptionExceptions:{}", String.valueOf(ex));
-        return ResponseEntity.status(400).body(new MessageDto(ex.getMessage()));
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<MessageDto> handleAllExceptions(Exception ex) {
-        log.error("Unhandled exception occurred: ", ex);
-        return ResponseEntity.status(500).body(new MessageDto("Ошибка сервера" + ex.getMessage()));
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, String>> handleJsonParseException(HttpMessageNotReadableException ex) {
-        Map<String, String> errorResponse = new HashMap<>();
-        if (ex.getMessage().contains("Role")) {
-            errorResponse.put("error", "Роль должна быть корректной");
-        } else {
-            errorResponse.put("error", "Некорректный формат данных: " + ex.getMessage());
+        if (ex instanceof MethodArgumentNotValidException validationEx) {
+            Map<String, String> errors = new HashMap<>();
+            validationEx.getBindingResult().getFieldErrors().forEach(error ->
+                    errors.put(error.getField(), error.getDefaultMessage())
+            );
+            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.BAD_REQUEST, "Ошибка валидации", request, errors);
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }
+
+        String message = ex.getMessage();
+        if (ex instanceof HttpMessageNotReadableException && ex.getMessage().contains("Role")) {
+            message = "Передана некорректная роль. Допустимые значения: MENTOR, STUDENT.";
+        }
+
+        ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.BAD_REQUEST, message, request);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    // --- 403 Forbidden: Ошибки, связанные с отсутствием прав доступа ---
+    @ExceptionHandler({AccessDeniedException.class, SecurityException.class})
+    public ResponseEntity<ErrorResponseDto> handleAccessDeniedExceptions(Exception ex, WebRequest request) {
+        log.warn("Access Denied (403 Forbidden): {}", ex.getMessage());
+        ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.FORBIDDEN, "Доступ запрещен", request);
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    // --- 404 Not Found: Ошибки, связанные с отсутствием запрашиваемого ресурса ---
+    @ExceptionHandler({ResourceNotFoundException.class, EntityNotFoundException.class, UsernameNotFoundException.class})
+    public ResponseEntity<ErrorResponseDto> handleNotFoundExceptions(RuntimeException ex, WebRequest request) {
+        log.warn("Resource Not Found (404 Not Found): {}", ex.getMessage());
+        ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    // --- 409 Conflict: Ошибки, связанные с конфликтом состояний (например, попытка создать уже существующую сущность) ---
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<ErrorResponseDto> handleConflictExceptions(EntityExistsException ex, WebRequest request) {
+        log.warn("Conflict (409 Conflict): {}", ex.getMessage());
+        ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.CONFLICT, ex.getMessage(), request);
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    // --- 413 Payload Too Large: Ошибки, связанные со слишком большим объемом данных ---
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<?> handleMaxSizeException(MaxUploadSizeExceededException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("message", "Файл слишком большой. Максимально допустимый размер — 10MB.");
-        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(error);
+    public ResponseEntity<ErrorResponseDto> handleMaxSizeException(MaxUploadSizeExceededException ex, WebRequest request) {
+        log.warn("Payload Too Large (413): {}", ex.getMessage());
+        String message = "Файл слишком большой. Максимально допустимый размер — 10MB.";
+        ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.PAYLOAD_TOO_LARGE, message, request);
+        return new ResponseEntity<>(errorResponse, HttpStatus.PAYLOAD_TOO_LARGE);
     }
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<MessageDto> handleIllegalStateException(IllegalStateException ex){
-        log.error("IllegalStateException:{}",ex.getMessage());
-        return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
-    }
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<MessageDto> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        log.error("ResourceNotFoundException:{}",ex.getMessage());
-        return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
-    }
-
-    @ExceptionHandler(FileStorageException.class)
-    public ResponseEntity<MessageDto> handleFileStorageException(FileStorageException ex) {
-        log.error("FileStorageException:{}",ex.getMessage());
-        return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
-    }
-
-    @ExceptionHandler(SecurityException.class)
-    public ResponseEntity<MessageDto> handleSecurityException(SecurityException ex) {
-        log.error("SecurityException:{}",ex.getMessage());
-        return ResponseEntity.badRequest().body(new MessageDto(ex.getMessage()));
+    // --- 500 Internal Server Error: Все остальные, непредвиденные ошибки ---
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDto> handleAllExceptions(Exception ex, WebRequest request) {
+        log.error("Unhandled Internal Server Error (500): ", ex); // Логируем со стектрейсом
+        String message = "Произошла непредвиденная ошибка на сервере.";
+        ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, message, request);
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
