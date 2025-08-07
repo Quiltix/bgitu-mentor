@@ -5,25 +5,23 @@ import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
 import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
-import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.MentorMapper;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.speciality.data.model.Speciality;
 import com.bgitu.mentor.mentor.data.repository.MentorRepository;
-import com.bgitu.mentor.speciality.data.repository.SpecialityRepository;
 import com.bgitu.mentor.mentorship.service.MentorshipLifecycleService;
+import com.bgitu.mentor.speciality.service.SpecialityService;
 import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.student.service.StudentDirectoryService;
-import com.bgitu.mentor.user.service.AbstractBaseUserService;
+import com.bgitu.mentor.user.service.BaseUserManagementService;
 import com.bgitu.mentor.user.service.UserFinder;
-import com.bgitu.mentor.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,56 +29,50 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, MentorRepository> implements MentorProfileService {
+@RequiredArgsConstructor
+public class MentorProfileServiceImpl implements MentorProfileService {
 
-    private final SpecialityRepository specialityRepository;
-    private final UserFinder userFinder;
-    private final MentorshipLifecycleService mentorshipLifecycleService;
+    // --- Основные зависимости ---
+    private final MentorRepository mentorRepository;
     private final MentorMapper mentorMapper;
+
+    // --- Зависимости от других доменных сервисов (Фасад) ---
     private final ArticleService articleService;
     private final StudentDirectoryService studentDirectoryService;
-    public MentorProfileServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
-                                    FileStorageService fileStorageService,
-                                    SpecialityRepository specialityRepository,
-                                    UserService userService, UserFinder userFinder,
-                                    MentorshipLifecycleService mentorshipLifecycleService,
-                                    MentorMapper mentorMapper,ArticleService articleService,
-                                    StudentDirectoryService studentDirectoryService) {
-        super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", userService);
+    private final MentorshipLifecycleService mentorshipLifecycleService;
 
-        this.specialityRepository = specialityRepository;
-        this.userFinder = userFinder;
-        this.mentorshipLifecycleService = mentorshipLifecycleService;
-        this.mentorMapper = mentorMapper;
-        this.articleService = articleService;
-        this.studentDirectoryService = studentDirectoryService;
-    }
+    // --- Зависимости от инфраструктурных/общих сервисов ---
+    private final UserFinder userFinder;
+    private final BaseUserManagementService baseUserManagementService;
+    private final SpecialityService specialityService;
 
 
     @Override
+    @Transactional
     public UserCredentialsResponseDto updateProfile(Long mentorId, UserCredentialsUpdateRequestDto dto) {
 
-        Mentor updatedMentor = super.updateProfileInternal(mentorId, dto);
+        baseUserManagementService.updateProfile(mentorId, dto);
 
+        Mentor updatedMentor = userFinder.findMentorById(mentorId);
         return mentorMapper.toCredentialsDto(updatedMentor);
     }
 
 
 
     @Override
+    @Transactional
     public MentorDetailsResponseDto updateCard(Long mentorId, MentorUpdateRequestDto dto, MultipartFile avatarFile) {
-
         Mentor mentor = userFinder.findMentorById(mentorId);
 
-        updateCardInternal(mentor, dto, avatarFile);
+        baseUserManagementService.updateCard(mentor, dto, avatarFile);
 
+        // 2. Применяем специфичную для ментора логику
         if (dto.getSpecialityId() != null) {
-            Speciality speciality = specialityRepository.findById(dto.getSpecialityId())
-                    .orElseThrow(() -> new EntityNotFoundException("Специальность с id=" + dto.getSpecialityId() + " не найдена"));
+            Speciality speciality = specialityService.getById(dto.getSpecialityId());
             mentor.setSpeciality(speciality);
         }
 
-        return mentorMapper.toDetailsDto(repository.save(mentor));
+        return mentorMapper.toDetailsDto(mentorRepository.save(mentor));
     }
 
 
@@ -88,7 +80,7 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
 
     @Override
     public MentorDetailsResponseDto getMyCard(Long id) {
-        Mentor mentor = repository.findById(id)
+        Mentor mentor = mentorRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
 
         return mentorMapper.toDetailsDto(mentor);

@@ -54,7 +54,6 @@ public class ArticleServiceImpl implements ArticleService {
             String publicUrl = "/api/uploads/image/" + storedRelativePath.replace("\\", "/");
             article.setImageUrl(publicUrl);
         }
-
         return articleMapper.toDetailsDto(articleRepository.save(article));
     }
 
@@ -78,7 +77,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public void changeArticleRank(Long articleId, boolean like, Long userId) {
-
         votingService.vote(articleId, userId, like, articleVoteHandler);
     }
 
