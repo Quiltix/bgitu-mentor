@@ -8,6 +8,7 @@ import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
+import com.bgitu.mentor.mentor.service.MentorDirectoryService;
 import com.bgitu.mentor.mentorship.data.model.Application;
 import com.bgitu.mentor.mentorship.data.repository.ApplicationRepository;
 import com.bgitu.mentor.mentorship.service.MentorshipLifecycleService;
@@ -35,18 +36,20 @@ public class StudentProfileServiceImpl extends AbstractBaseUserService<Student,S
     private final UserFinder userFinder;
     private final MentorshipLifecycleService mentorshipLifecycleService;
     private final StudentMapper studentMapper;
+    private final MentorDirectoryService mentorDirectoryService;
 
 
     public StudentProfileServiceImpl(StudentRepository studentRepository, PasswordEncoder passwordEncoder,
                                      FileStorageService fileStorageService, ApplicationRepository applicationRepository,
                                      UserService userService, UserFinder userFinder,
                                      MentorshipLifecycleService mentorshipLifecycleService,
-                                     StudentMapper studentMapper) {
+                                     StudentMapper studentMapper,MentorDirectoryService mentorDirectoryService) {
         super(studentRepository, passwordEncoder, fileStorageService, "Студент",userService);
         this.applicationRepository = applicationRepository;
         this.userFinder = userFinder;
         this.mentorshipLifecycleService = mentorshipLifecycleService;
         this.studentMapper = studentMapper;
+        this.mentorDirectoryService = mentorDirectoryService;
     }
 
 
@@ -72,13 +75,13 @@ public class StudentProfileServiceImpl extends AbstractBaseUserService<Student,S
     @Override
     public MentorDetailsResponseDto getMentorOfStudent(Long studentId) {
         Student student = userFinder.findStudentById(studentId);
-
         Mentor mentor = student.getMentor();
         if (mentor == null) {
-            throw new IllegalStateException("У студента пока нет назначенного ментора");
+            throw new ResourceNotFoundException("У студента нет ментора");
         }
 
-        return new MentorDetailsResponseDto(mentor);
+        // Делегируем преобразование другому сервису, который за это отвечает
+        return mentorDirectoryService.getMentorDetails(mentor.getId());
     }
 
     @Override
