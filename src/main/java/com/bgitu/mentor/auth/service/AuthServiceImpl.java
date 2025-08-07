@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
 
         String token = tokenProvider.generateToken(savedUser.getId(), userRole);
 
-        // 2. Возвращаем AuthResult с токеном и уже известной нам ролью
+
         return new JwtAuthenticationResponseDto(token,userRole.name());
     }
 
