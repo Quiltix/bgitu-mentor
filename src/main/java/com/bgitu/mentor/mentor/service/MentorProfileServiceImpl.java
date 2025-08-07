@@ -16,6 +16,7 @@ import com.bgitu.mentor.speciality.data.repository.SpecialityRepository;
 import com.bgitu.mentor.mentorship.service.MentorshipLifecycleService;
 import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.data.model.Student;
+import com.bgitu.mentor.student.service.StudentDirectoryService;
 import com.bgitu.mentor.user.service.AbstractBaseUserService;
 import com.bgitu.mentor.user.service.UserFinder;
 import com.bgitu.mentor.user.service.UserService;
@@ -37,12 +38,14 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
     private final MentorshipLifecycleService mentorshipLifecycleService;
     private final MentorMapper mentorMapper;
     private final ArticleService articleService;
+    private final StudentDirectoryService studentDirectoryService;
     public MentorProfileServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
                                     FileStorageService fileStorageService,
                                     SpecialityRepository specialityRepository,
                                     UserService userService, UserFinder userFinder,
                                     MentorshipLifecycleService mentorshipLifecycleService,
-                                    MentorMapper mentorMapper,ArticleService articleService) {
+                                    MentorMapper mentorMapper,ArticleService articleService,
+                                    StudentDirectoryService studentDirectoryService) {
         super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", userService);
 
         this.specialityRepository = specialityRepository;
@@ -50,6 +53,7 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
         this.mentorshipLifecycleService = mentorshipLifecycleService;
         this.mentorMapper = mentorMapper;
         this.articleService = articleService;
+        this.studentDirectoryService = studentDirectoryService;
     }
 
 
@@ -107,11 +111,7 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
 
     @Override
     public List<StudentDetailsResponseDto> getMyStudents(Long mentorId) {
-        Mentor mentor = userFinder.findMentorById(mentorId);
-
-        return mentor.getStudents().stream()
-                .map(StudentDetailsResponseDto::new)
-                .toList();
+        return studentDirectoryService.findAllStudentsByMentor(mentorId);
     }
 
     @Override

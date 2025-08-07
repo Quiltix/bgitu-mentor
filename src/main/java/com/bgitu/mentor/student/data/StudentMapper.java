@@ -6,6 +6,8 @@ import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.data.model.Student;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface StudentMapper {
 
@@ -13,6 +15,8 @@ public interface StudentMapper {
 
 
     UserCredentialsResponseDto toCredentialsDto(Student student);
+
+    List<StudentDetailsResponseDto> toDetailDtoList(List<Student> students);
 
 
 

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
 
-    List<Article> findAllByAuthorId(Object unknownAttr1);
+    List<Article> findAllByAuthorId(Long id);
 }

@@ -7,7 +7,7 @@ import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.student.data.dto.ApplicationOfStudentResponseDto;
 import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.data.dto.StudentDetailsUpdateRequestDto;
-import com.bgitu.mentor.student.service.StudentService;
+import com.bgitu.mentor.student.service.StudentProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -28,7 +28,7 @@ import java.util.List;
 public class StudentProfileController {
 
 
-    private final StudentService studentService;
+    private final StudentProfileService studentService;
 
     @Operation(summary = "Получение карточки студента", description = "Доступно только для роли STUDENT. Возвращает полную информацию по текущему студенту.")
     @PreAuthorize("hasRole('STUDENT')")

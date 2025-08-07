@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Service
-public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentRepository> implements StudentService {
+public class StudentProfileServiceImpl extends AbstractBaseUserService<Student,StudentRepository> implements StudentProfileService {
 
 
     private final ApplicationRepository applicationRepository;
@@ -37,11 +37,11 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
     private final StudentMapper studentMapper;
 
 
-    public StudentServiceImpl(StudentRepository studentRepository, PasswordEncoder passwordEncoder,
-                              FileStorageService fileStorageService, ApplicationRepository applicationRepository,
-                              UserService userService, UserFinder userFinder,
-                              MentorshipLifecycleService mentorshipLifecycleService,
-                              StudentMapper studentMapper) {
+    public StudentProfileServiceImpl(StudentRepository studentRepository, PasswordEncoder passwordEncoder,
+                                     FileStorageService fileStorageService, ApplicationRepository applicationRepository,
+                                     UserService userService, UserFinder userFinder,
+                                     MentorshipLifecycleService mentorshipLifecycleService,
+                                     StudentMapper studentMapper) {
         super(studentRepository, passwordEncoder, fileStorageService, "Студент",userService);
         this.applicationRepository = applicationRepository;
         this.userFinder = userFinder;

@@ -2,7 +2,7 @@ package com.bgitu.mentor.student.controller;
 
 
 
-import com.bgitu.mentor.student.service.StudentService;
+import com.bgitu.mentor.student.service.StudentProfileService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/students")
 public class StudentController {
 
-    private final StudentService studentService;
+    private final StudentProfileService studentService;
 
 
 

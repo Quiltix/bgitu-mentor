@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public interface StudentService {
+public interface StudentProfileService {
     UserCredentialsResponseDto updateProfile(Long studentId, UserCredentialsUpdateRequestDto dto);
     StudentDetailsResponseDto updateCard(Long studentId, StudentDetailsUpdateRequestDto dto, MultipartFile avatarFile);
     void terminateCurrentMentorship(Long studentId);
