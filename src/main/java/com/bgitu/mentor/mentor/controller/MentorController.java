@@ -1,7 +1,6 @@
 package com.bgitu.mentor.mentor.controller;
 
 import com.bgitu.mentor.common.SecurityUtils;
-import com.bgitu.mentor.common.dto.MessageDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
 import com.bgitu.mentor.mentor.service.MentorDirectoryService;
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -32,7 +32,7 @@ public class MentorController {
             "Поддерживает сортировку: `sort=rank,desc` (для топ-3). Первый параметр - поле по которому сортировать, второй - desc (по убыванию) или asc (по возрастанию)." +
             "Поддерживает пагинацию: `page=0`, `size=10`."
     )
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping()
     public ResponseEntity<Page<MentorSummaryResponseDto>>  getAllMentorsShort(
             @RequestParam(required = false) Long specialityId,
@@ -42,24 +42,24 @@ public class MentorController {
     }
 
     @Operation(summary = "Получение полной карточки ментора", description = "Доступно для ролей STUDENT и MENTOR. Возвращает полную информацию по ментору по id.")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<MentorDetailsResponseDto> getMentorDetails(@PathVariable Long id) {
-        return ResponseEntity.ok( mentorService.getMentorDetails(id));
+        return ResponseEntity.ok(mentorService.getMentorDetails(id));
     }
 
 
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/{id}/vote")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Лайк/дизлайк ментора", description = "Голосование за ментора (1 раз на студента)")
-    public ResponseEntity<MessageDto> voteMentor(
+    public void voteMentor(
             @PathVariable Long id,
             @RequestParam boolean upvote,
             Authentication authentication
     ) {
         Long userId = SecurityUtils.getCurrentUserId(authentication);
         mentorService.voteForMentor(id, upvote, userId);
-        return ResponseEntity.ok(new MessageDto("Голос учтен"));
     }
 
 }
