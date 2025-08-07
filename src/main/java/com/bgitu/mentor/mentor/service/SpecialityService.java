@@ -1,7 +1,7 @@
 package com.bgitu.mentor.mentor.service;
 
 import com.bgitu.mentor.mentor.data.dto.SpecialityDto;
-import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
+import com.bgitu.mentor.speciality.data.repository.SpecialityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

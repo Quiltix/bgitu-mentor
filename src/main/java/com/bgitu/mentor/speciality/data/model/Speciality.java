@@ -1,4 +1,4 @@
-package com.bgitu.mentor.mentor.data.model;
+package com.bgitu.mentor.speciality.data.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

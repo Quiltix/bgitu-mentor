@@ -11,8 +11,8 @@ import com.bgitu.mentor.user.service.UserFinder;
 import com.bgitu.mentor.vote.data.repository.ArticleVoteRepository;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.model.Mentor;
-import com.bgitu.mentor.mentor.data.model.Speciality;
-import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
+import com.bgitu.mentor.speciality.data.model.Speciality;
+import com.bgitu.mentor.speciality.data.repository.SpecialityRepository;
 import com.bgitu.mentor.vote.service.ArticleVoteHandler;
 import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +23,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @Service
@@ -83,6 +85,14 @@ public class ArticleServiceImpl implements ArticleService {
     public void changeArticleRank(Long articleId, boolean like, Long userId) {
 
         votingService.vote(articleId, userId, like, articleVoteHandler);
+    }
+
+    @Override
+    public List<ArticleSummaryResponseDto> findArticlesByAuthor(Long authorId) {
+        // Напрямую запрашиваем у репозитория статей. Это эффективно и безопасно.
+        List<Article> articles = articleRepository.findAllByAuthorId(authorId);
+        // Делегируем маппинг
+        return articleMapper.toSummaryDtoList(articles);
     }
 
     @Override

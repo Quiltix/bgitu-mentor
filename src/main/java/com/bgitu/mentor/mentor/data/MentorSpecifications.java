@@ -3,7 +3,7 @@ package com.bgitu.mentor.mentor.data;
 
 
 import com.bgitu.mentor.mentor.data.model.Mentor;
-import com.bgitu.mentor.mentor.data.model.Speciality;
+import com.bgitu.mentor.speciality.data.model.Speciality;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.Join;
 

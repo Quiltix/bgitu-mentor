@@ -20,4 +20,5 @@ public interface StudentService {
     MentorDetailsResponseDto getMentorOfStudent(Long studentId);
     StudentDetailsResponseDto getPublicCardById(Long studentId);
     UserCredentialsResponseDto getPersonalInfo(Long studentId);
+
 }

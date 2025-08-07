@@ -4,6 +4,9 @@ import com.bgitu.mentor.article.data.model.Article;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
+
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
 
+    List<Article> findAllByAuthorId(Object unknownAttr1);
 }

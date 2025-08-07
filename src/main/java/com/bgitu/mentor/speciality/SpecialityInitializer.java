@@ -1,6 +1,7 @@
-package com.bgitu.mentor.mentor.data.model;
+package com.bgitu.mentor.speciality;
 
-import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
+import com.bgitu.mentor.speciality.data.model.Speciality;
+import com.bgitu.mentor.speciality.data.repository.SpecialityRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

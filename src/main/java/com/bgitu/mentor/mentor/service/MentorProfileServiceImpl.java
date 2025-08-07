@@ -2,7 +2,7 @@ package com.bgitu.mentor.mentor.service;
 
 
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
-import com.bgitu.mentor.article.data.model.Article;
+import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
 import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.common.service.FileStorageService;
@@ -10,9 +10,9 @@ import com.bgitu.mentor.mentor.data.MentorMapper;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
-import com.bgitu.mentor.mentor.data.model.Speciality;
+import com.bgitu.mentor.speciality.data.model.Speciality;
 import com.bgitu.mentor.mentor.data.repository.MentorRepository;
-import com.bgitu.mentor.mentor.data.repository.SpecialityRepository;
+import com.bgitu.mentor.speciality.data.repository.SpecialityRepository;
 import com.bgitu.mentor.mentorship.service.MentorshipLifecycleService;
 import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.data.model.Student;
@@ -36,18 +36,20 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
     private final UserFinder userFinder;
     private final MentorshipLifecycleService mentorshipLifecycleService;
     private final MentorMapper mentorMapper;
+    private final ArticleService articleService;
     public MentorProfileServiceImpl(MentorRepository mentorRepository, PasswordEncoder passwordEncoder,
                                     FileStorageService fileStorageService,
                                     SpecialityRepository specialityRepository,
                                     UserService userService, UserFinder userFinder,
                                     MentorshipLifecycleService mentorshipLifecycleService,
-                                    MentorMapper mentorMapper) {
+                                    MentorMapper mentorMapper,ArticleService articleService) {
         super(mentorRepository, passwordEncoder, fileStorageService, "Ментор", userService);
 
         this.specialityRepository = specialityRepository;
         this.userFinder = userFinder;
         this.mentorshipLifecycleService = mentorshipLifecycleService;
         this.mentorMapper = mentorMapper;
+        this.articleService = articleService;
     }
 
 
@@ -92,13 +94,8 @@ public class MentorProfileServiceImpl extends AbstractBaseUserService<Mentor, Me
 
     @Override
     public List<ArticleSummaryResponseDto> getMyArticles(Long mentorId) {
-        Mentor mentor = userFinder.findMentorById(mentorId);
 
-        List<Article> articles = mentor.getArticles();
-
-        return articles.stream()
-                .map(ArticleSummaryResponseDto::new)
-                .toList();
+        return articleService.findArticlesByAuthor(mentorId);
     }
 
     @Override
