@@ -1,6 +1,7 @@
 package com.bgitu.mentor.student.data;
 
 
+import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
 import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.data.model.Student;
 import org.mapstruct.Mapper;
@@ -10,6 +11,8 @@ public interface StudentMapper {
 
     StudentDetailsResponseDto toDetailsDto(Student student);
 
+
+    UserCredentialsResponseDto toCredentialsDto(Student student);
 
 
 

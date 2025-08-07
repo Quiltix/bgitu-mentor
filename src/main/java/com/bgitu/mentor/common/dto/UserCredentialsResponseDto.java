@@ -12,11 +12,4 @@ public class UserCredentialsResponseDto {
 
     @Email(message = "Email должен быть корректным")
     private String email;
-
-
-
-    public UserCredentialsResponseDto(Student student) {
-        this.email = student.getEmail();
-
-    }
 }

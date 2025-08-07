@@ -11,6 +11,7 @@ import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentorship.data.model.Application;
 import com.bgitu.mentor.mentorship.data.repository.ApplicationRepository;
 import com.bgitu.mentor.mentorship.service.MentorshipLifecycleService;
+import com.bgitu.mentor.student.data.StudentMapper;
 import com.bgitu.mentor.student.data.dto.ApplicationOfStudentResponseDto;
 import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.data.dto.StudentDetailsUpdateRequestDto;
@@ -33,16 +34,19 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
     private final ApplicationRepository applicationRepository;
     private final UserFinder userFinder;
     private final MentorshipLifecycleService mentorshipLifecycleService;
+    private final StudentMapper studentMapper;
 
 
     public StudentServiceImpl(StudentRepository studentRepository, PasswordEncoder passwordEncoder,
                               FileStorageService fileStorageService, ApplicationRepository applicationRepository,
                               UserService userService, UserFinder userFinder,
-                              MentorshipLifecycleService mentorshipLifecycleService) {
+                              MentorshipLifecycleService mentorshipLifecycleService,
+                              StudentMapper studentMapper) {
         super(studentRepository, passwordEncoder, fileStorageService, "Студент",userService);
         this.applicationRepository = applicationRepository;
         this.userFinder = userFinder;
         this.mentorshipLifecycleService = mentorshipLifecycleService;
+        this.studentMapper = studentMapper;
     }
 
 
@@ -53,7 +57,7 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
 
         updateCardInternal(student, dto, avatarFile);
 
-        return new StudentDetailsResponseDto(repository.save(student));
+        return studentMapper.toDetailsDto(repository.save(student));
     }
 
     @Override
@@ -61,7 +65,7 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
 
         Student updatedStudent = super.updateProfileInternal(studentId, dto);
 
-        return new UserCredentialsResponseDto(updatedStudent);
+        return studentMapper.toCredentialsDto(updatedStudent);
     }
 
 
@@ -107,13 +111,13 @@ public class StudentServiceImpl extends AbstractBaseUserService<Student,StudentR
     public StudentDetailsResponseDto getPublicCardById(Long studentId) {
 
         Student student = userFinder.findStudentById(studentId);
-        return new StudentDetailsResponseDto(student);
+        return studentMapper.toDetailsDto(student);
     }
 
     @Override
     public UserCredentialsResponseDto getPersonalInfo(Long studentId) {
         Student student = userFinder.findStudentById(studentId);
-        return new UserCredentialsResponseDto(student);
+        return studentMapper.toCredentialsDto(student);
     }
 
 
