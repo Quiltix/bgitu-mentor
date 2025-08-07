@@ -81,7 +81,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         mentorshipLifecycleService.establishLink(application.getMentor(), application.getStudent());
 
         List<Application> otherPendingApps = applicationRepository
-                .findAllByStudentAndStatus(application.getStudent(), ApplicationStatus.PENDING);
+                .findAllByStudentIdAndStatus(application.getStudent().getId(), ApplicationStatus.PENDING);
 
         otherPendingApps.forEach(otherApp -> otherApp.setStatus(ApplicationStatus.EXPIRED));
 
