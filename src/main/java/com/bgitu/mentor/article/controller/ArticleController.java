@@ -5,13 +5,13 @@ import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.SecurityUtils;
-import com.bgitu.mentor.common.dto.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -69,24 +69,25 @@ public class ArticleController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('MENTOR')")
     @Operation(summary = "Удалить статью", description = "Удаляет статью, если вы её автор")
-    public ResponseEntity<MessageDto> deleteArticle(@PathVariable Long id, Authentication authentication) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteArticle(@PathVariable Long id, Authentication authentication) {
         Long userId = SecurityUtils.getCurrentUserId(authentication);
 
         articleService.deleteArticle(id, userId);
-        return ResponseEntity.ok(new MessageDto("Статья удалена"));
+
     }
 
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @PostMapping("/{id}/vote")
     @Operation(summary = "Оценить статью", description = "Лайк или дизлайк статьи. true = лайк, false = дизлайк")
-    public ResponseEntity<MessageDto> voteArticle(
+    @ResponseStatus(HttpStatus.OK)
+    public void voteArticle(
             @PathVariable Long id,
             @RequestParam boolean like,
             Authentication authentication
     ) {
         Long userId = SecurityUtils.getCurrentUserId(authentication);
         articleService.changeArticleRank(id, like, userId);
-        return ResponseEntity.ok(new MessageDto(like ? "Статья лайкнута" : "Статья дизлайкнута"));
     }
 
 }
