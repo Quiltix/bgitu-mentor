@@ -25,18 +25,6 @@ public class Mentor extends BaseUser implements Votable{
 
     private Integer rank = 0;
 
-    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
-    private List<MentorVote> votes;
-
-    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
-    private List<Student> students;
-
-    @OneToMany(mappedBy = "mentor", fetch = FetchType.LAZY)
-    private List<Application> applications;
-
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
-    private List<Article> articles;
-
     @Override
     public Integer getRank() {
         return rank;

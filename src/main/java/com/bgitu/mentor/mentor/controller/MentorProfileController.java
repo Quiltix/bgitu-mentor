@@ -2,6 +2,7 @@ package com.bgitu.mentor.mentor.controller;
 
 
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
+import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.SecurityUtils;
 import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
 import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
@@ -28,6 +29,7 @@ import java.util.List;
 public class MentorProfileController {
 
     private final MentorProfileService mentorService;
+    private final ArticleService articleService;
 
     @Operation(summary = "Получение карточки ментора", description = "Доступно только для роли MENTOR. Возвращает полную информацию по текущему пользователю.")
     @PreAuthorize("hasRole('MENTOR')")

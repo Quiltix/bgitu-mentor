@@ -18,7 +18,4 @@ public class Student extends BaseUser {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mentor_id")
     private Mentor mentor;
-
-    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
-    private List<Application> applications;
 }
