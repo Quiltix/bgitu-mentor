@@ -4,14 +4,16 @@ import com.bgitu.mentor.auth.Role;
 import com.bgitu.mentor.auth.dto.JwtAuthenticationResponseDto;
 import com.bgitu.mentor.auth.dto.LoginRequestDto;
 import com.bgitu.mentor.auth.dto.RegisterRequestDto;
+import com.bgitu.mentor.auth.security.AuthenticatedUser;
 import com.bgitu.mentor.auth.security.JwtTokenProvider;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.user.data.model.BaseUser;
 import com.bgitu.mentor.user.data.repository.BaseUserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final BaseUserRepository userRepository;
     private final JwtTokenProvider tokenProvider;
+    private final AuthenticationManager authenticationManager;
 
     public JwtAuthenticationResponseDto register(RegisterRequestDto dto) {
         String email = dto.getEmail();
@@ -58,29 +61,21 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
+    @Override
     public JwtAuthenticationResponseDto login(LoginRequestDto dto) {
-        String email = dto.getEmail();
-        String rawPassword = dto.getPassword();
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 
 
-        BaseUser user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
 
-        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-            throw new BadCredentialsException("Неверный пароль");
-        }
+        AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
 
-        Role role;
-        if (user instanceof Mentor) {
-            role = Role.MENTOR;
-        } else if (user instanceof Student) {
-            role = Role.STUDENT;
-        } else {
-            throw new IllegalStateException("Неопределенная роль для пользователя");
-        }
-        String token = tokenProvider.generateToken(user.getId(), role);
+        // 4. Генерируем токен
+        String token = tokenProvider.generateToken(userDetails.getId(), userDetails.getRole());
 
-        return new JwtAuthenticationResponseDto(token,role.name());
+        return new JwtAuthenticationResponseDto(token, userDetails.getRole().name());
     }
 }

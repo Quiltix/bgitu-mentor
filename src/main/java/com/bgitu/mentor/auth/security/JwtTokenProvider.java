@@ -4,7 +4,6 @@ import com.bgitu.mentor.auth.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +30,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(String.valueOf(userId)) // Устанавливаем ID как subject токена
-                .claim("role", "ROLE_" + role.name())
+                .claim("role", role.name())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(jwtSecret)
@@ -45,8 +44,19 @@ public class JwtTokenProvider {
 
 
 
-    public String getRoleFromToken(String token) {
-        return parseClaims(token).get("role", String.class);
+    public Role getRoleFromToken(String token) {
+        try {
+
+            String roleString = parseClaims(token).get("role", String.class);
+            if (roleString == null) {
+                throw new IllegalArgumentException("В токене отсутствует поле 'role'.");
+            }
+
+            return Role.valueOf(roleString);
+        } catch (IllegalArgumentException e) {
+
+            throw new JwtException("Некорректная роль в токене", e);
+        }
     }
 
     public boolean validateToken(String token) {
