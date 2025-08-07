@@ -2,10 +2,14 @@ package com.bgitu.mentor.article.data.model;
 
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.speciality.data.model.Speciality;
+import com.bgitu.mentor.vote.data.model.ArticleVote;
 import com.bgitu.mentor.vote.data.model.Votable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -31,7 +35,26 @@ public class Article implements Votable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
-    private Mentor author;  // односторонняя связь
+    private Mentor author;
+
+    @OneToMany(
+            mappedBy = "article",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ArticleVote> votes = new ArrayList<>();
+
+
+    public void addVote(ArticleVote vote) {
+
+        this.votes.add(vote);
+
+        vote.setArticle(this);
+    }
+    public void removeVote(ArticleVote vote) {
+        this.votes.remove(vote);
+        vote.setArticle(null);
+    }
 
     @Override
     public void setRank(Integer rank) {

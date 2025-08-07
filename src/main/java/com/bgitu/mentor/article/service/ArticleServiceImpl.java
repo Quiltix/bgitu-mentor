@@ -7,12 +7,11 @@ import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.article.data.repository.ArticleRepository;
+import com.bgitu.mentor.speciality.service.SpecialityService;
 import com.bgitu.mentor.user.service.UserFinder;
-import com.bgitu.mentor.vote.data.repository.ArticleVoteRepository;
 import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.speciality.data.model.Speciality;
-import com.bgitu.mentor.speciality.data.repository.SpecialityRepository;
 import com.bgitu.mentor.vote.service.ArticleVoteHandler;
 import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,9 +31,8 @@ import java.util.List;
 public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final UserFinder userFinder;
-    private final SpecialityRepository specialityRepository;
+    private final SpecialityService specialityService;
     private final FileStorageService fileStorageService;
-    private final ArticleVoteRepository articleVoteRepository;
     private final VotingService votingService;
     private final ArticleVoteHandler articleVoteHandler;
     private final ArticleMapper articleMapper;
@@ -42,8 +40,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public ArticleDetailsResponseDto createArticle(Long authorId, ArticleCreateRequestDto dto, MultipartFile image) {
         Mentor author = userFinder.findMentorById(authorId);
-        Speciality speciality = specialityRepository.findById(dto.getSpecialityId())
-                .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
+        Speciality speciality = specialityService.getById(dto.getSpecialityId());
 
         Article article = new Article();
         article.setTitle(dto.getTitle());
@@ -76,8 +73,6 @@ public class ArticleServiceImpl implements ArticleService {
         if (!article.getAuthor().getId().equals(currentMentor.getId())) {
             throw new AccessDeniedException("Вы можете удалять только свои статьи");
         }
-
-        articleVoteRepository.deleteAllByArticleId(articleId); // <== удаление голосов
         articleRepository.delete(article);
     }
 

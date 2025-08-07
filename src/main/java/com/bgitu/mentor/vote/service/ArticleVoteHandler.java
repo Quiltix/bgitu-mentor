@@ -30,12 +30,11 @@ public class ArticleVoteHandler implements VoteHandler<Article>{
     }
 
     @Override
-    public void saveVote(BaseUser user, Article entity, boolean upVote) {
+    public void saveVote(BaseUser user, Article entity, boolean isUpvote) {
         ArticleVote vote = new ArticleVote();
         vote.setUser(user);
-        vote.setArticle(entity);
-        vote.setUpvote(upVote);
-        voteRepository.save(vote);
+        vote.setUpvote(isUpvote);
+        entity.addVote(vote);
 
     }
 
