@@ -1,6 +1,7 @@
 package com.bgitu.mentor.mentorship.service;
 
 
+import com.bgitu.mentor.auth.Role;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentorship.data.ApplicationMapper;
@@ -10,13 +11,13 @@ import com.bgitu.mentor.mentorship.data.dto.ApplicationCreateRequestDto;
 import com.bgitu.mentor.mentorship.data.model.Application;
 import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.data.repository.ApplicationRepository;
-import com.bgitu.mentor.student.data.dto.ApplicationOfStudentResponseDto;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.user.service.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -93,22 +94,22 @@ public class MentorshipServiceImpl implements MentorshipService {
     }
 
     @Override
-    public List<ApplicationDetailsResponseDto> getApplicationsForMentor(Long mentorId, ApplicationStatus status) {
+    public List<?> getMyApplications(Long userId, Role role, ApplicationStatus status) {
+        if (role == Role.MENTOR) {
+            List<Application> applications = (status != null)
+                    ? applicationRepository.findAllByMentorIdAndStatus(userId, status)
+                    : applicationRepository.findAllByMentorId(userId);
+            return applicationMapper.toDetailsDtoList(applications);
+        }
 
-        List<Application> applications = (status != null)
-                ? applicationRepository.findAllByMentorIdAndStatus(mentorId, status)
-                : applicationRepository.findAllByMentorId(mentorId);
+        if (role == Role.STUDENT) {
+            List<Application> applications = (status != null)
+                    ? applicationRepository.findAllByStudentIdAndStatus(userId, status)
+                    : applicationRepository.findAllByStudentId(userId);
+            return applicationMapper.toStudentApplicationDtoList(applications);
+        }
 
-        return applicationMapper.toDetailsDtoList(applications);
-    }
-    @Override
-    public List<ApplicationOfStudentResponseDto> getApplicationsForStudent(Long studentId, ApplicationStatus status) {
-
-        List<Application> applications = (status != null)
-                ? applicationRepository.findAllByStudentIdAndStatus(studentId, status)
-                : applicationRepository.findAllByStudentId(studentId);
-
-        return applicationMapper.toStudentApplicationDtoList(applications);
+        return Collections.emptyList();
     }
 
     private Application findAndVerifyApplicationOwner(Long applicationId, Mentor mentor) {
