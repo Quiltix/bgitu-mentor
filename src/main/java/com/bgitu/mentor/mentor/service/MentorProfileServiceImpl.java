@@ -16,6 +16,7 @@ import com.bgitu.mentor.speciality.service.SpecialityService;
 import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.student.service.StudentDirectoryService;
+import com.bgitu.mentor.user.data.model.BaseUser;
 import com.bgitu.mentor.user.service.BaseUserManagementService;
 import com.bgitu.mentor.user.service.UserFinder;
 import jakarta.persistence.EntityNotFoundException;
@@ -51,10 +52,8 @@ public class MentorProfileServiceImpl implements MentorProfileService {
     @Transactional
     public UserCredentialsResponseDto updateProfile(Long mentorId, UserCredentialsUpdateRequestDto dto) {
 
-        baseUserManagementService.updateProfile(mentorId, dto);
-
-        Mentor updatedMentor = userFinder.findMentorById(mentorId);
-        return mentorMapper.toCredentialsDto(updatedMentor);
+        BaseUser updatedUser = baseUserManagementService.updateProfile(mentorId, dto);
+        return mentorMapper.toCredentialsDto((Mentor) updatedUser);
     }
 
 

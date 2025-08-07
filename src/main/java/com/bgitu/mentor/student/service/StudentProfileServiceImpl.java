@@ -14,8 +14,8 @@ import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.data.dto.StudentDetailsUpdateRequestDto;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.student.data.repository.StudentRepository;
+import com.bgitu.mentor.user.data.model.BaseUser;
 import com.bgitu.mentor.user.service.BaseUserManagementService;
-import com.bgitu.mentor.user.service.UserFinder;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,8 +34,6 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     private final MentorDirectoryService mentorDirectoryService;
     private final MentorshipLifecycleService mentorshipLifecycleService;
 
-    // --- Зависимости от инфраструктурных/общих сервисов ---
-    private final UserFinder userFinder;
     private final BaseUserManagementService baseUserManagementService; // <-- КОМПОЗИЦИЯ
 
 
@@ -43,7 +41,7 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     @Override
     @Transactional
     public StudentDetailsResponseDto updateCard(Long studentId, StudentDetailsUpdateRequestDto dto, MultipartFile avatarFile) {
-        Student student = userFinder.findStudentById(studentId);
+        Student student = findStudentById(studentId);
 
         baseUserManagementService.updateCard(student, dto, avatarFile);
 
@@ -53,17 +51,15 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     @Override
     @Transactional
     public UserCredentialsResponseDto updateProfile(Long studentId, UserCredentialsUpdateRequestDto dto) {
+        BaseUser updatedUser = baseUserManagementService.updateProfile(studentId, dto);
 
-        baseUserManagementService.updateProfile(studentId, dto);
-
-        Student updatedStudent = userFinder.findStudentById(studentId);
-        return studentMapper.toCredentialsDto(updatedStudent);
+        return studentMapper.toCredentialsDto((Student) updatedUser);
     }
 
 
     @Override
     public MentorDetailsResponseDto getMentorOfStudent(Long studentId) {
-        Student student = userFinder.findStudentById(studentId);
+        Student student = findStudentById(studentId);
         Mentor mentor = student.getMentor();
         if (mentor == null) {
             throw new ResourceNotFoundException("У студента нет ментора");
@@ -74,7 +70,7 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     @Override // <-- Добавляем @Override, так как метод теперь в интерфейсе
     @Transactional
     public void terminateCurrentMentorship(Long studentId) {
-        Student student = userFinder.findStudentById(studentId);
+        Student student = findStudentById(studentId);
         Mentor currentMentor = student.getMentor();
 
 
@@ -88,14 +84,19 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     @Override
     public StudentDetailsResponseDto getPublicCardById(Long studentId) {
 
-        Student student = userFinder.findStudentById(studentId);
+        Student student = findStudentById(studentId);
         return studentMapper.toDetailsDto(student);
     }
 
     @Override
     public UserCredentialsResponseDto getPersonalInfo(Long studentId) {
-        Student student = userFinder.findStudentById(studentId);
+        Student student = findStudentById(studentId);
         return studentMapper.toCredentialsDto(student);
+    }
+
+    private Student findStudentById(Long studentId) {
+        return studentRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Студент с id=" + studentId + " не найден"));
     }
 
 

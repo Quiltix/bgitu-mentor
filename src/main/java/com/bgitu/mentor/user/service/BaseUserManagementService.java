@@ -22,7 +22,7 @@ public class BaseUserManagementService {
     private final FileStorageService fileStorageService;
     private final BaseUserRepository baseUserRepository;
 
-    public void updateProfile(Long userId, UserCredentialsUpdateRequestDto dto) {
+    public BaseUser updateProfile(Long userId, UserCredentialsUpdateRequestDto dto) {
         BaseUser user = userFinder.findUserById(userId);
 
         String newEmail = dto.getEmail();
@@ -37,7 +37,7 @@ public class BaseUserManagementService {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
-        baseUserRepository.save(user);
+        return baseUserRepository.save(user);
     }
 
     public void updateCard(BaseUser user, BaseUserUpdateRequestDto dto, MultipartFile avatarFile) {
