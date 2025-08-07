@@ -7,6 +7,7 @@ import com.bgitu.mentor.mentorship.data.dto.ApplicationDetailsResponseDto;
 import com.bgitu.mentor.mentorship.data.dto.ApplicationCreateRequestDto;
 import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.service.MentorshipService;
+import com.bgitu.mentor.student.data.dto.ApplicationOfStudentResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -58,5 +59,13 @@ public class MentorshipController {
             @RequestParam(required = false) ApplicationStatus status) {
         Long mentorId = SecurityUtils.getCurrentUserId(authentication);
         return ResponseEntity.ok(mentorshipService.getApplicationsForMentor(mentorId, status));
+    }
+
+    @Operation(summary = "Получение всех заявок студента", description = "Доступно только студенту")
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("/applications")
+    public List<ApplicationOfStudentResponseDto> getStudentApplications(Authentication authentication, @RequestParam(required = false) ApplicationStatus status) {
+        Long studentId = SecurityUtils.getCurrentUserId(authentication);
+        return mentorshipService.getApplicationsForStudent(studentId, status);
     }
 }

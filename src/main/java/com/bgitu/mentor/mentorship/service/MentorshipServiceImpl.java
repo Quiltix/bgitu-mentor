@@ -10,6 +10,7 @@ import com.bgitu.mentor.mentorship.data.dto.ApplicationCreateRequestDto;
 import com.bgitu.mentor.mentorship.data.model.Application;
 import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.data.repository.ApplicationRepository;
+import com.bgitu.mentor.student.data.dto.ApplicationOfStudentResponseDto;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.user.service.UserFinder;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         }
 
 
-        if (applicationRepository.existsByStudentAndMentorAndStatus(student, mentor, ApplicationStatus.PENDING)) {
+        if (applicationRepository.existsByStudentIdAndMentorIdAndStatus(studentId, mentor.getId(), ApplicationStatus.PENDING)) {
             throw new IllegalStateException("Вы уже отправляли заявку этому ментору.");
         }
         Application app = new Application();
@@ -93,13 +94,21 @@ public class MentorshipServiceImpl implements MentorshipService {
 
     @Override
     public List<ApplicationDetailsResponseDto> getApplicationsForMentor(Long mentorId, ApplicationStatus status) {
-        Mentor mentor = userFinder.findMentorById(mentorId);
 
         List<Application> applications = (status != null)
-                ? applicationRepository.findAllByMentorAndStatus(mentor, status)
-                : applicationRepository.findAllByMentor(mentor);
+                ? applicationRepository.findAllByMentorIdAndStatus(mentorId, status)
+                : applicationRepository.findAllByMentorId(mentorId);
 
         return applicationMapper.toDetailsDtoList(applications);
+    }
+    @Override
+    public List<ApplicationOfStudentResponseDto> getApplicationsForStudent(Long studentId, ApplicationStatus status) {
+
+        List<Application> applications = (status != null)
+                ? applicationRepository.findAllByStudentIdAndStatus(studentId, status)
+                : applicationRepository.findAllByStudentId(studentId);
+
+        return applicationMapper.toStudentApplicationDtoList(applications);
     }
 
     private Application findAndVerifyApplicationOwner(Long applicationId, Mentor mentor) {

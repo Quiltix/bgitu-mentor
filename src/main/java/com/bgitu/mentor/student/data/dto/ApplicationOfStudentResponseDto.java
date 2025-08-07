@@ -1,6 +1,6 @@
 package com.bgitu.mentor.student.data.dto;
 
-import com.bgitu.mentor.mentorship.data.model.Application;
+
 import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,15 +14,4 @@ public class ApplicationOfStudentResponseDto {
     private String mentorSpeciality;
     private ApplicationStatus status;
 
-    public ApplicationOfStudentResponseDto(Application application) {
-        this.id = application.getId();
-        this.message = application.getMessage();
-        this.status = application.getStatus();
-        if (application.getMentor() != null) {
-            this.mentorFullName = application.getMentor().getFirstName() + " " + application.getMentor().getLastName();
-            this.mentorSpeciality = application.getMentor().getSpeciality() != null
-                    ? application.getMentor().getSpeciality().getName()
-                    : null;
-        }
-    }
 }

@@ -5,69 +5,58 @@ package com.bgitu.mentor.student.service;
 import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
 import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
-import com.bgitu.mentor.common.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.service.MentorDirectoryService;
-import com.bgitu.mentor.mentorship.data.model.Application;
-import com.bgitu.mentor.mentorship.data.repository.ApplicationRepository;
 import com.bgitu.mentor.mentorship.service.MentorshipLifecycleService;
 import com.bgitu.mentor.student.data.StudentMapper;
-import com.bgitu.mentor.student.data.dto.ApplicationOfStudentResponseDto;
 import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.data.dto.StudentDetailsUpdateRequestDto;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.student.data.repository.StudentRepository;
-import com.bgitu.mentor.user.service.AbstractBaseUserService;
+import com.bgitu.mentor.user.service.BaseUserManagementService;
 import com.bgitu.mentor.user.service.UserFinder;
-import com.bgitu.mentor.user.service.UserService;
 import jakarta.transaction.Transactional;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 
 @Service
-public class StudentProfileServiceImpl extends AbstractBaseUserService<Student,StudentRepository> implements StudentProfileService {
+@RequiredArgsConstructor
+public class StudentProfileServiceImpl implements StudentProfileService {
 
-
-    private final ApplicationRepository applicationRepository;
-    private final UserFinder userFinder;
-    private final MentorshipLifecycleService mentorshipLifecycleService;
+    // --- Основные зависимости ---
+    private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
+
+    // --- Зависимости от других доменных сервисов (Фасад) ---
     private final MentorDirectoryService mentorDirectoryService;
+    private final MentorshipLifecycleService mentorshipLifecycleService;
 
-
-    public StudentProfileServiceImpl(StudentRepository studentRepository, PasswordEncoder passwordEncoder,
-                                     FileStorageService fileStorageService, ApplicationRepository applicationRepository,
-                                     UserService userService, UserFinder userFinder,
-                                     MentorshipLifecycleService mentorshipLifecycleService,
-                                     StudentMapper studentMapper,MentorDirectoryService mentorDirectoryService) {
-        super(studentRepository, passwordEncoder, fileStorageService, "Студент",userService);
-        this.applicationRepository = applicationRepository;
-        this.userFinder = userFinder;
-        this.mentorshipLifecycleService = mentorshipLifecycleService;
-        this.studentMapper = studentMapper;
-        this.mentorDirectoryService = mentorDirectoryService;
-    }
+    // --- Зависимости от инфраструктурных/общих сервисов ---
+    private final UserFinder userFinder;
+    private final BaseUserManagementService baseUserManagementService; // <-- КОМПОЗИЦИЯ
 
 
 
     @Override
+    @Transactional
     public StudentDetailsResponseDto updateCard(Long studentId, StudentDetailsUpdateRequestDto dto, MultipartFile avatarFile) {
         Student student = userFinder.findStudentById(studentId);
 
-        updateCardInternal(student, dto, avatarFile);
+        baseUserManagementService.updateCard(student, dto, avatarFile);
 
-        return studentMapper.toDetailsDto(repository.save(student));
+        return studentMapper.toDetailsDto(studentRepository.save(student));
     }
 
     @Override
+    @Transactional
     public UserCredentialsResponseDto updateProfile(Long studentId, UserCredentialsUpdateRequestDto dto) {
 
-        Student updatedStudent = super.updateProfileInternal(studentId, dto);
+        baseUserManagementService.updateProfile(studentId, dto);
 
+        Student updatedStudent = userFinder.findStudentById(studentId);
         return studentMapper.toCredentialsDto(updatedStudent);
     }
 
@@ -80,22 +69,8 @@ public class StudentProfileServiceImpl extends AbstractBaseUserService<Student,S
             throw new ResourceNotFoundException("У студента нет ментора");
         }
 
-        // Делегируем преобразование другому сервису, который за это отвечает
         return mentorDirectoryService.getMentorDetails(mentor.getId());
     }
-
-    @Override
-    public List<ApplicationOfStudentResponseDto> getStudentApplications(Long studentId) {
-
-        Student student = userFinder.findStudentById(studentId);
-
-        List<Application> applications = applicationRepository.findAllByStudent(student);
-
-        return applications.stream()
-                .map(ApplicationOfStudentResponseDto::new)
-                .toList();
-    }
-
     @Override // <-- Добавляем @Override, так как метод теперь в интерфейсе
     @Transactional
     public void terminateCurrentMentorship(Long studentId) {
