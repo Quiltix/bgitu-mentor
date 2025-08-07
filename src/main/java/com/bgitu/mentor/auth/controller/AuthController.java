@@ -3,42 +3,36 @@ package com.bgitu.mentor.auth.controller;
 import com.bgitu.mentor.auth.dto.JwtAuthenticationResponseDto;
 import com.bgitu.mentor.auth.dto.LoginRequestDto;
 import com.bgitu.mentor.auth.dto.RegisterRequestDto;
-import com.bgitu.mentor.auth.security.JwtTokenProvider;
 import com.bgitu.mentor.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 
 @Tag(name = "Auth", description = "Регистрирует и авторизует пользователя, выдает jwt токен")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController(AuthService authService, JwtTokenProvider jwtTokenProvider) {
-        this.authService = authService;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
-    @Operation(summary = "Регистрация пользователя", description = "Регистрирует пользователя в зависимости от роли, выдает jwt токен.")
     @PostMapping("/register")
-    public ResponseEntity<JwtAuthenticationResponseDto> register(@RequestBody @Valid RegisterRequestDto requestDto) {
-        String token = authService.register(requestDto);
-        return ResponseEntity.ok(new JwtAuthenticationResponseDto(token, jwtTokenProvider.getRoleFromToken(token)));
+    @ResponseStatus(HttpStatus.CREATED) // <-- Используем правильный статус 201 для создания
+    @Operation(summary = "Регистрация нового пользователя")
+    public JwtAuthenticationResponseDto register(@RequestBody @Valid RegisterRequestDto requestDto) {
+
+        return authService.register(requestDto);
     }
 
-    @Operation(summary = "Авторизация пользователя", description = "Моторизирует пользователя в зависимости от роли, выдает jwt токен.")
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthenticationResponseDto> login(@RequestBody @Valid LoginRequestDto requestDto){
-        String token = authService.login(requestDto);
-        return ResponseEntity.ok(new JwtAuthenticationResponseDto(token, jwtTokenProvider.getRoleFromToken(token)));
+    @Operation(summary = "Аутентификация пользователя")
+    public JwtAuthenticationResponseDto login(@RequestBody @Valid LoginRequestDto requestDto) {
+
+        return authService.login(requestDto);
     }
 }
