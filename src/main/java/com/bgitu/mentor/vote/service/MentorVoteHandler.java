@@ -19,8 +19,8 @@ public class MentorVoteHandler implements VoteHandler<Mentor>{
 
 
     @Override
-    public boolean hasVoted(BaseUser user, Long entityId) {
-        return voteRepository.existsByMentorIdAndUserId(entityId, user.getId());
+    public boolean hasVoted(Long userId, Long entityId) {
+        return voteRepository.existsByMentorIdAndUserId(entityId, userId);
     }
 
     @Override

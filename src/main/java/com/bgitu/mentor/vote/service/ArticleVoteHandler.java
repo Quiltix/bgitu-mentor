@@ -19,8 +19,8 @@ public class ArticleVoteHandler implements VoteHandler<Article>{
 
 
     @Override
-    public boolean hasVoted(BaseUser user, Long entityId) {
-        return voteRepository.existsByArticleIdAndUserId(entityId, user.getId());
+    public boolean hasVoted(Long userId, Long entityId) {
+        return voteRepository.existsByArticleIdAndUserId(entityId, userId);
     }
 
     @Override

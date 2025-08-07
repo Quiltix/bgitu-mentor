@@ -6,6 +6,7 @@ import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 
 @Tag(name = "Article", description = "Методы для взаимодействия со статьями")
@@ -30,21 +34,32 @@ public class ArticleController {
     @PreAuthorize("hasRole('MENTOR')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Создание статьи", description = "Позволяет ментору опубликовать статью")
+    @ApiResponse(responseCode = "201", description = "Статья успешно создана")
     public ResponseEntity<ArticleDetailsResponseDto> createArticle(
             Authentication auth,
             @RequestPart("data")  @Valid ArticleCreateRequestDto dto,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         Long authorId = SecurityUtils.getCurrentUserId(auth);
-        return ResponseEntity.ok(articleService.createArticle(authorId, dto, image));
+
+        ArticleDetailsResponseDto createdArticle = articleService.createArticle(authorId, dto, image);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createdArticle.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(createdArticle);
     }
 
 
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
     @GetMapping("/{id}")
     @Operation(summary = "Получить статью", description = "Получить статью по её ID")
-    public ResponseEntity<ArticleDetailsResponseDto> getArticleById(@PathVariable Long id) {
-        return ResponseEntity.ok(articleService.getById(id));
+    public ArticleDetailsResponseDto getArticleById(@PathVariable Long id, Authentication authentication) {
+        Long userId = SecurityUtils.getCurrentUserId(authentication);
+        return articleService.getById(id, userId);
     }
 
     @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
@@ -56,12 +71,12 @@ public class ArticleController {
                     "Сортировка: `sort=rank,desc`. " +
                     "Пагинация: `page`, `size`."
     )
-    public ResponseEntity<Page<ArticleSummaryResponseDto>> findArticles(
+    public Page<ArticleSummaryResponseDto> findArticles(
             @RequestParam(required = false) Long specialityId,
             @RequestParam(required = false) String query,
             Pageable pageable
     ) {
-        return ResponseEntity.ok(articleService.findArticles(specialityId, query, pageable));
+        return articleService.findArticles(specialityId, query, pageable);
 
     }
 
@@ -77,7 +92,7 @@ public class ArticleController {
 
     }
 
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/vote")
     @Operation(summary = "Оценить статью", description = "Лайк или дизлайк статьи. true = лайк, false = дизлайк")
     @ResponseStatus(HttpStatus.OK)

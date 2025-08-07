@@ -18,7 +18,7 @@ public class VotingService {
     public <T extends Votable> void vote(Long entityId, Long userId, boolean isUpvote, VoteHandler<T> handler){
         BaseUser user = userService.findById(userId);
 
-        if (handler.hasVoted(user, entityId)){
+        if (handler.hasVoted(userId, entityId)){
             throw new IllegalStateException("Вы уже голосовали");
         }
 

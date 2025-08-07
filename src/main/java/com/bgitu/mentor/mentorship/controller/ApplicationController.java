@@ -22,10 +22,10 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/mentorship/applications")
+@RequestMapping("/api/applications")
 @RequiredArgsConstructor
-@Tag(name = "Mentorships", description = "Управление заявками на менторство между студентами и менторами")
-public class MentorshipController {
+@Tag(name = "Applications", description = "Управление заявками на менторство между студентами и менторами")
+public class ApplicationController {
 
     private final MentorshipService mentorshipService;
 
@@ -52,7 +52,7 @@ public class MentorshipController {
 
 
     @PreAuthorize("hasRole('MENTOR')")
-    @GetMapping
+    @GetMapping("/mentor")
     @Operation(summary = "Получить входящие заявки ментора", description = "Возвращает список заявок, направленных текущему ментору")
     public ResponseEntity<List<ApplicationDetailsResponseDto>> getMentorApplications(
             Authentication authentication,
@@ -63,7 +63,7 @@ public class MentorshipController {
 
     @Operation(summary = "Получение всех заявок студента", description = "Доступно только студенту")
     @PreAuthorize("hasRole('STUDENT')")
-    @GetMapping("/applications")
+    @GetMapping("/student")
     public List<ApplicationOfStudentResponseDto> getStudentApplications(Authentication authentication, @RequestParam(required = false) ApplicationStatus status) {
         Long studentId = SecurityUtils.getCurrentUserId(authentication);
         return mentorshipService.getApplicationsForStudent(studentId, status);

@@ -14,7 +14,7 @@ public interface ArticleService {
 
 
     ArticleDetailsResponseDto createArticle(Long authorId, ArticleCreateRequestDto dto, MultipartFile image);
-    ArticleDetailsResponseDto getById(Long id);
+    ArticleDetailsResponseDto getById(Long id, Long userId);
     Page<ArticleSummaryResponseDto> findArticles(Long specialityId, String query, Pageable pageable);
     List<ArticleSummaryResponseDto> findArticlesByAuthor(Long authorId);
     void deleteArticle(Long articleId, Long userId);

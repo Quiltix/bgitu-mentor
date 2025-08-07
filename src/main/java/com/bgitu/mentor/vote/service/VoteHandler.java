@@ -5,7 +5,7 @@ import com.bgitu.mentor.vote.data.model.Votable;
 
 public interface VoteHandler<T extends Votable>{
 
-    boolean hasVoted(BaseUser user, Long entityId);
+    boolean hasVoted(Long userId, Long entityId);
 
     T findVotableEntity(Long entityId);
 
