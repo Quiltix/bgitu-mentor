@@ -8,6 +8,8 @@ import com.bgitu.mentor.student.data.StudentMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", uses = {StudentMapper.class})
 public interface ApplicationMapper {
 
@@ -15,4 +17,6 @@ public interface ApplicationMapper {
 
     @Mapping(source = "student",target = "student")
     ApplicationDetailsResponseDto toDetailsDto(Application application);
+
+    List<ApplicationDetailsResponseDto> toDetailsDtoList(List<Application> applications);
 }

@@ -3,6 +3,7 @@ package com.bgitu.mentor.mentorship.service;
 
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.data.model.Mentor;
+import com.bgitu.mentor.mentorship.data.ApplicationMapper;
 import com.bgitu.mentor.mentorship.data.dto.ApplicationDecisionRequestDto;
 import com.bgitu.mentor.mentorship.data.dto.ApplicationDetailsResponseDto;
 import com.bgitu.mentor.mentorship.data.dto.ApplicationCreateRequestDto;
@@ -25,6 +26,7 @@ public class MentorshipServiceImpl implements MentorshipService {
     private final ApplicationRepository applicationRepository;
     private final UserFinder userFinder;
     private final MentorshipLifecycleService mentorshipLifecycleService;
+    private final ApplicationMapper applicationMapper;
 
     @Override
     @Transactional
@@ -47,7 +49,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         app.setMessage(dto.getMessage());
         app.setStatus(ApplicationStatus.PENDING);
 
-        return new ApplicationDetailsResponseDto(applicationRepository.save(app));
+        return applicationMapper.toDetailsDto(applicationRepository.save(app));
     }
 
     @Override
@@ -81,7 +83,7 @@ public class MentorshipServiceImpl implements MentorshipService {
 
         otherPendingApps.forEach(otherApp -> otherApp.setStatus(ApplicationStatus.EXPIRED));
 
-        // Сохраняем все измененные заявки (включая текущую)
+
         applicationRepository.save(application);
 
         if (!otherPendingApps.isEmpty()) {
@@ -97,7 +99,7 @@ public class MentorshipServiceImpl implements MentorshipService {
                 ? applicationRepository.findAllByMentorAndStatus(mentor, status)
                 : applicationRepository.findAllByMentor(mentor);
 
-        return applications.stream().map(ApplicationDetailsResponseDto::new).toList();
+        return applicationMapper.toDetailsDtoList(applications);
     }
 
     private Application findAndVerifyApplicationOwner(Long applicationId, Mentor mentor) {
