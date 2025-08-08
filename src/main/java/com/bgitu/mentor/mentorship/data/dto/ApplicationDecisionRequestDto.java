@@ -8,8 +8,6 @@ import lombok.Setter;
 @Setter
 public class ApplicationDecisionRequestDto {
 
-    @NotNull(message = "Решение (принять/отклонить) не может быть пустым")
-    private Boolean accepted;
-
-
+  @NotNull(message = "Решение (принять/отклонить) не может быть пустым")
+  private Boolean accepted;
 }

@@ -7,29 +7,27 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-
 @RequiredArgsConstructor
 @Service
-public class MentorshipLifecycleServiceImpl implements  MentorshipLifecycleService{
+public class MentorshipLifecycleServiceImpl implements MentorshipLifecycleService {
 
-    private final StudentRepository studentRepository;
+  private final StudentRepository studentRepository;
 
+  @Override
+  @Transactional
+  public void establishLink(Mentor mentor, Student student) {
 
-    @Override
-    @Transactional
-    public void establishLink(Mentor mentor, Student student) {
+    student.setMentor(mentor);
 
-        student.setMentor(mentor);
+    studentRepository.save(student);
+  }
 
-        studentRepository.save(student);
-    }
+  @Override
+  @Transactional
+  public void terminateLink(Mentor mentor, Student student) {
 
-    @Override
-    @Transactional
-    public void terminateLink(Mentor mentor, Student student) {
+    student.setMentor(null);
 
-        student.setMentor(null);
-
-        studentRepository.save(student);
-    }
+    studentRepository.save(student);
+  }
 }

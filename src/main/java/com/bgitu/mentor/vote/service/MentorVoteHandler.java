@@ -1,6 +1,5 @@
 package com.bgitu.mentor.vote.service;
 
-
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.repository.MentorRepository;
 import com.bgitu.mentor.user.data.model.BaseUser;
@@ -12,38 +11,34 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class MentorVoteHandler implements VoteHandler<Mentor>{
+public class MentorVoteHandler implements VoteHandler<Mentor> {
 
-    private final MentorRepository mentorRepository;
-    private final MentorVoteRepository voteRepository;
+  private final MentorRepository mentorRepository;
+  private final MentorVoteRepository voteRepository;
 
+  @Override
+  public boolean hasVoted(Long userId, Long entityId) {
+    return voteRepository.existsByMentorIdAndUserId(entityId, userId);
+  }
 
-    @Override
-    public boolean hasVoted(Long userId, Long entityId) {
-        return voteRepository.existsByMentorIdAndUserId(entityId, userId);
-    }
+  @Override
+  public Mentor findVotableEntity(Long entityId) {
+    return mentorRepository
+        .findById(entityId)
+        .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
+  }
 
-    @Override
-    public Mentor findVotableEntity(Long entityId) {
-        return mentorRepository.findById(entityId)
-                .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
-    }
+  @Override
+  public void saveVote(BaseUser user, Mentor entity, boolean upVote) {
+    MentorVote vote = new MentorVote();
+    vote.setUser(user);
+    vote.setMentor(entity);
+    vote.setUpvote(upVote);
+    voteRepository.save(vote);
+  }
 
-    @Override
-    public void saveVote(BaseUser user, Mentor entity, boolean upVote) {
-        MentorVote vote = new MentorVote();
-        vote.setUser(user);
-        vote.setMentor(entity);
-        vote.setUpvote(upVote);
-        voteRepository.save(vote);
-
-    }
-
-    @Override
-    public void saveVotableEntity(Mentor entity) {
-        mentorRepository.save(entity);
-
-    }
-
-
+  @Override
+  public void saveVotableEntity(Mentor entity) {
+    mentorRepository.save(entity);
+  }
 }

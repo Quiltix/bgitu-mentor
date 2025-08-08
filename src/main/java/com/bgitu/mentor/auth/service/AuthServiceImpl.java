@@ -20,62 +20,56 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    private final PasswordEncoder passwordEncoder;
-    private final BaseUserRepository userRepository;
-    private final JwtTokenProvider tokenProvider;
-    private final AuthenticationManager authenticationManager;
+  private final PasswordEncoder passwordEncoder;
+  private final BaseUserRepository userRepository;
+  private final JwtTokenProvider tokenProvider;
+  private final AuthenticationManager authenticationManager;
 
-    public JwtAuthenticationResponseDto register(RegisterRequestDto dto) {
-        String email = dto.getEmail();
+  public JwtAuthenticationResponseDto register(RegisterRequestDto dto) {
+    String email = dto.getEmail();
 
-        if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("Email уже используется");
-        }
-
-
-
-        BaseUser userToSave;
-        if (dto.getRole() == Role.MENTOR) {
-            Mentor mentor = new Mentor();
-            mentor.setRank(0);
-            userToSave = mentor;
-        } else if (dto.getRole() == Role.STUDENT) {
-            userToSave = new Student();
-        } else {
-            throw new IllegalArgumentException("Вы выбрали недопустимую роль");
-        }
-
-        userToSave.setEmail(email);
-        userToSave.setPassword(passwordEncoder.encode(dto.getPassword()));
-        userToSave.setFirstName(dto.getFirstName());
-        userToSave.setLastName(dto.getLastName());
-
-        BaseUser savedUser = userRepository.save(userToSave);
-
-        Role userRole = dto.getRole();
-
-        String token = tokenProvider.generateToken(savedUser.getId(), userRole);
-
-
-        return new JwtAuthenticationResponseDto(token,userRole.name());
+    if (userRepository.existsByEmail(email)) {
+      throw new IllegalArgumentException("Email уже используется");
     }
 
-
-    @Override
-    public JwtAuthenticationResponseDto login(LoginRequestDto dto) {
-
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
-
-
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
-
-        AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
-
-        // 4. Генерируем токен
-        String token = tokenProvider.generateToken(userDetails.getId(), userDetails.getRole());
-
-        return new JwtAuthenticationResponseDto(token, userDetails.getRole().name());
+    BaseUser userToSave;
+    if (dto.getRole() == Role.MENTOR) {
+      Mentor mentor = new Mentor();
+      mentor.setRank(0);
+      userToSave = mentor;
+    } else if (dto.getRole() == Role.STUDENT) {
+      userToSave = new Student();
+    } else {
+      throw new IllegalArgumentException("Вы выбрали недопустимую роль");
     }
+
+    userToSave.setEmail(email);
+    userToSave.setPassword(passwordEncoder.encode(dto.getPassword()));
+    userToSave.setFirstName(dto.getFirstName());
+    userToSave.setLastName(dto.getLastName());
+
+    BaseUser savedUser = userRepository.save(userToSave);
+
+    Role userRole = dto.getRole();
+
+    String token = tokenProvider.generateToken(savedUser.getId(), userRole);
+
+    return new JwtAuthenticationResponseDto(token, userRole.name());
+  }
+
+  @Override
+  public JwtAuthenticationResponseDto login(LoginRequestDto dto) {
+
+    UsernamePasswordAuthenticationToken authenticationToken =
+        new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
+
+    Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+    AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
+
+    // 4. Генерируем токен
+    String token = tokenProvider.generateToken(userDetails.getId(), userDetails.getRole());
+
+    return new JwtAuthenticationResponseDto(token, userDetails.getRole().name());
+  }
 }

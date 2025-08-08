@@ -5,10 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ArticleVoteRepository extends JpaRepository<ArticleVote, Long> {
 
-
-
-    boolean existsByArticleIdAndUserId(Long articleId, Long userId);
-
-    void deleteAllByArticleId(Long articleId);
-
+  boolean existsByArticleIdAndUserId(Long articleId, Long userId);
 }

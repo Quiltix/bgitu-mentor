@@ -8,10 +8,8 @@ import lombok.Setter;
 @Setter
 public class UserCredentialsUpdateRequestDto {
 
-    @Email(message = "Email должен быть корректным")
-    private String email;
+  @Email(message = "Email должен быть корректным")
+  private String email;
 
-    private String password;
-
-
+  private String password;
 }

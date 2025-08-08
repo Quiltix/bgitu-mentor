@@ -11,57 +11,53 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Getter
 @Setter
 @Entity
 public class Article implements Votable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String title;
+  private String title;
 
-    @Column(length = 5000)
-    private String content;
+  @Column(length = 5000)
+  private String content;
 
-    private String imageUrl;
+  private String imageUrl;
 
-    private int rank;
+  private int rank;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "speciality_id")
-    private Speciality speciality;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "speciality_id")
+  private Speciality speciality;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id")
-    private Mentor author;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "author_id")
+  private Mentor author;
 
-    @OneToMany(
-            mappedBy = "article",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<ArticleVote> votes = new ArrayList<>();
+  @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ArticleVote> votes = new ArrayList<>();
 
+  public void addVote(ArticleVote vote) {
 
-    public void addVote(ArticleVote vote) {
+    this.votes.add(vote);
 
-        this.votes.add(vote);
+    vote.setArticle(this);
+  }
 
-        vote.setArticle(this);
-    }
-    public void removeVote(ArticleVote vote) {
-        this.votes.remove(vote);
-        vote.setArticle(null);
-    }
+  public void removeVote(ArticleVote vote) {
+    this.votes.remove(vote);
+    vote.setArticle(null);
+  }
 
-    @Override
-    public void setRank(Integer rank) {
-        this.rank = rank;
-    }
-    @Override
-    public Integer getRank() {
-        return rank;
-    }
+  @Override
+  public void setRank(Integer rank) {
+    this.rank = rank;
+  }
+
+  @Override
+  public Integer getRank() {
+    return rank;
+  }
 }

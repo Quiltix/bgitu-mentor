@@ -1,6 +1,5 @@
 package com.bgitu.mentor.mentorship.service;
 
-
 import com.bgitu.mentor.auth.Role;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.data.model.Mentor;
@@ -24,101 +23,106 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MentorshipServiceImpl implements MentorshipService {
 
+  private final ApplicationRepository applicationRepository;
+  private final UserFinder userFinder;
+  private final MentorshipLifecycleService mentorshipLifecycleService;
+  private final ApplicationMapper applicationMapper;
 
-    private final ApplicationRepository applicationRepository;
-    private final UserFinder userFinder;
-    private final MentorshipLifecycleService mentorshipLifecycleService;
-    private final ApplicationMapper applicationMapper;
+  @Override
+  @Transactional
+  public ApplicationDetailsResponseDto createApplication(
+      Long studentId, ApplicationCreateRequestDto dto) {
+    Student student = userFinder.findStudentById(studentId);
 
-    @Override
-    @Transactional
-    public ApplicationDetailsResponseDto createApplication(Long studentId, ApplicationCreateRequestDto dto) {
-        Student student = userFinder.findStudentById(studentId);
+    Mentor mentor = userFinder.findMentorById(dto.getMentorId());
 
-        Mentor mentor = userFinder.findMentorById(dto.getMentorId());
-
-        if (student.getMentor() != null) {
-            throw new IllegalStateException("У вас уже есть ментор. Сначала прекратите текущее менторство.");
-        }
-
-
-        if (applicationRepository.existsByStudentIdAndMentorIdAndStatus(studentId, mentor.getId(), ApplicationStatus.PENDING)) {
-            throw new IllegalStateException("Вы уже отправляли заявку этому ментору.");
-        }
-        Application app = new Application();
-        app.setStudent(student);
-        app.setMentor(mentor);
-        app.setMessage(dto.getMessage());
-        app.setStatus(ApplicationStatus.PENDING);
-
-        return applicationMapper.toDetailsDto(applicationRepository.save(app));
+    if (student.getMentor() != null) {
+      throw new IllegalStateException(
+          "У вас уже есть ментор. Сначала прекратите текущее менторство.");
     }
 
-    @Override
-    @Transactional
-    public void updateApplicationStatus(Long mentorId, Long applicationId, ApplicationDecisionRequestDto dto) {
-        Mentor mentor = userFinder.findMentorById(mentorId);
-        Application app = findAndVerifyApplicationOwner(applicationId, mentor);
+    if (applicationRepository.existsByStudentIdAndMentorIdAndStatus(
+        studentId, mentor.getId(), ApplicationStatus.PENDING)) {
+      throw new IllegalStateException("Вы уже отправляли заявку этому ментору.");
+    }
+    Application app = new Application();
+    app.setStudent(student);
+    app.setMentor(mentor);
+    app.setMessage(dto.getMessage());
+    app.setStatus(ApplicationStatus.PENDING);
 
+    return applicationMapper.toDetailsDto(applicationRepository.save(app));
+  }
 
+  @Override
+  @Transactional
+  public void updateApplicationStatus(
+      Long mentorId, Long applicationId, ApplicationDecisionRequestDto dto) {
+    Mentor mentor = userFinder.findMentorById(mentorId);
+    Application app = findAndVerifyApplicationOwner(applicationId, mentor);
 
-        if (app.getStatus() != ApplicationStatus.PENDING) {
-            throw new IllegalStateException("Нельзя изменить статус заявки, которая уже обработана.");
-        }
-
-        if (Boolean.TRUE.equals(dto.getAccepted())) {
-            approveApplication(app);
-        } else {
-            app.setStatus(ApplicationStatus.REJECTED);
-        }
-        applicationRepository.save(app);
+    if (app.getStatus() != ApplicationStatus.PENDING) {
+      throw new IllegalStateException("Нельзя изменить статус заявки, которая уже обработана.");
     }
 
+    if (Boolean.TRUE.equals(dto.getAccepted())) {
+      approveApplication(app);
+    } else {
+      app.setStatus(ApplicationStatus.REJECTED);
+    }
+    applicationRepository.save(app);
+  }
 
-    private void approveApplication(Application application) {
-        application.setStatus(ApplicationStatus.ACCEPTED);
+  private void approveApplication(Application application) {
+    application.setStatus(ApplicationStatus.ACCEPTED);
 
-        mentorshipLifecycleService.establishLink(application.getMentor(), application.getStudent());
+    mentorshipLifecycleService.establishLink(application.getMentor(), application.getStudent());
 
-        List<Application> otherPendingApps = applicationRepository
-                .findAllByStudentIdAndStatus(application.getStudent().getId(), ApplicationStatus.PENDING);
+    List<Application> otherPendingApps =
+        applicationRepository.findAllByStudentIdAndStatus(
+            application.getStudent().getId(), ApplicationStatus.PENDING);
 
-        otherPendingApps.forEach(otherApp -> otherApp.setStatus(ApplicationStatus.EXPIRED));
+    otherPendingApps.forEach(otherApp -> otherApp.setStatus(ApplicationStatus.EXPIRED));
 
+    applicationRepository.save(application);
 
-        applicationRepository.save(application);
+    if (!otherPendingApps.isEmpty()) {
+      applicationRepository.saveAll(otherPendingApps);
+    }
+  }
 
-        if (!otherPendingApps.isEmpty()) {
-            applicationRepository.saveAll(otherPendingApps);
-        }
+  @Override
+  public List<?> getMyApplications(Long userId, Role role, ApplicationStatus status) {
+    if (role == Role.MENTOR) {
+      List<Application> applications =
+          (status != null)
+              ? applicationRepository.findAllByMentorIdAndStatus(userId, status)
+              : applicationRepository.findAllByMentorId(userId);
+      return applicationMapper.toDetailsDtoList(applications);
     }
 
-    @Override
-    public List<?> getMyApplications(Long userId, Role role, ApplicationStatus status) {
-        if (role == Role.MENTOR) {
-            List<Application> applications = (status != null)
-                    ? applicationRepository.findAllByMentorIdAndStatus(userId, status)
-                    : applicationRepository.findAllByMentorId(userId);
-            return applicationMapper.toDetailsDtoList(applications);
-        }
-
-        if (role == Role.STUDENT) {
-            List<Application> applications = (status != null)
-                    ? applicationRepository.findAllByStudentIdAndStatus(userId, status)
-                    : applicationRepository.findAllByStudentId(userId);
-            return applicationMapper.toStudentApplicationDtoList(applications);
-        }
-
-        return Collections.emptyList();
+    if (role == Role.STUDENT) {
+      List<Application> applications =
+          (status != null)
+              ? applicationRepository.findAllByStudentIdAndStatus(userId, status)
+              : applicationRepository.findAllByStudentId(userId);
+      return applicationMapper.toStudentApplicationDtoList(applications);
     }
 
-    private Application findAndVerifyApplicationOwner(Long applicationId, Mentor mentor) {
-        Application app = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Заявка с id=" + applicationId + " не найдена"));
+    return Collections.emptyList();
+  }
 
-        if (!app.getMentor().getId().equals(mentor.getId())) {
-            throw new SecurityException("Вы не можете отвечать на чужую заявку.");
-        }
-        return app;
+  private Application findAndVerifyApplicationOwner(Long applicationId, Mentor mentor) {
+    Application app =
+        applicationRepository
+            .findById(applicationId)
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException("Заявка с id=" + applicationId + " не найдена"));
+
+    if (!app.getMentor().getId().equals(mentor.getId())) {
+      throw new SecurityException("Вы не можете отвечать на чужую заявку.");
     }
+    return app;
+  }
 }

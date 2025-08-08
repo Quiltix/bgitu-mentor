@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SpecialityService {
 
-    Speciality getById(Long specialityId);
+  Speciality getById(Long specialityId);
 
-    List<SpecialityDto> getAllSpecialities();
+  List<SpecialityDto> getAllSpecialities();
 }

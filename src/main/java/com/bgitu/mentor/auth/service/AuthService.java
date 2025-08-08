@@ -6,6 +6,7 @@ import com.bgitu.mentor.auth.dto.RegisterRequestDto;
 
 public interface AuthService {
 
-    JwtAuthenticationResponseDto register(RegisterRequestDto dto);
-    JwtAuthenticationResponseDto login(LoginRequestDto dto);
+  JwtAuthenticationResponseDto register(RegisterRequestDto dto);
+
+  JwtAuthenticationResponseDto login(LoginRequestDto dto);
 }

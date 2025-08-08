@@ -1,13 +1,10 @@
 package com.bgitu.mentor.student.data.model;
 
 import com.bgitu.mentor.mentor.data.model.Mentor;
-import com.bgitu.mentor.mentorship.data.model.Application;
 import com.bgitu.mentor.user.data.model.BaseUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -15,7 +12,7 @@ import java.util.List;
 @Table(name = "student")
 public class Student extends BaseUser {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mentor_id")
-    private Mentor mentor;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "mentor_id")
+  private Mentor mentor;
 }

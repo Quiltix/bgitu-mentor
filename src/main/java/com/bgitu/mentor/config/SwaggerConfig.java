@@ -1,7 +1,5 @@
 package com.bgitu.mentor.config;
 
-
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -14,26 +12,26 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-
 @Configuration
 public class SwaggerConfig {
 
-    @Value("${swagger.server-url:http://localhost:8080}")
-    private String swaggerServerUrl;
+  @Value("${swagger.server-url:http://localhost:8080}")
+  private String swaggerServerUrl;
 
-    @Bean
-    public OpenAPI api() {
-        return new OpenAPI()
-                .servers(List.of(new Server().url(swaggerServerUrl)))
-                .info(new Info().
-                        title("API for mentor service")
-                        .description("API Documentation"))
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .components(new Components()
-                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
-                                .name("bearerAuth")
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")));
-    };
-    }
+  @Bean
+  public OpenAPI api() {
+    return new OpenAPI()
+        .servers(List.of(new Server().url(swaggerServerUrl)))
+        .info(new Info().title("API for mentor service").description("API Documentation"))
+        .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+        .components(
+            new Components()
+                .addSecuritySchemes(
+                    "bearerAuth",
+                    new SecurityScheme()
+                        .name("bearerAuth")
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")));
+  }
+}

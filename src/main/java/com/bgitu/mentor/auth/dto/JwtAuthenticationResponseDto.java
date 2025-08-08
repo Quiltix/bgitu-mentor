@@ -8,16 +8,16 @@ import lombok.Setter;
 @Setter
 @Schema(description = "Ответ с JWT")
 public class JwtAuthenticationResponseDto {
-    @Schema(description = "JWT токен", example = "eyJhbGciOiJIUzI1...")
-    private String accessToken;
-    @Schema(description = "Тип аутентификации", example = "Bearer")
-    private final String tokenType = "Bearer";
+  @Schema(description = "JWT токен", example = "eyJhbGciOiJIUzI1...")
+  private String accessToken;
 
-    private String role;
+  @Schema(description = "Тип аутентификации", example = "Bearer")
+  private final String tokenType = "Bearer";
 
-    public JwtAuthenticationResponseDto(String accessToken, String role) {
-        this.accessToken = accessToken;
-        this.role = role;
+  private String role;
 
-    }
+  public JwtAuthenticationResponseDto(String accessToken, String role) {
+    this.accessToken = accessToken;
+    this.role = role;
+  }
 }

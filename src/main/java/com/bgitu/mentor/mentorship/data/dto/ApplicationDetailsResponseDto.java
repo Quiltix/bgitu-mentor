@@ -1,7 +1,5 @@
 package com.bgitu.mentor.mentorship.data.dto;
 
-
-import com.bgitu.mentor.mentorship.data.model.Application;
 import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import jakarta.validation.constraints.Size;
@@ -12,14 +10,12 @@ import lombok.Setter;
 @Setter
 public class ApplicationDetailsResponseDto {
 
-    Long id;
+  Long id;
 
-    @Size(max = 250, message = "Сократите сообщение до 250 символов")
-    String message;
+  @Size(max = 250, message = "Сократите сообщение до 250 символов")
+  String message;
 
-    ApplicationStatus status;
+  ApplicationStatus status;
 
-    StudentDetailsResponseDto student;
-
-
+  StudentDetailsResponseDto student;
 }

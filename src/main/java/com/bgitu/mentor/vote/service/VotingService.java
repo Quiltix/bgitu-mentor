@@ -1,6 +1,5 @@
 package com.bgitu.mentor.vote.service;
 
-
 import com.bgitu.mentor.user.data.model.BaseUser;
 import com.bgitu.mentor.user.service.UserService;
 import com.bgitu.mentor.vote.data.model.Votable;
@@ -12,25 +11,24 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class VotingService {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    @Transactional
-    public <T extends Votable> void vote(Long entityId, Long userId, boolean isUpvote, VoteHandler<T> handler){
-        BaseUser user = userService.findById(userId);
+  @Transactional
+  public <T extends Votable> void vote(
+      Long entityId, Long userId, boolean isUpvote, VoteHandler<T> handler) {
+    BaseUser user = userService.findById(userId);
 
-        if (handler.hasVoted(userId, entityId)){
-            throw new IllegalStateException("Вы уже голосовали");
-        }
-
-        T entity = handler.findVotableEntity(entityId);
-
-        handler.saveVote(user, entity, isUpvote);
-
-        int rankChange = isUpvote ? 1 : -1;
-        entity.setRank(entity.getRank() + rankChange);
-
-        handler.saveVotableEntity(entity);
-
+    if (handler.hasVoted(userId, entityId)) {
+      throw new IllegalStateException("Вы уже голосовали");
     }
 
+    T entity = handler.findVotableEntity(entityId);
+
+    handler.saveVote(user, entity, isUpvote);
+
+    int rankChange = isUpvote ? 1 : -1;
+    entity.setRank(entity.getRank() + rankChange);
+
+    handler.saveVotableEntity(entity);
+  }
 }

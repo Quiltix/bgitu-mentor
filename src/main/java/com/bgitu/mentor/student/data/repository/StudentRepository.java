@@ -7,7 +7,5 @@ import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
-
-
-    List<Student> findAllByMentorId(Long mentorId);
+  List<Student> findAllByMentorId(Long mentorId);
 }

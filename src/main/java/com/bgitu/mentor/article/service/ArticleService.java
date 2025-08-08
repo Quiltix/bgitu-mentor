@@ -9,14 +9,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-
 public interface ArticleService {
 
+  ArticleDetailsResponseDto createArticle(
+      Long authorId, ArticleCreateRequestDto dto, MultipartFile image);
 
-    ArticleDetailsResponseDto createArticle(Long authorId, ArticleCreateRequestDto dto, MultipartFile image);
-    ArticleDetailsResponseDto getById(Long id, Long userId);
-    Page<ArticleSummaryResponseDto> findArticles(Long specialityId, String query, Pageable pageable);
-    List<ArticleSummaryResponseDto> findArticlesByAuthor(Long authorId);
-    void deleteArticle(Long articleId, Long userId);
-    void changeArticleRank(Long articleId, boolean like, Long userId);
+  ArticleDetailsResponseDto getById(Long id, Long userId);
+
+  Page<ArticleSummaryResponseDto> findArticles(Long specialityId, String query, Pageable pageable);
+
+  List<ArticleSummaryResponseDto> findArticlesByAuthor(Long authorId);
+
+  void deleteArticle(Long articleId, Long userId);
+
+  void changeArticleRank(Long articleId, boolean like, Long userId);
 }

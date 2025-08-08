@@ -6,6 +6,4 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StudentDetailsUpdateRequestDto extends BaseUserUpdateRequestDto {
-
-}
+public class StudentDetailsUpdateRequestDto extends BaseUserUpdateRequestDto {}

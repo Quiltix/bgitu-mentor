@@ -14,25 +14,30 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserFinderImpl implements UserFinder {
 
-    private final BaseUserRepository baseUserRepository;
-    private final MentorRepository mentorRepository;
-    private final StudentRepository studentRepository;
+  private final BaseUserRepository baseUserRepository;
+  private final MentorRepository mentorRepository;
+  private final StudentRepository studentRepository;
 
-    @Override
-    public BaseUser findUserById(Long userId) {
-        return baseUserRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id=" + userId + " не найден"));
-    }
+  @Override
+  public BaseUser findUserById(Long userId) {
+    return baseUserRepository
+        .findById(userId)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("Пользователь с id=" + userId + " не найден"));
+  }
 
-    @Override
-    public Mentor findMentorById(Long mentorId) {
-        return mentorRepository.findById(mentorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Ментор с id=" + mentorId + " не найден"));
-    }
+  @Override
+  public Mentor findMentorById(Long mentorId) {
+    return mentorRepository
+        .findById(mentorId)
+        .orElseThrow(() -> new ResourceNotFoundException("Ментор с id=" + mentorId + " не найден"));
+  }
 
-    @Override
-    public Student findStudentById(Long studentId) {
-        return studentRepository.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Студент с id=" + studentId + " не найден"));
-    }
+  @Override
+  public Student findStudentById(Long studentId) {
+    return studentRepository
+        .findById(studentId)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("Студент с id=" + studentId + " не найден"));
+  }
 }

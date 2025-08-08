@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface StudentDirectoryService {
 
-    List<StudentDetailsResponseDto> findAllStudentsByMentor(Long mentorId);
+  List<StudentDetailsResponseDto> findAllStudentsByMentor(Long mentorId);
 }

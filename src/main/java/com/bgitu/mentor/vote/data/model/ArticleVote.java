@@ -6,20 +6,18 @@ import lombok.*;
 
 @Entity
 @Table(
-        name = "article_vote",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"article_id", "mentor_id"}),
-                @UniqueConstraint(columnNames = {"article_id", "student_id"})
-        }
-)
+    name = "article_vote",
+    uniqueConstraints = {
+      @UniqueConstraint(columnNames = {"article_id", "mentor_id"}),
+      @UniqueConstraint(columnNames = {"article_id", "student_id"})
+    })
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticleVote extends BaseVote {
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "article_id", nullable = false)
-    private Article article;
-
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "article_id", nullable = false)
+  private Article article;
 }

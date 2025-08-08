@@ -11,19 +11,16 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "mentor")
-public class Mentor extends BaseUser implements Votable{
+public class Mentor extends BaseUser implements Votable {
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "speciality_id")
+  private Speciality speciality;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "speciality_id")
-    private Speciality speciality;
+  private Integer rank = 0;
 
-    private Integer rank = 0;
-
-    @Override
-    public Integer getRank() {
-        return rank;
-    }
-
-
+  @Override
+  public Integer getRank() {
+    return rank;
+  }
 }

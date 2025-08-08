@@ -15,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -23,50 +22,43 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/mentors")
 public class MentorDirectoryController {
 
-    private final MentorDirectoryService mentorService;
+  private final MentorDirectoryService mentorService;
 
+  @Operation(
+      summary = "Получение списка менторов (короткое описание) с фильтрацией и пагинацией",
+      description =
+          "Возвращает пагинированный список менторов. "
+              + "Поддерживает фильтры: `specialityId`, `query`. "
+              + "Поддерживает сортировку: `sort=rank,desc` (для топ-3). Первый параметр - поле по которому сортировать, второй - desc (по убыванию) или asc (по возрастанию)."
+              + "Поддерживает пагинацию: `page=0`, `size=10`.")
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping()
+  public Page<MentorSummaryResponseDto> getAllMentorsShort(
+      @RequestParam(required = false) Long specialityId,
+      @RequestParam(required = false) String query,
+      Pageable pageable) {
+    return mentorService.findMentors(specialityId, query, pageable);
+  }
 
-    @Operation(summary = "Получение списка менторов (короткое описание) с фильтрацией и пагинацией", description = "Возвращает пагинированный список менторов. " +
-            "Поддерживает фильтры: `specialityId`, `query`. " +
-            "Поддерживает сортировку: `sort=rank,desc` (для топ-3). Первый параметр - поле по которому сортировать, второй - desc (по убыванию) или asc (по возрастанию)." +
-            "Поддерживает пагинацию: `page=0`, `size=10`."
-    )
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping()
-    public Page<MentorSummaryResponseDto>  getAllMentorsShort(
-            @RequestParam(required = false) Long specialityId,
-            @RequestParam(required = false) String query,
-            Pageable pageable) {
-        return mentorService.findMentors(specialityId, query, pageable);
-    }
+  @Operation(
+      summary = "Получение полной карточки ментора",
+      description =
+          "Доступно для ролей STUDENT и MENTOR. Возвращает полную информацию по ментору по id.")
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/{id}")
+  public MentorDetailsResponseDto getMentorDetails(@PathVariable Long id) {
+    return mentorService.getMentorDetails(id);
+  }
 
-    @Operation(summary = "Получение полной карточки ментора", description = "Доступно для ролей STUDENT и MENTOR. Возвращает полную информацию по ментору по id.")
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}")
-    public MentorDetailsResponseDto getMentorDetails(@PathVariable Long id) {
-        return mentorService.getMentorDetails(id);
-    }
-
-
-    @PreAuthorize("hasRole('STUDENT')")
-    @PostMapping("/{id}/vote")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Лайк/дизлайк ментора", description = "Голосование за ментора (1 раз на студента)")
-    public void voteMentor(
-            @PathVariable Long id,
-            @RequestParam boolean upvote,
-            Authentication authentication
-    ) {
-        Long userId = SecurityUtils.getCurrentUserId(authentication);
-        mentorService.voteForMentor(id, upvote, userId);
-    }
-
+  @PreAuthorize("hasRole('STUDENT')")
+  @PostMapping("/{id}/vote")
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(
+      summary = "Лайк/дизлайк ментора",
+      description = "Голосование за ментора (1 раз на студента)")
+  public void voteMentor(
+      @PathVariable Long id, @RequestParam boolean upvote, Authentication authentication) {
+    Long userId = SecurityUtils.getCurrentUserId(authentication);
+    mentorService.voteForMentor(id, upvote, userId);
+  }
 }
-
-
-
-
-
-
-
-

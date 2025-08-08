@@ -12,18 +12,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SpecialityServiceImpl implements SpecialityService {
 
-    private final SpecialityRepository specialityRepository;
+  private final SpecialityRepository specialityRepository;
 
-    @Override
-    public Speciality getById(Long specialityId) {
-        return specialityRepository.findById(specialityId)
-                .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
-    }
+  @Override
+  public Speciality getById(Long specialityId) {
+    return specialityRepository
+        .findById(specialityId)
+        .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
+  }
 
-    public List<SpecialityDto> getAllSpecialities() {
-        return specialityRepository.findAll()
-                .stream()
-                .map(s -> new SpecialityDto(s.getId(), s.getName()))
-                .toList();
-    }
+  public List<SpecialityDto> getAllSpecialities() {
+    return specialityRepository.findAll().stream()
+        .map(s -> new SpecialityDto(s.getId(), s.getName()))
+        .toList();
+  }
 }

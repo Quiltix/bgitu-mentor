@@ -25,94 +25,94 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-
 @Service
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
-    private final ArticleRepository articleRepository;
-    private final UserFinder userFinder;
-    private final SpecialityService specialityService;
-    private final FileStorageService fileStorageService;
-    private final VotingService votingService;
-    private final ArticleVoteHandler articleVoteHandler;
-    private final ArticleMapper articleMapper;
+  private final ArticleRepository articleRepository;
+  private final UserFinder userFinder;
+  private final SpecialityService specialityService;
+  private final FileStorageService fileStorageService;
+  private final VotingService votingService;
+  private final ArticleVoteHandler articleVoteHandler;
+  private final ArticleMapper articleMapper;
 
-    @Override
-    public ArticleDetailsResponseDto createArticle(Long authorId, ArticleCreateRequestDto dto, MultipartFile image) {
-        Mentor author = userFinder.findMentorById(authorId);
-        Speciality speciality = specialityService.getById(dto.getSpecialityId());
+  @Override
+  public ArticleDetailsResponseDto createArticle(
+      Long authorId, ArticleCreateRequestDto dto, MultipartFile image) {
+    Mentor author = userFinder.findMentorById(authorId);
+    Speciality speciality = specialityService.getById(dto.getSpecialityId());
 
-        Article article = new Article();
-        article.setTitle(dto.getTitle());
-        article.setContent(dto.getContent());
-        article.setAuthor(author);
-        article.setSpeciality(speciality);
-        article.setRank(0);
+    Article article = new Article();
+    article.setTitle(dto.getTitle());
+    article.setContent(dto.getContent());
+    article.setAuthor(author);
+    article.setSpeciality(speciality);
+    article.setRank(0);
 
-        if (image != null && !image.isEmpty()) {
-            String storedRelativePath = fileStorageService.store(image, "articles");
-            String publicUrl = "/api/uploads/image/" + storedRelativePath.replace("\\", "/");
-            article.setImageUrl(publicUrl);
-        }
-        return articleMapper.toDetailsDto(articleRepository.save(article));
+    if (image != null && !image.isEmpty()) {
+      String storedRelativePath = fileStorageService.store(image, "articles");
+      String publicUrl = "/api/uploads/image/" + storedRelativePath.replace("\\", "/");
+      article.setImageUrl(publicUrl);
+    }
+    return articleMapper.toDetailsDto(articleRepository.save(article));
+  }
+
+  @Override
+  public ArticleDetailsResponseDto getById(Long id, Long userId) {
+
+    Article article = findById(id);
+    return articleMapper.toDetailsDto(article, !articleVoteHandler.hasVoted(userId, id));
+  }
+
+  @Override
+  public void deleteArticle(Long articleId, Long userId) {
+    Article article = findById(articleId);
+
+    Mentor currentMentor = userFinder.findMentorById(userId);
+
+    if (!article.getAuthor().getId().equals(currentMentor.getId())) {
+      throw new AccessDeniedException("Вы можете удалять только свои статьи");
+    }
+    articleRepository.delete(article);
+  }
+
+  @Override
+  public void changeArticleRank(Long articleId, boolean like, Long userId) {
+    votingService.vote(articleId, userId, like, articleVoteHandler);
+  }
+
+  @Override
+  public List<ArticleSummaryResponseDto> findArticlesByAuthor(Long authorId) {
+    // Напрямую запрашиваем у репозитория статей. Это эффективно и безопасно.
+    List<Article> articles = articleRepository.findAllByAuthorId(authorId);
+    // Делегируем маппинг
+    return articleMapper.toSummaryDtoList(articles);
+  }
+
+  @Override
+  public Page<ArticleSummaryResponseDto> findArticles(
+      Long specialityId, String query, Pageable pageable) {
+
+    Specification<Article> specification = Specification.not(null);
+
+    if (specialityId != null) {
+      specification.and(ArticleSpecifications.hasSpeciality(specialityId));
     }
 
-    @Override
-    public ArticleDetailsResponseDto getById(Long id, Long userId) {
-
-        Article article = findById(id);
-        return articleMapper.toDetailsDto(article, !articleVoteHandler.hasVoted(userId,id));
+    if (query != null && !query.isBlank()) {
+      if (query.length() > 250) {
+        throw new IllegalStateException("Сократите строку поиска до 250 символов");
+      }
+      specification.and(ArticleSpecifications.titleOrContentContains(query));
     }
+    Page<Article> articlePages = articleRepository.findAll(specification, pageable);
 
-    @Override
-    public void deleteArticle(Long articleId,Long userId) {
-        Article article = findById(articleId);
+    return articlePages.map(articleMapper::toSummaryDto);
+  }
 
-        Mentor currentMentor = userFinder.findMentorById(userId);
-
-        if (!article.getAuthor().getId().equals(currentMentor.getId())) {
-            throw new AccessDeniedException("Вы можете удалять только свои статьи");
-        }
-        articleRepository.delete(article);
-    }
-
-    @Override
-    public void changeArticleRank(Long articleId, boolean like, Long userId) {
-        votingService.vote(articleId, userId, like, articleVoteHandler);
-    }
-
-    @Override
-    public List<ArticleSummaryResponseDto> findArticlesByAuthor(Long authorId) {
-        // Напрямую запрашиваем у репозитория статей. Это эффективно и безопасно.
-        List<Article> articles = articleRepository.findAllByAuthorId(authorId);
-        // Делегируем маппинг
-        return articleMapper.toSummaryDtoList(articles);
-    }
-
-    @Override
-    public Page<ArticleSummaryResponseDto> findArticles(Long specialityId, String query, Pageable pageable){
-
-        Specification<Article> specification = Specification.not(null);
-
-        if (specialityId != null){
-            specification.and(ArticleSpecifications.hasSpeciality(specialityId));
-        }
-
-        if (query != null && !query.isBlank()) {
-            if (query.length() > 250) {
-                throw new IllegalStateException("Сократите строку поиска до 250 символов");
-            }
-            specification.and(ArticleSpecifications.titleOrContentContains(query));
-        }
-        Page<Article> articlePages = articleRepository.findAll(specification, pageable);
-
-        return articlePages.map(articleMapper::toSummaryDto);
-    }
-
-    private Article findById(Long articleId){
-        return articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException("Статья не найдена"));
-    }
-
+  private Article findById(Long articleId) {
+    return articleRepository
+        .findById(articleId)
+        .orElseThrow(() -> new EntityNotFoundException("Статья не найдена"));
+  }
 }
-

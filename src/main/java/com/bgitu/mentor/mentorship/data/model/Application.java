@@ -10,20 +10,20 @@ import lombok.Setter;
 @Setter
 @Entity
 public class Application {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String message;
+  private String message;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id")
-    private Student student;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "student_id")
+  private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mentor_id")
-    private Mentor mentor;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "mentor_id")
+  private Mentor mentor;
 
-    @Enumerated(EnumType.STRING)
-    private ApplicationStatus status; // PENDING, ACCEPTED, REJECTED
+  @Enumerated(EnumType.STRING)
+  private ApplicationStatus status; // PENDING, ACCEPTED, REJECTED
 }

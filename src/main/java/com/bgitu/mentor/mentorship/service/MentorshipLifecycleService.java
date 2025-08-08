@@ -5,9 +5,7 @@ import com.bgitu.mentor.student.data.model.Student;
 
 public interface MentorshipLifecycleService {
 
+  void establishLink(Mentor mentor, Student student);
 
-    void establishLink(Mentor mentor, Student student);
-
-
-    void terminateLink(Mentor mentor, Student student);
+  void terminateLink(Mentor mentor, Student student);
 }

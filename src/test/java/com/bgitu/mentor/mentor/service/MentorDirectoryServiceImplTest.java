@@ -1,6 +1,5 @@
 package com.bgitu.mentor.mentor.service;
 
-
 import com.bgitu.mentor.mentor.data.MentorMapper;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
@@ -26,135 +25,120 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-
 @ExtendWith(MockitoExtension.class)
 class MentorDirectoryServiceImplTest {
 
-    private static Mentor createMentor(Long id, String firstName) {
-        Mentor mentor = new Mentor();
-        mentor.setId(id);
-        mentor.setFirstName(firstName);
+  private static Mentor createMentor(Long id, String firstName) {
+    Mentor mentor = new Mentor();
+    mentor.setId(id);
+    mentor.setFirstName(firstName);
 
-        return mentor;
-    }
+    return mentor;
+  }
 
+  @Mock private MentorRepository mentorRepository;
+  @Mock private MentorMapper mentorMapper;
 
+  @InjectMocks private MentorDirectoryServiceImpl mentorDirectoryService;
 
-    @Mock
-    private MentorRepository mentorRepository;
-    @Mock
-    private MentorMapper mentorMapper;
+  @Test
+  @DisplayName("Должен вернуть DTO ментора, если ментор найден по ID")
+  void getMentorDetails_shouldReturnMentorDto_whenMentorExists() {
+    long mentorId = 1L;
 
-    @InjectMocks
-    private MentorDirectoryServiceImpl mentorDirectoryService;
+    Mentor fakeMentor = createMentor(mentorId, "Иван");
 
+    MentorDetailsResponseDto fakeDto = new MentorDetailsResponseDto();
+    fakeDto.setId(mentorId);
+    fakeDto.setFirstName("Иван");
 
-    @Test
-    @DisplayName("Должен вернуть DTO ментора, если ментор найден по ID")
-    void getMentorDetails_shouldReturnMentorDto_whenMentorExists(){
-        long mentorId = 1L;
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(fakeMentor));
+    when(mentorMapper.toDetailsDto(fakeMentor)).thenReturn(fakeDto);
 
-        Mentor fakeMentor = createMentor(mentorId,"Иван");
+    MentorDetailsResponseDto resultDto = mentorDirectoryService.getMentorDetails(mentorId);
 
+    assertNotNull(resultDto);
+    assertEquals(fakeDto.getId(), resultDto.getId());
+    assertEquals(fakeDto.getFirstName(), resultDto.getFirstName());
 
-        MentorDetailsResponseDto fakeDto = new MentorDetailsResponseDto();
-        fakeDto.setId(mentorId);
-        fakeDto.setFirstName("Иван");
+    verify(mentorRepository, times(1)).findById(mentorId);
+    verify(mentorMapper, times(1)).toDetailsDto(fakeMentor);
+  }
 
-        when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(fakeMentor));
-        when(mentorMapper.toDetailsDto(fakeMentor)).thenReturn(fakeDto);
+  @Test
+  @DisplayName("Должен выбросить исключение, если ментор не существует")
+  void getMentorDetails_shouldThrowException_whenMentorDoesNotExist() {
 
+    when(mentorRepository.findById(99L)).thenReturn(Optional.empty());
 
-        MentorDetailsResponseDto resultDto = mentorDirectoryService.getMentorDetails(mentorId);
+    assertThrows(EntityNotFoundException.class, () -> mentorDirectoryService.getMentorDetails(99L));
+  }
 
+  @Test
+  @DisplayName("Должен найти и смапить менторов, применяя все фильтры")
+  void findMentors_shouldApplyAllFiltersAndReturnPagedDto() {
 
-        assertNotNull(resultDto);
-        assertEquals(fakeDto.getId(), resultDto.getId());
-        assertEquals(fakeDto.getFirstName(), resultDto.getFirstName());
+    Long specialityId = 10L;
+    String query = "java";
+    Pageable pageable = PageRequest.of(0, 5);
 
-        verify(mentorRepository, times(1)).findById(mentorId);
-        verify(mentorMapper, times(1)).toDetailsDto(fakeMentor);
-    }
+    Mentor mentor1 = createMentor(1L, "Анна");
 
-    @Test
-    @DisplayName("Должен выбросить исключение, если ментор не существует")
-    void getMentorDetails_shouldThrowException_whenMentorDoesNotExist() {
+    List<Mentor> fakeMentors = List.of(mentor1);
 
-        when(mentorRepository.findById(99L)).thenReturn(Optional.empty());
+    Page<Mentor> fakeMentorPage = new PageImpl<>(fakeMentors, pageable, 1);
 
+    when(mentorRepository.findAll(any(Specification.class), any(Pageable.class)))
+        .thenReturn(fakeMentorPage);
 
-        assertThrows(EntityNotFoundException.class,()-> mentorDirectoryService.getMentorDetails(99L));
-    }
+    when(mentorMapper.toSummaryDto(any(Mentor.class))).thenReturn(new MentorSummaryResponseDto());
 
-    @Test
-    @DisplayName("Должен найти и смапить менторов, применяя все фильтры")
-    void findMentors_shouldApplyAllFiltersAndReturnPagedDto(){
+    ArgumentCaptor<Specification<Mentor>> argumentCaptor =
+        ArgumentCaptor.forClass(Specification.class);
 
-        Long specialityId = 10L;
-        String query = "java";
-        Pageable pageable = PageRequest.of(0,5);
+    Page<MentorSummaryResponseDto> resultPage =
+        mentorDirectoryService.findMentors(specialityId, query, pageable);
 
-        Mentor mentor1 = createMentor(1L,"Анна");
+    assertNotNull(resultPage);
 
-        List<Mentor> fakeMentors = List.of(mentor1);
+    assertEquals(1, resultPage.getTotalElements());
 
-        Page<Mentor> fakeMentorPage = new PageImpl<>(fakeMentors,pageable,1);
+    verify(mentorRepository).findAll(argumentCaptor.capture(), eq(pageable));
 
-        when(mentorRepository.findAll(any(Specification.class),any(Pageable.class))).thenReturn(fakeMentorPage);
+    Specification<Mentor> capturedSpec = argumentCaptor.getValue();
 
-        when(mentorMapper.toSummaryDto(any(Mentor.class)))
-                .thenReturn(new MentorSummaryResponseDto());
+    assertNotNull(capturedSpec);
 
-        ArgumentCaptor<Specification<Mentor>> argumentCaptor = ArgumentCaptor.forClass(Specification.class);
+    verify(mentorMapper, times(fakeMentors.size())).toSummaryDto(any(Mentor.class));
+  }
 
+  @Test
+  @DisplayName("Должен найти менторов без фильтров, если они не переданы")
+  void findMentors_shouldWork_whenNoFiltersAreProvided() {
+    // Arrange
+    Pageable pageable = PageRequest.of(0, 10);
+    Page<Mentor> emptyPage = new PageImpl<>(List.of(), pageable, 0);
 
-        Page<MentorSummaryResponseDto> resultPage = mentorDirectoryService.findMentors(specialityId,query,pageable);
+    when(mentorRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(emptyPage);
 
+    ArgumentCaptor<Specification<Mentor>> specCaptor = ArgumentCaptor.forClass(Specification.class);
 
-        assertNotNull(resultPage);
+    mentorDirectoryService.findMentors(null, null, pageable);
 
-        assertEquals(1,resultPage.getTotalElements());
+    verify(mentorRepository).findAll(specCaptor.capture(), eq(pageable));
 
-        verify(mentorRepository).findAll(argumentCaptor.capture(),eq(pageable));
+    Specification<Mentor> capturedSpec = specCaptor.getValue();
 
-        Specification<Mentor> capturedSpec = argumentCaptor.getValue();
+    assertNotNull(capturedSpec);
+  }
 
-        assertNotNull(capturedSpec);
+  @Test
+  @DisplayName("Должен выбросить исключение, если строка больше 250")
+  void findMentors_shouldThrowException_whenQueryIsLong() {
+    // Arrange
+    String query = "1".repeat(251);
 
-        verify(mentorMapper,times(fakeMentors.size())).toSummaryDto(any(Mentor.class));
-
-    }
-
-    @Test
-    @DisplayName("Должен найти менторов без фильтров, если они не переданы")
-    void findMentors_shouldWork_whenNoFiltersAreProvided() {
-        // Arrange
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Mentor> emptyPage = new PageImpl<>(List.of(), pageable, 0);
-
-        when(mentorRepository.findAll(any(Specification.class), eq(pageable)))
-                .thenReturn(emptyPage);
-
-        ArgumentCaptor<Specification<Mentor>> specCaptor = ArgumentCaptor.forClass(Specification.class);
-
-
-        mentorDirectoryService.findMentors(null, null, pageable);
-
-
-        verify(mentorRepository).findAll(specCaptor.capture(), eq(pageable));
-
-        Specification<Mentor> capturedSpec = specCaptor.getValue();
-
-
-        assertNotNull(capturedSpec);
-    }
-
-    @Test
-    @DisplayName("Должен выбросить исключение, если строка больше 250")
-    void findMentors_shouldThrowException_whenQueryIsLong() {
-        // Arrange
-        String query = "1".repeat( 251);
-
-        assertThrows(IllegalStateException.class,()-> mentorDirectoryService.findMentors(null,query,null));
-    }
+    assertThrows(
+        IllegalStateException.class, () -> mentorDirectoryService.findMentors(null, query, null));
+  }
 }

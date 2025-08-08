@@ -1,6 +1,5 @@
 package com.bgitu.mentor.mentor.service;
 
-
 import com.bgitu.mentor.mentor.data.MentorMapper;
 import com.bgitu.mentor.mentor.data.MentorSpecifications;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
@@ -19,45 +18,48 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MentorDirectoryServiceImpl implements MentorDirectoryService{
+public class MentorDirectoryServiceImpl implements MentorDirectoryService {
 
-    private final MentorRepository mentorRepository;
-    private final VotingService votingService;
-    private final MentorVoteHandler mentorVoteHandler;
-    private final MentorMapper mentorMapper;
+  private final MentorRepository mentorRepository;
+  private final VotingService votingService;
+  private final MentorVoteHandler mentorVoteHandler;
+  private final MentorMapper mentorMapper;
 
-    @Override
-    public Page<MentorSummaryResponseDto> findMentors(Long specialityId, String query, Pageable pageable) {
+  @Override
+  public Page<MentorSummaryResponseDto> findMentors(
+      Long specialityId, String query, Pageable pageable) {
 
-        Specification<Mentor> specification = Specification.not(null);
+    Specification<Mentor> specification = Specification.not(null);
 
-        if (specialityId != null) {
-            specification.and(MentorSpecifications.hasSpeciality(specialityId));
-        }
-
-        if (query != null && !query.isBlank()) {
-            if (query.length() > 250) {
-                throw new IllegalStateException("Строка для поиска слишком длинная");
-            }
-            specification.and(MentorSpecifications.nameOrDescriptionContains(query));
-        }
-
-        Page<Mentor> mentorPage = mentorRepository.findAll(specification, pageable);
-
-        return mentorPage.map(mentorMapper::toSummaryDto);
+    if (specialityId != null) {
+      specification.and(MentorSpecifications.hasSpeciality(specialityId));
     }
 
-    @Override
-    public MentorDetailsResponseDto getMentorDetails(Long mentorId) {
-        Mentor mentor = mentorRepository.findById(mentorId)
-                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
-
-        return mentorMapper.toDetailsDto(mentor);
+    if (query != null && !query.isBlank()) {
+      if (query.length() > 250) {
+        throw new IllegalStateException("Строка для поиска слишком длинная");
+      }
+      specification.and(MentorSpecifications.nameOrDescriptionContains(query));
     }
 
-    @Override
-    @Transactional
-    public void voteForMentor(Long mentorId, boolean upvote, Long userId) {
-        votingService.vote(mentorId, userId, upvote, mentorVoteHandler);
-    }
+    Page<Mentor> mentorPage = mentorRepository.findAll(specification, pageable);
+
+    return mentorPage.map(mentorMapper::toSummaryDto);
+  }
+
+  @Override
+  public MentorDetailsResponseDto getMentorDetails(Long mentorId) {
+    Mentor mentor =
+        mentorRepository
+            .findById(mentorId)
+            .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
+
+    return mentorMapper.toDetailsDto(mentor);
+  }
+
+  @Override
+  @Transactional
+  public void voteForMentor(Long mentorId, boolean upvote, Long userId) {
+    votingService.vote(mentorId, userId, upvote, mentorVoteHandler);
+  }
 }

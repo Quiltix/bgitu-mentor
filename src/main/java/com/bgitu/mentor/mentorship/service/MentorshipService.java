@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface MentorshipService {
 
-    ApplicationDetailsResponseDto createApplication(Long studentId, ApplicationCreateRequestDto dto);
+  ApplicationDetailsResponseDto createApplication(Long studentId, ApplicationCreateRequestDto dto);
 
-    void updateApplicationStatus(Long mentorId, Long applicationId, ApplicationDecisionRequestDto dto);
+  void updateApplicationStatus(
+      Long mentorId, Long applicationId, ApplicationDecisionRequestDto dto);
 
-
-    List<?> getMyApplications(Long userId, Role role, ApplicationStatus status);
+  List<?> getMyApplications(Long userId, Role role, ApplicationStatus status);
 }

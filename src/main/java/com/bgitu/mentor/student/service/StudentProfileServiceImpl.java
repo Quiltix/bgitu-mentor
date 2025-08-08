@@ -1,7 +1,5 @@
 package com.bgitu.mentor.student.service;
 
-
-
 import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
 import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
@@ -21,83 +19,81 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-
 @Service
 @RequiredArgsConstructor
 public class StudentProfileServiceImpl implements StudentProfileService {
 
-    // --- Основные зависимости ---
-    private final StudentRepository studentRepository;
-    private final StudentMapper studentMapper;
+  // --- Основные зависимости ---
+  private final StudentRepository studentRepository;
+  private final StudentMapper studentMapper;
 
-    // --- Зависимости от других доменных сервисов (Фасад) ---
-    private final MentorDirectoryService mentorDirectoryService;
-    private final MentorshipLifecycleService mentorshipLifecycleService;
+  // --- Зависимости от других доменных сервисов (Фасад) ---
+  private final MentorDirectoryService mentorDirectoryService;
+  private final MentorshipLifecycleService mentorshipLifecycleService;
 
-    private final BaseUserManagementService baseUserManagementService; // <-- КОМПОЗИЦИЯ
+  private final BaseUserManagementService baseUserManagementService; // <-- КОМПОЗИЦИЯ
 
+  @Override
+  @Transactional
+  public StudentDetailsResponseDto updateCard(
+      Long studentId, StudentDetailsUpdateRequestDto dto, MultipartFile avatarFile) {
+    Student student = findStudentById(studentId);
 
+    baseUserManagementService.updateCard(student, dto, avatarFile);
 
-    @Override
-    @Transactional
-    public StudentDetailsResponseDto updateCard(Long studentId, StudentDetailsUpdateRequestDto dto, MultipartFile avatarFile) {
-        Student student = findStudentById(studentId);
+    return studentMapper.toDetailsDto(studentRepository.save(student));
+  }
 
-        baseUserManagementService.updateCard(student, dto, avatarFile);
+  @Override
+  @Transactional
+  public UserCredentialsResponseDto updateProfile(
+      Long studentId, UserCredentialsUpdateRequestDto dto) {
+    BaseUser updatedUser = baseUserManagementService.updateProfile(studentId, dto);
 
-        return studentMapper.toDetailsDto(studentRepository.save(student));
+    return studentMapper.toCredentialsDto((Student) updatedUser);
+  }
+
+  @Override
+  public MentorDetailsResponseDto getMentorOfStudent(Long studentId) {
+    Student student = findStudentById(studentId);
+    Mentor mentor = student.getMentor();
+    if (mentor == null) {
+      throw new ResourceNotFoundException("У студента нет ментора");
     }
 
-    @Override
-    @Transactional
-    public UserCredentialsResponseDto updateProfile(Long studentId, UserCredentialsUpdateRequestDto dto) {
-        BaseUser updatedUser = baseUserManagementService.updateProfile(studentId, dto);
+    return mentorDirectoryService.getMentorDetails(mentor.getId());
+  }
 
-        return studentMapper.toCredentialsDto((Student) updatedUser);
+  @Override // <-- Добавляем @Override, так как метод теперь в интерфейсе
+  @Transactional
+  public void terminateCurrentMentorship(Long studentId) {
+    Student student = findStudentById(studentId);
+    Mentor currentMentor = student.getMentor();
+
+    if (currentMentor == null) {
+      throw new ResourceNotFoundException("У вас нет активного ментора, чтобы от него отказаться.");
     }
 
+    mentorshipLifecycleService.terminateLink(currentMentor, student);
+  }
 
-    @Override
-    public MentorDetailsResponseDto getMentorOfStudent(Long studentId) {
-        Student student = findStudentById(studentId);
-        Mentor mentor = student.getMentor();
-        if (mentor == null) {
-            throw new ResourceNotFoundException("У студента нет ментора");
-        }
+  @Override
+  public StudentDetailsResponseDto getPublicCardById(Long studentId) {
 
-        return mentorDirectoryService.getMentorDetails(mentor.getId());
-    }
-    @Override // <-- Добавляем @Override, так как метод теперь в интерфейсе
-    @Transactional
-    public void terminateCurrentMentorship(Long studentId) {
-        Student student = findStudentById(studentId);
-        Mentor currentMentor = student.getMentor();
+    Student student = findStudentById(studentId);
+    return studentMapper.toDetailsDto(student);
+  }
 
+  @Override
+  public UserCredentialsResponseDto getPersonalInfo(Long studentId) {
+    Student student = findStudentById(studentId);
+    return studentMapper.toCredentialsDto(student);
+  }
 
-        if (currentMentor == null) {
-            throw new ResourceNotFoundException("У вас нет активного ментора, чтобы от него отказаться.");
-        }
-
-        mentorshipLifecycleService.terminateLink(currentMentor, student);
-    }
-
-    @Override
-    public StudentDetailsResponseDto getPublicCardById(Long studentId) {
-
-        Student student = findStudentById(studentId);
-        return studentMapper.toDetailsDto(student);
-    }
-
-    @Override
-    public UserCredentialsResponseDto getPersonalInfo(Long studentId) {
-        Student student = findStudentById(studentId);
-        return studentMapper.toCredentialsDto(student);
-    }
-
-    private Student findStudentById(Long studentId) {
-        return studentRepository.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Студент с id=" + studentId + " не найден"));
-    }
-
-
+  private Student findStudentById(Long studentId) {
+    return studentRepository
+        .findById(studentId)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("Студент с id=" + studentId + " не найден"));
+  }
 }

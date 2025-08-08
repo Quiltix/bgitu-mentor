@@ -5,15 +5,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 public class ApplicationCreateRequestDto {
 
-    @NotNull
-    Long mentorId;
+  @NotNull Long mentorId;
 
-    @NotNull
-    @Size(max = 250, message = "Сократите сообщение до 250 символов")
-    String message;
+  @NotNull
+  @Size(max = 250, message = "Сократите сообщение до 250 символов")
+  String message;
 }

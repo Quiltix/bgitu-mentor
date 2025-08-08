@@ -18,12 +18,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SpecialityController {
 
-    private final SpecialityService specialityService;
+  private final SpecialityService specialityService;
 
-    @Operation(summary = "Получение полного списка специальностей", description = "Доступно для всех ролей")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
-    @GetMapping
-    public List<SpecialityDto> getAllSpecialities() {
-        return specialityService.getAllSpecialities();
-    }
+  @Operation(
+      summary = "Получение полного списка специальностей",
+      description = "Доступно для всех ролей")
+  @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
+  @GetMapping
+  public List<SpecialityDto> getAllSpecialities() {
+    return specialityService.getAllSpecialities();
+  }
 }
