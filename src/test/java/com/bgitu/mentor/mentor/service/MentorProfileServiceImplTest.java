@@ -3,6 +3,8 @@ package com.bgitu.mentor.mentor.service;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.mentor.data.MentorMapper;
+import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
+import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.repository.MentorRepository;
 import com.bgitu.mentor.mentorship.service.MentorshipLifecycleService;
@@ -18,6 +20,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -177,5 +181,40 @@ class MentorProfileServiceImplTest {
         () -> mentorProfileService.terminateMentorshipWithStudent(mentorId, studentId));
 
     verify(mentorshipLifecycleService, never()).terminateLink(any(), any());
+  }
+
+  @Test
+  @DisplayName(
+      "updateCard | Должен обновить все поля, включая специальность, если все данные переданы")
+  void updateCard_shouldUpdateAllFields_whenAllDataProvided() {
+
+    long mentorId = 1L;
+    long specialityId = 10L;
+
+    MentorUpdateRequestDto updateDto = new MentorUpdateRequestDto();
+    updateDto.setSpecialityId(specialityId);
+    MultipartFile fakeAvatar =
+        new MockMultipartFile("avatar", "avatar.jpg", "image/jpeg", "some-image-bytes".getBytes());
+
+    Mentor existingMentor = createMentor(mentorId);
+    Speciality newSpeciality = createSpeciality(specialityId, "Java");
+
+    when(userFinder.findMentorById(mentorId)).thenReturn(existingMentor);
+    when(specialityService.getById(specialityId)).thenReturn(newSpeciality);
+    when(mentorRepository.save(any(Mentor.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+    when(mentorMapper.toDetailsDto(any(Mentor.class))).thenReturn(new MentorDetailsResponseDto());
+
+    mentorProfileService.updateCard(mentorId, updateDto, fakeAvatar);
+
+    verify(baseUserManagementService, times(1)).updateCard(existingMentor, updateDto, fakeAvatar);
+
+    verify(specialityService, times(1)).getById(specialityId);
+
+    verify(mentorRepository, times(1)).save(existingMentor);
+
+    verify(mentorMapper, times(1)).toDetailsDto(existingMentor);
+
+    assertEquals(newSpeciality, existingMentor.getSpeciality());
   }
 }
