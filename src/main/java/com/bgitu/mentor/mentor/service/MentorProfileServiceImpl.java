@@ -19,7 +19,6 @@ import com.bgitu.mentor.student.service.StudentDirectoryService;
 import com.bgitu.mentor.user.data.model.BaseUser;
 import com.bgitu.mentor.user.service.BaseUserManagementService;
 import com.bgitu.mentor.user.service.UserFinder;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +64,6 @@ public class MentorProfileServiceImpl implements MentorProfileService {
 
         baseUserManagementService.updateCard(mentor, dto, avatarFile);
 
-        // 2. Применяем специфичную для ментора логику
         if (dto.getSpecialityId() != null) {
             Speciality speciality = specialityService.getById(dto.getSpecialityId());
             mentor.setSpeciality(speciality);
@@ -79,8 +77,7 @@ public class MentorProfileServiceImpl implements MentorProfileService {
 
     @Override
     public MentorDetailsResponseDto getMyCard(Long id) {
-        Mentor mentor = mentorRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Ментор не найден"));
+        Mentor mentor = userFinder.findMentorById(id);
 
         return mentorMapper.toDetailsDto(mentor);
     }
