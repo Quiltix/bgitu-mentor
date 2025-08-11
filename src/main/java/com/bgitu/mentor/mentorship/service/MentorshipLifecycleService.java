@@ -9,5 +9,5 @@ public interface MentorshipLifecycleService {
 
   void terminateLinkByMentor(Long mentorId, Long studentId);
 
-  void terminateLinkByStudent(Long studentId, Long mentorId);
+  void terminateLinkByStudent(Long studentId);
 }

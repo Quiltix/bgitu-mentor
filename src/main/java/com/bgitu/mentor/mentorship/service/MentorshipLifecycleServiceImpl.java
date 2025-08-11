@@ -45,7 +45,7 @@ public class MentorshipLifecycleServiceImpl implements MentorshipLifecycleServic
   }
 
   @Override
-  public void terminateLinkByStudent(Long studentId, Long mentorId) {
+  public void terminateLinkByStudent(Long studentId) {
     Student student = userFinder.findStudentById(studentId);
 
     if (student.getMentor() == null) {
