@@ -64,17 +64,11 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     return mentorDirectoryService.getMentorDetails(mentor.getId());
   }
 
-  @Override // <-- Добавляем @Override, так как метод теперь в интерфейсе
+  @Override
   @Transactional
   public void terminateCurrentMentorship(Long studentId) {
-    Student student = findStudentById(studentId);
-    Mentor currentMentor = student.getMentor();
 
-    if (currentMentor == null) {
-      throw new ResourceNotFoundException("У вас нет активного ментора, чтобы от него отказаться.");
-    }
-
-    mentorshipLifecycleService.terminateLink(currentMentor, student);
+    mentorshipLifecycleService.terminateLinkByStudent(studentId);
   }
 
   @Override
