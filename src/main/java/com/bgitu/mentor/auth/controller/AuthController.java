@@ -20,7 +20,7 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/register")
-  @ResponseStatus(HttpStatus.CREATED) // <-- Используем правильный статус 201 для создания
+  @ResponseStatus(HttpStatus.CREATED)
   @Operation(summary = "Регистрация нового пользователя")
   public JwtAuthenticationResponseDto register(@RequestBody @Valid RegisterRequestDto requestDto) {
 
