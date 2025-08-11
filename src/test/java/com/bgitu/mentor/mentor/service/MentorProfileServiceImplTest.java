@@ -13,7 +13,6 @@ import com.bgitu.mentor.speciality.service.SpecialityService;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.student.service.StudentDirectoryService;
 import com.bgitu.mentor.user.service.BaseUserManagementService;
-import com.bgitu.mentor.user.service.UserFinder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +23,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -56,7 +56,6 @@ class MentorProfileServiceImplTest {
   @Mock private ArticleService articleService;
   @Mock private StudentDirectoryService studentDirectoryService;
   @Mock private MentorshipLifecycleService mentorshipLifecycleService;
-  @Mock private UserFinder userFinder;
   @Mock private BaseUserManagementService baseUserManagementService;
   @Mock private SpecialityService specialityService;
 
@@ -112,75 +111,16 @@ class MentorProfileServiceImplTest {
     verifyNoInteractions(studentDirectoryService, mentorshipLifecycleService);
   }
 
-  @Test
   @DisplayName(
-      "terminateMentorship | Должен вызвать LifecycleService, если ментор является владельцем студента")
-  void terminateMentorshipWithStudent_shouldCallLifecycleService_whenMentorIsOwner() {
-
+      "terminateMentorship | Должен вызвать terminateLinkByMentor с корректными аргументами")
+  @Test
+  void terminateMentorshipWithStudent_shouldCallTerminateLinkByMentor() {
     long mentorId = 0L;
     long studentId = 1L;
-
-    Mentor mentor = createMentor(mentorId);
-
-    Student student = createStudent(studentId, mentor);
-
-    when(userFinder.findMentorById(mentorId)).thenReturn(mentor);
-
-    when(userFinder.findStudentById(studentId)).thenReturn(student);
 
     mentorProfileService.terminateMentorshipWithStudent(mentorId, studentId);
 
-    verify(mentorshipLifecycleService, times(1)).terminateLink(mentor, student);
-  }
-
-  @Test
-  @DisplayName(
-      "terminateMentorship | Должен выбросить SecurityException, если у студента нет ментора")
-  void terminateMentorshipWithStudent_shouldThrowSecurityException_whenStudentHasNoMentor() {
-
-    long mentorId = 0L;
-    long studentId = 1L;
-
-    Mentor mentor = createMentor(mentorId);
-
-    Student student = new Student();
-    student.setId(studentId);
-
-    when(userFinder.findMentorById(mentorId)).thenReturn(mentor);
-
-    when(userFinder.findStudentById(studentId)).thenReturn(student);
-
-    assertThrows(
-        SecurityException.class,
-        () -> mentorProfileService.terminateMentorshipWithStudent(mentorId, studentId));
-
-    verify(mentorshipLifecycleService, never()).terminateLink(any(), any());
-  }
-
-  @Test
-  @DisplayName(
-      "terminateMentorship | Должен выбросить SecurityException, если у студента другой ментор")
-  void terminateMentorshipWithStudent_shouldThrowSecurityException_whenStudentHasAnotherMentor() {
-
-    long mentorId = 0L;
-    long mentorOwnerId = 20L;
-    long studentId = 1L;
-
-    Mentor mentor = createMentor(mentorId);
-
-    Mentor mentorOwner = createMentor(mentorOwnerId);
-
-    Student student = createStudent(studentId, mentorOwner);
-
-    when(userFinder.findMentorById(mentorId)).thenReturn(mentor);
-
-    when(userFinder.findStudentById(studentId)).thenReturn(student);
-
-    assertThrows(
-        SecurityException.class,
-        () -> mentorProfileService.terminateMentorshipWithStudent(mentorId, studentId));
-
-    verify(mentorshipLifecycleService, never()).terminateLink(any(), any());
+    verify(mentorshipLifecycleService, times(1)).terminateLinkByMentor(mentorId, studentId);
   }
 
   @Test
@@ -199,7 +139,7 @@ class MentorProfileServiceImplTest {
     Mentor existingMentor = createMentor(mentorId);
     Speciality newSpeciality = createSpeciality(specialityId, "Java");
 
-    when(userFinder.findMentorById(mentorId)).thenReturn(existingMentor);
+    when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(existingMentor));
     when(specialityService.getById(specialityId)).thenReturn(newSpeciality);
     when(mentorRepository.save(any(Mentor.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
