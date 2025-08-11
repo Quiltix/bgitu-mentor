@@ -7,5 +7,7 @@ public interface MentorshipLifecycleService {
 
   void establishLink(Mentor mentor, Student student);
 
-  void terminateLink(Mentor mentor, Student student);
+  void terminateLinkByMentor(Long mentorId, Long studentId);
+
+  void terminateLinkByStudent(Long studentId, Long mentorId);
 }
