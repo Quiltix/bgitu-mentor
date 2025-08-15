@@ -9,7 +9,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -77,39 +76,27 @@ class MentorDirectoryServiceImplTest {
   @Test
   @DisplayName("Должен найти и смапить менторов, применяя все фильтры")
   void findMentors_shouldApplyAllFiltersAndReturnPagedDto() {
-
+    // Arrange
     Long specialityId = 10L;
     String query = "java";
     Pageable pageable = PageRequest.of(0, 5);
 
-    Mentor mentor1 = createMentor(1L, "Анна");
+    Mentor mentor = createMentor(1L, "Анна");
+    Page<Mentor> fakeMentorPage = new PageImpl<>(List.of(mentor), pageable, 1);
 
-    List<Mentor> fakeMentors = List.of(mentor1);
-
-    Page<Mentor> fakeMentorPage = new PageImpl<>(fakeMentors, pageable, 1);
-
-    when(mentorRepository.findAll(any(Specification.class), any(Pageable.class)))
+    when(mentorRepository.findAll(any(Specification.class), eq(pageable)))
         .thenReturn(fakeMentorPage);
-
     when(mentorMapper.toSummaryDto(any(Mentor.class))).thenReturn(new MentorSummaryResponseDto());
 
-    ArgumentCaptor<Specification<Mentor>> argumentCaptor =
-        ArgumentCaptor.forClass(Specification.class);
-
+    // Act
     Page<MentorSummaryResponseDto> resultPage =
         mentorDirectoryService.findMentors(specialityId, query, pageable);
 
+    // Assert
     assertNotNull(resultPage);
-
     assertEquals(1, resultPage.getTotalElements());
-
-    verify(mentorRepository).findAll(argumentCaptor.capture(), eq(pageable));
-
-    Specification<Mentor> capturedSpec = argumentCaptor.getValue();
-
-    assertNotNull(capturedSpec);
-
-    verify(mentorMapper, times(fakeMentors.size())).toSummaryDto(any(Mentor.class));
+    verify(mentorRepository).findAll(any(Specification.class), eq(pageable));
+    verify(mentorMapper, times(1)).toSummaryDto(any(Mentor.class));
   }
 
   @Test
@@ -117,19 +104,14 @@ class MentorDirectoryServiceImplTest {
   void findMentors_shouldWork_whenNoFiltersAreProvided() {
     // Arrange
     Pageable pageable = PageRequest.of(0, 10);
-    Page<Mentor> emptyPage = new PageImpl<>(List.of(), pageable, 0);
+    when(mentorRepository.findAll(any(Specification.class), eq(pageable)))
+        .thenReturn(Page.empty(pageable));
 
-    when(mentorRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(emptyPage);
-
-    ArgumentCaptor<Specification<Mentor>> specCaptor = ArgumentCaptor.forClass(Specification.class);
-
+    // Act
     mentorDirectoryService.findMentors(null, null, pageable);
 
-    verify(mentorRepository).findAll(specCaptor.capture(), eq(pageable));
-
-    Specification<Mentor> capturedSpec = specCaptor.getValue();
-
-    assertNotNull(capturedSpec);
+    // Assert
+    verify(mentorRepository).findAll(any(Specification.class), eq(pageable));
   }
 
   @Test
