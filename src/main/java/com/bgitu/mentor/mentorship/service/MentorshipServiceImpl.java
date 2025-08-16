@@ -84,8 +84,6 @@ public class MentorshipServiceImpl implements MentorshipService {
 
     otherPendingApps.forEach(otherApp -> otherApp.setStatus(ApplicationStatus.EXPIRED));
 
-    applicationRepository.save(application);
-
     if (!otherPendingApps.isEmpty()) {
       applicationRepository.saveAll(otherPendingApps);
     }
