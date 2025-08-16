@@ -20,8 +20,11 @@ public class MentorshipLifecycleServiceImpl implements MentorshipLifecycleServic
   @Transactional
   public void establishLink(Mentor mentor, Student student) {
 
-    student.setMentor(mentor);
+    if (student.getMentor() != null) {
+      throw new IllegalStateException("Этот студент уже закреплен за другим ментором.");
+    }
 
+    student.setMentor(mentor);
     studentRepository.save(student);
   }
 
