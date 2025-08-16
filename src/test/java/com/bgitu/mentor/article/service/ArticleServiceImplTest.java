@@ -3,6 +3,7 @@ package com.bgitu.mentor.article.service;
 import com.bgitu.mentor.article.data.ArticleMapper;
 import com.bgitu.mentor.article.data.dto.ArticleCreateRequestDto;
 import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
+import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.article.data.repository.ArticleRepository;
 import com.bgitu.mentor.common.service.FileStorageService;
@@ -19,6 +20,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.multipart.MultipartFile;
@@ -207,5 +211,62 @@ class ArticleServiceImplTest {
     verify(articleRepository, times(1)).findById(articleId);
     verify(userFinder, times(1)).findMentorById(userId);
     verify(articleRepository, never()).delete(article);
+  }
+
+  @DisplayName(
+      "findArticles | Should return paginated articles when specialityId and query are null")
+  @Test
+  void findArticles_returnsPaginatedArticles_whenSpecialityIdAndQueryAreNull() {
+    Pageable pageable = mock(Pageable.class);
+    Page<Article> articlePage = mock(Page.class);
+    when(articleRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(articlePage);
+    when(articlePage.map(any())).thenReturn(Page.empty());
+
+    Page<ArticleSummaryResponseDto> result = articleService.findArticles(null, null, pageable);
+
+    verify(articleRepository, times(1)).findAll(any(Specification.class), eq(pageable));
+    assertNotNull(result);
+  }
+
+  @DisplayName("findArticles | Should return paginated articles when specialityId is provided")
+  @Test
+  void findArticles_returnsPaginatedArticles_whenSpecialityIdIsProvided() {
+    Long specialityId = 1L;
+    Pageable pageable = mock(Pageable.class);
+    Page<Article> articlePage = mock(Page.class);
+    when(articleRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(articlePage);
+    when(articlePage.map(any())).thenReturn(Page.empty());
+
+    Page<ArticleSummaryResponseDto> result =
+        articleService.findArticles(specialityId, null, pageable);
+
+    verify(articleRepository, times(1)).findAll(any(Specification.class), eq(pageable));
+    assertNotNull(result);
+  }
+
+  @DisplayName("findArticles | Should return paginated articles when query is provided")
+  @Test
+  void findArticles_returnsPaginatedArticles_whenQueryIsProvided() {
+    String query = "test";
+    Pageable pageable = mock(Pageable.class);
+    Page<Article> articlePage = mock(Page.class);
+    when(articleRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(articlePage);
+    when(articlePage.map(any())).thenReturn(Page.empty());
+
+    Page<ArticleSummaryResponseDto> result = articleService.findArticles(null, query, pageable);
+
+    verify(articleRepository, times(1)).findAll(any(Specification.class), eq(pageable));
+    assertNotNull(result);
+  }
+
+  @DisplayName("findArticles | Should throw exception when query length exceeds 250 characters")
+  @Test
+  void findArticles_throwsException_whenQueryLengthExceedsLimit() {
+    String longQuery = "a".repeat(251);
+    Pageable pageable = mock(Pageable.class);
+
+    assertThrows(
+        IllegalStateException.class, () -> articleService.findArticles(null, longQuery, pageable));
+    verifyNoInteractions(articleRepository);
   }
 }

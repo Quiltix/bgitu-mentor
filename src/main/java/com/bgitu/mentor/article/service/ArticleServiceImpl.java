@@ -83,9 +83,7 @@ public class ArticleServiceImpl implements ArticleService {
 
   @Override
   public List<ArticleSummaryResponseDto> findArticlesByAuthor(Long authorId) {
-    // Напрямую запрашиваем у репозитория статей. Это эффективно и безопасно.
     List<Article> articles = articleRepository.findAllByAuthorId(authorId);
-    // Делегируем маппинг
     return articleMapper.toSummaryDtoList(articles);
   }
 
