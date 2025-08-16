@@ -1,5 +1,6 @@
 package com.bgitu.mentor.mentorship;
 
+import com.bgitu.mentor.auth.Role;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentorship.data.ApplicationMapper;
@@ -11,6 +12,7 @@ import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.data.repository.ApplicationRepository;
 import com.bgitu.mentor.mentorship.service.MentorshipLifecycleService;
 import com.bgitu.mentor.mentorship.service.MentorshipServiceImpl;
+import com.bgitu.mentor.student.data.dto.ApplicationOfStudentResponseDto;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.user.service.UserFinder;
 import org.junit.jupiter.api.DisplayName;
@@ -343,5 +345,101 @@ class MentorshipServiceImplTest {
     verify(userFinder, times(1)).findMentorById(mentorId);
     verify(applicationRepository, times(1)).findById(applicationId);
     verifyNoMoreInteractions(applicationRepository);
+  }
+
+  @DisplayName(
+      "getMyApplications | Should return mentor applications when role is MENTOR and status is provided")
+  @Test
+  void getMyApplications_returnsMentorApplications_whenRoleIsMentorAndStatusIsProvided() {
+    Long mentorId = 1L;
+    ApplicationStatus status = ApplicationStatus.PENDING;
+
+    List<Application> applications = List.of(new Application(), new Application());
+    when(applicationRepository.findAllByMentorIdAndStatus(mentorId, status))
+        .thenReturn(applications);
+    when(applicationMapper.toDetailsDtoList(applications))
+        .thenReturn(
+            List.of(new ApplicationDetailsResponseDto(), new ApplicationDetailsResponseDto()));
+
+    List<?> result = mentorshipServiceImpl.getMyApplications(mentorId, Role.MENTOR, status);
+
+    verify(applicationRepository, times(1)).findAllByMentorIdAndStatus(mentorId, status);
+    verify(applicationMapper, times(1)).toDetailsDtoList(applications);
+    assertNotNull(result);
+    assertEquals(2, result.size());
+  }
+
+  @DisplayName(
+      "getMyApplications | Should return mentor applications when role is MENTOR and status is null")
+  @Test
+  void getMyApplications_returnsMentorApplications_whenRoleIsMentorAndStatusIsNull() {
+    Long mentorId = 1L;
+
+    List<Application> applications = List.of(new Application(), new Application());
+    when(applicationRepository.findAllByMentorId(mentorId)).thenReturn(applications);
+    when(applicationMapper.toDetailsDtoList(applications))
+        .thenReturn(
+            List.of(new ApplicationDetailsResponseDto(), new ApplicationDetailsResponseDto()));
+
+    List<?> result = mentorshipServiceImpl.getMyApplications(mentorId, Role.MENTOR, null);
+
+    verify(applicationRepository, times(1)).findAllByMentorId(mentorId);
+    verify(applicationMapper, times(1)).toDetailsDtoList(applications);
+    assertNotNull(result);
+    assertEquals(2, result.size());
+  }
+
+  @DisplayName(
+      "getMyApplications | Should return student applications when role is STUDENT and status is provided")
+  @Test
+  void getMyApplications_returnsStudentApplications_whenRoleIsStudentAndStatusIsProvided() {
+    Long studentId = 1L;
+    ApplicationStatus status = ApplicationStatus.ACCEPTED;
+
+    List<Application> applications = List.of(new Application());
+    when(applicationRepository.findAllByStudentIdAndStatus(studentId, status))
+        .thenReturn(applications);
+    when(applicationMapper.toStudentApplicationDtoList(applications))
+        .thenReturn(List.of(new ApplicationOfStudentResponseDto()));
+
+    List<?> result = mentorshipServiceImpl.getMyApplications(studentId, Role.STUDENT, status);
+
+    verify(applicationRepository, times(1)).findAllByStudentIdAndStatus(studentId, status);
+    verify(applicationMapper, times(1)).toStudentApplicationDtoList(applications);
+    assertNotNull(result);
+    assertEquals(1, result.size());
+  }
+
+  @DisplayName(
+      "getMyApplications | Should return student applications when role is STUDENT and status is null")
+  @Test
+  void getMyApplications_returnsStudentApplications_whenRoleIsStudentAndStatusIsNull() {
+    Long studentId = 1L;
+
+    List<Application> applications = List.of(new Application());
+    when(applicationRepository.findAllByStudentId(studentId)).thenReturn(applications);
+    when(applicationMapper.toStudentApplicationDtoList(applications))
+        .thenReturn(List.of(new ApplicationOfStudentResponseDto()));
+
+    List<?> result = mentorshipServiceImpl.getMyApplications(studentId, Role.STUDENT, null);
+
+    verify(applicationRepository, times(1)).findAllByStudentId(studentId);
+    verify(applicationMapper, times(1)).toStudentApplicationDtoList(applications);
+    assertNotNull(result);
+    assertEquals(1, result.size());
+  }
+
+  @DisplayName(
+      "getMyApplications | Should return empty list when role is neither MENTOR nor STUDENT")
+  @Test
+  void getMyApplications_returnsEmptyList_whenRoleIsNeitherMentorNorStudent() {
+    Long userId = 1L;
+
+    List<?> result = mentorshipServiceImpl.getMyApplications(userId, Role.ADMIN, null);
+
+    verifyNoInteractions(applicationRepository);
+    verifyNoInteractions(applicationMapper);
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
   }
 }
