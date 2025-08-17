@@ -2,6 +2,7 @@
 # SPRING BOOT CORE
 # =======================================
 spring:
+
   application:
     name: mentor
   # --- JPA & Datasource Configuration ---
@@ -11,6 +12,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:qwe}
     driver-class-name: org.postgresql.Driver
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
