@@ -7,5 +7,4 @@ ARG APP_JAR=app.jar
 
 COPY ${APP_JAR} app.jar
 
-# Запуск приложения
 ENTRYPOINT ["java", "-Duser.timezone=Europe/Moscow", "-jar", "app.jar"]

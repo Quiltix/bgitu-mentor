@@ -7,61 +7,43 @@ spring:
   # --- JPA & Datasource Configuration ---
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/bgitu}
-    username: root
-    password: qwe
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:qwe}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
-  # --- Caching Configuration ---
+  # --- Caching & Redis ---
   cache:
     type: redis
-  # --- Redis Configuration ---
   data:
     redis:
       host: ${SPRING_REDIS_HOST:localhost}
-      port: 6379
-
+      port: ${SPRING_REDIS_PORT:6379}
+      password: ${SPRING_REDIS_PASSWORD:} #
+  # --- File Upload ---
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-  # kafka:
-  #   bootstrap-servers: localhost:9092
-  #   producer:
-  #     key-serializer: org.apache.kafka.common.serialization.StringSerializer
-  #     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 # =======================================
 # SERVER CONFIGURATION
 # =======================================
 server:
-  address: 0.0.0.0
   port: 8080
 
 # =======================================
 # CUSTOM APPLICATION PROPERTIES
 # =======================================
-# --- Swagger Configuration ---
-swagger:
-  server-url: http://localhost:8080
-
-# --- File Upload Directory ---
 file:
   upload-dir: uploads/images
 
-# --- JWT Configuration ---
-jwt:
-  secret: a/hFBlYkb327RBub+7z+hX5EpDQse2+yBZkUyPfVvv+71ugvaNAcZNJfL/ubDK7U3wIaDqyeag0JjNlR1Pe4mw==
 
-# =======================================
-# LOGGING CONFIGURATION
-# =======================================
-# logging:
-#   level:
-#     root: INFO
-#     org.springframework.web: DEBUG
-#     org.springframework.data.redis: DEBUG
-#     org.springframework.security: DEBUG
+jwt:
+  secret: ${JWT_SECRET}
+
+swagger:
+  server-url: ${SWAGGER_SERVER_URL:http://localhost:8080}
