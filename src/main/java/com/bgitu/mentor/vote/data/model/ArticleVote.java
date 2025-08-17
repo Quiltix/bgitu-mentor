@@ -7,10 +7,7 @@ import lombok.*;
 @Entity
 @Table(
     name = "article_vote",
-    uniqueConstraints = {
-      @UniqueConstraint(columnNames = {"article_id", "mentor_id"}),
-      @UniqueConstraint(columnNames = {"article_id", "student_id"})
-    })
+    uniqueConstraints = @UniqueConstraint(columnNames = {"article_id", "user_id"}))
 @Getter
 @Setter
 @NoArgsConstructor
