@@ -17,12 +17,9 @@ public abstract class BaseUser {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Email(message = "Email должен быть корректным")
-  @NotBlank(message = "Email должен быть не пустым")
   @Column(unique = true)
   private String email;
 
-  @NotBlank(message = "Password должен быть не пустым")
   private String password;
 
   private String firstName;
