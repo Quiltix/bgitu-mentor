@@ -1,11 +1,11 @@
-package com.bgitu.mentor.auth;
+package com.bgitu.mentor.auth.service;
 
+import com.bgitu.mentor.auth.Role;
 import com.bgitu.mentor.auth.dto.JwtAuthenticationResponseDto;
 import com.bgitu.mentor.auth.dto.LoginRequestDto;
 import com.bgitu.mentor.auth.dto.RegisterRequestDto;
 import com.bgitu.mentor.auth.security.AuthenticatedUser;
 import com.bgitu.mentor.auth.security.JwtTokenProvider;
-import com.bgitu.mentor.auth.service.AuthServiceImpl;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.user.data.repository.BaseUserRepository;

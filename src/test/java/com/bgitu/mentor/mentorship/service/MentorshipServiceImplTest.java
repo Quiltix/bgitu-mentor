@@ -1,4 +1,4 @@
-package com.bgitu.mentor.mentorship;
+package com.bgitu.mentor.mentorship.service;
 
 import com.bgitu.mentor.auth.Role;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
@@ -10,8 +10,6 @@ import com.bgitu.mentor.mentorship.data.dto.ApplicationDetailsResponseDto;
 import com.bgitu.mentor.mentorship.data.model.Application;
 import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 import com.bgitu.mentor.mentorship.data.repository.ApplicationRepository;
-import com.bgitu.mentor.mentorship.service.MentorshipLifecycleService;
-import com.bgitu.mentor.mentorship.service.MentorshipServiceImpl;
 import com.bgitu.mentor.student.data.dto.ApplicationOfStudentResponseDto;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.user.service.UserFinder;
