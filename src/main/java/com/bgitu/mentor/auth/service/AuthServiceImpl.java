@@ -67,7 +67,6 @@ public class AuthServiceImpl implements AuthService {
 
     AuthenticatedUser userDetails = (AuthenticatedUser) authentication.getPrincipal();
 
-    // 4. Генерируем токен
     String token = tokenProvider.generateToken(userDetails.getId(), userDetails.getRole());
 
     return new JwtAuthenticationResponseDto(token, userDetails.getRole().name());
