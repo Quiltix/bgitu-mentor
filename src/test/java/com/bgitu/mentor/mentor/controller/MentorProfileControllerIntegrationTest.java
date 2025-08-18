@@ -61,4 +61,17 @@ class MentorProfileControllerIntegrationTest extends AbstractIntegrationTest {
         .andExpect(jsonPath("$.rank").value(mentor.getRank()))
         .andExpect(jsonPath("$.description").value(mentor.getDescription()));
   }
+
+  @Test
+  @DisplayName("GET api/mentors/{id} | should return 404 Not Found for non-existing mentor")
+  @WithMockUser(roles = "STUDENT")
+  void getMentorProfile_shouldReturn404NotFoundForNonExistingMentor() throws Exception {
+    Long nonExistingMentorId = 999L;
+
+    ResultActions resultActions = mockMvc.perform(get("/api/mentors/{id}", nonExistingMentorId));
+
+    resultActions
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.message").value("Пользователь не найден"));
+  }
 }
