@@ -2,6 +2,9 @@ package com.bgitu.mentor.vote.service;
 
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.repository.MentorRepository;
+import com.bgitu.mentor.student.data.model.Student;
+import com.bgitu.mentor.user.data.model.BaseUser;
+import com.bgitu.mentor.vote.data.model.MentorVote;
 import com.bgitu.mentor.vote.data.repository.MentorVoteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
@@ -79,5 +82,59 @@ class MentorVoteHandlerTest {
         EntityNotFoundException.class, () -> mentorVoteHandler.findVotableEntity(mentorId));
 
     verify(mentorRepository, times(1)).findById(mentorId);
+  }
+
+  @DisplayName("saveVote | Should save upvote for mentor and associate it with user")
+  @Test
+  void saveVote_savesUpvoteForMentorAndAssociatesWithUser() {
+    BaseUser user = new Student();
+    user.setId(1L);
+
+    Mentor mentor = new Mentor();
+    mentor.setId(2L);
+
+    MentorVote vote = new MentorVote();
+    vote.setUser(user);
+    vote.setMentor(mentor);
+    vote.setUpvote(true);
+
+    when(voteRepository.save(any(MentorVote.class))).thenReturn(vote);
+
+    mentorVoteHandler.saveVote(user, mentor, true);
+
+    verify(voteRepository, times(1))
+        .save(
+            argThat(
+                savedVote ->
+                    savedVote.getUser().equals(user)
+                        && savedVote.getMentor().equals(mentor)
+                        && savedVote.isUpvote()));
+  }
+
+  @DisplayName("saveVote | Should save downvote for mentor and associate it with user")
+  @Test
+  void saveVote_savesDownVoteForMentorAndAssociatesWithUser() {
+    BaseUser user = new Student();
+    user.setId(1L);
+
+    Mentor mentor = new Mentor();
+    mentor.setId(2L);
+
+    MentorVote vote = new MentorVote();
+    vote.setUser(user);
+    vote.setMentor(mentor);
+    vote.setUpvote(false);
+
+    when(voteRepository.save(any(MentorVote.class))).thenReturn(vote);
+
+    mentorVoteHandler.saveVote(user, mentor, false);
+
+    verify(voteRepository, times(1))
+        .save(
+            argThat(
+                savedVote ->
+                    savedVote.getUser().equals(user)
+                        && savedVote.getMentor().equals(mentor)
+                        && !savedVote.isUpvote()));
   }
 }
