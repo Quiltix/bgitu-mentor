@@ -1,6 +1,7 @@
 package com.bgitu.mentor.speciality.service;
 
 import com.bgitu.mentor.mentor.data.dto.SpecialityDto;
+import com.bgitu.mentor.speciality.data.SpecialityMapper;
 import com.bgitu.mentor.speciality.data.model.Speciality;
 import com.bgitu.mentor.speciality.data.repository.SpecialityRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.List;
 public class SpecialityServiceImpl implements SpecialityService {
 
   private final SpecialityRepository specialityRepository;
+  private final SpecialityMapper specialityMapper;
 
   @Override
   public Speciality getById(Long specialityId) {
@@ -22,8 +24,6 @@ public class SpecialityServiceImpl implements SpecialityService {
   }
 
   public List<SpecialityDto> getAllSpecialities() {
-    return specialityRepository.findAll().stream()
-        .map(s -> new SpecialityDto(s.getId(), s.getName()))
-        .toList();
+    return specialityMapper.toDtoList(specialityRepository.findAll());
   }
 }
