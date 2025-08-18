@@ -1,7 +1,7 @@
 package com.bgitu.mentor.vote.service;
 
 import com.bgitu.mentor.user.data.model.BaseUser;
-import com.bgitu.mentor.user.service.UserService;
+import com.bgitu.mentor.user.service.UserFinder;
 import com.bgitu.mentor.vote.data.model.Votable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,12 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class VotingService {
 
-  private final UserService userService;
+  private final UserFinder userFinder;
 
   @Transactional
   public <T extends Votable> void vote(
       Long entityId, Long userId, boolean isUpvote, VoteHandler<T> handler) {
-    BaseUser user = userService.findById(userId);
+    BaseUser user = userFinder.findUserById(userId);
 
     if (handler.hasVoted(userId, entityId)) {
       throw new IllegalStateException("Вы уже голосовали");
