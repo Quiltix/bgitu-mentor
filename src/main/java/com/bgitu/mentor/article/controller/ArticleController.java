@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @Tag(name = "Article", description = "Методы для взаимодействия со статьями")
 @RestController
@@ -51,7 +52,7 @@ public class ArticleController {
     return ResponseEntity.created(location).body(createdArticle);
   }
 
-  @PreAuthorize("hasRole('STUDENT') or hasRole('MENTOR')")
+  @PreAuthorize("isAuthenticated()")
   @GetMapping("/{id}")
   @Operation(summary = "Получить статью", description = "Получить статью по её ID")
   public ArticleDetailsResponseDto getArticleById(
@@ -96,5 +97,14 @@ public class ArticleController {
       @PathVariable Long id, @RequestParam boolean like, Authentication authentication) {
     Long userId = SecurityUtils.getCurrentUserId(authentication);
     articleService.changeArticleRank(id, like, userId);
+  }
+
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/popular")
+  @Operation(
+      summary = "Получить популярный статьи",
+      description = "Возвращает топ 3 статьи по рейтингу")
+  public List<ArticleSummaryResponseDto> getPopularArticles() {
+    return articleService.findPopularArticles();
   }
 }

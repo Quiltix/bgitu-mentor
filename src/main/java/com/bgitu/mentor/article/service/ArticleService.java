@@ -20,6 +20,8 @@ public interface ArticleService {
 
   List<ArticleSummaryResponseDto> findArticlesByAuthor(Long authorId);
 
+  List<ArticleSummaryResponseDto> findPopularArticles();
+
   void deleteArticle(Long articleId, Long userId);
 
   void changeArticleRank(Long articleId, boolean like, Long userId);

@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
-public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
+public interface ArticleRepository
+    extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
 
-    List<Article> findAllByAuthorId(Long id);
+  List<Article> findAllByAuthorId(Long id);
+
+  List<Article> findTop3ByOrderByRankDesc();
 }

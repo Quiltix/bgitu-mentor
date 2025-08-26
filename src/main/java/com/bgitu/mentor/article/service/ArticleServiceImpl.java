@@ -16,6 +16,7 @@ import com.bgitu.mentor.vote.service.ArticleVoteHandler;
 import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -91,6 +92,14 @@ public class ArticleServiceImpl implements ArticleService {
   @Transactional(readOnly = true)
   public List<ArticleSummaryResponseDto> findArticlesByAuthor(Long authorId) {
     List<Article> articles = articleRepository.findAllByAuthorId(authorId);
+    return articleMapper.toSummaryDtoList(articles);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  @Cacheable(value = "popularArticles")
+  public List<ArticleSummaryResponseDto> findPopularArticles() {
+    List<Article> articles = articleRepository.findTop3ByOrderByRankDesc();
     return articleMapper.toSummaryDtoList(articles);
   }
 
