@@ -17,10 +17,10 @@ import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.service.StudentDirectoryService;
 import com.bgitu.mentor.user.data.model.BaseUser;
 import com.bgitu.mentor.user.service.BaseUserManagementService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -30,11 +30,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MentorProfileServiceImpl implements MentorProfileService {
 
-  // --- Основные зависимости ---
   private final MentorRepository mentorRepository;
   private final MentorMapper mentorMapper;
 
-  // --- Зависимости от других доменных сервисов (Фасад) ---
   private final ArticleService articleService;
   private final StudentDirectoryService studentDirectoryService;
   private final MentorshipLifecycleService mentorshipLifecycleService;
@@ -43,7 +41,6 @@ public class MentorProfileServiceImpl implements MentorProfileService {
   private final SpecialityService specialityService;
 
   @Override
-  @Transactional
   public UserCredentialsResponseDto updateProfile(
       Long mentorId, UserCredentialsUpdateRequestDto dto) {
 
@@ -68,6 +65,7 @@ public class MentorProfileServiceImpl implements MentorProfileService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public MentorDetailsResponseDto getMyCard(Long id) {
     Mentor mentor = findMentorById(id);
 
@@ -76,11 +74,11 @@ public class MentorProfileServiceImpl implements MentorProfileService {
 
   @Override
   public List<ArticleSummaryResponseDto> getMyArticles(Long mentorId) {
-
     return articleService.findArticlesByAuthor(mentorId);
   }
 
   @Override
+  @Transactional(readOnly = true)
   public UserCredentialsResponseDto getPersonalInfo(Long mentorId) {
     Mentor mentor = findMentorById(mentorId);
 
@@ -93,15 +91,13 @@ public class MentorProfileServiceImpl implements MentorProfileService {
   }
 
   @Override
-  @Transactional
   public void terminateMentorshipWithStudent(Long mentorId, Long studentId) {
-
     mentorshipLifecycleService.terminateLinkByMentor(mentorId, studentId);
   }
 
   private Mentor findMentorById(Long mentorId) {
     return mentorRepository
         .findById(mentorId)
-        .orElseThrow(() -> new ResourceNotFoundException("Ментор с id=" + mentorId + " не найден"));
+        .orElseThrow(() -> new ResourceNotFoundException("Ментор не найден"));
   }
 }

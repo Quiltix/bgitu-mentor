@@ -39,6 +39,7 @@ public class ArticleServiceImpl implements ArticleService {
   private final ArticleMapper articleMapper;
 
   @Override
+  @Transactional
   public ArticleDetailsResponseDto createArticle(
       Long authorId, ArticleCreateRequestDto dto, MultipartFile image) {
     Mentor author = userFinder.findMentorById(authorId);
@@ -68,6 +69,7 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
+  @Transactional
   public void deleteArticle(Long articleId, Long userId) {
     Article article = findById(articleId);
 
@@ -80,6 +82,7 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
+  @Transactional
   public void changeArticleRank(Long articleId, boolean like, Long userId) {
     votingService.vote(articleId, userId, like, articleVoteHandler);
   }
