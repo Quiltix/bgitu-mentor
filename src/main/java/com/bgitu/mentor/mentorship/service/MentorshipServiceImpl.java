@@ -91,6 +91,7 @@ public class MentorshipServiceImpl implements MentorshipService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<?> getMyApplications(Long userId, Role role, ApplicationStatus status) {
     if (role == Role.MENTOR) {
       List<Application> applications =
