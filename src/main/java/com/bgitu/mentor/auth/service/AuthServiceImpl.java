@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class AuthServiceImpl implements AuthService {
   private final JwtTokenProvider tokenProvider;
   private final AuthenticationManager authenticationManager;
 
+  @Transactional
   public JwtAuthenticationResponseDto register(RegisterRequestDto dto) {
     String email = dto.getEmail();
 
@@ -58,6 +60,7 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public JwtAuthenticationResponseDto login(LoginRequestDto dto) {
 
     UsernamePasswordAuthenticationToken authenticationToken =
