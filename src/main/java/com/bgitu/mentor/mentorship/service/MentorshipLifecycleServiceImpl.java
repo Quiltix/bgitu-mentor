@@ -5,9 +5,9 @@ import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.student.data.repository.StudentRepository;
 import com.bgitu.mentor.user.service.UserFinder;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -18,7 +18,9 @@ public class MentorshipLifecycleServiceImpl implements MentorshipLifecycleServic
 
   @Override
   @Transactional
-  public void establishLink(Mentor mentor, Student student) {
+  public void establishLink(Long mentorId, Long studentId) {
+    Mentor mentor = userFinder.findMentorById(mentorId);
+    Student student = userFinder.findStudentById(studentId);
 
     if (student.getMentor() != null) {
       throw new IllegalStateException("Этот студент уже закреплен за другим ментором.");
@@ -36,6 +38,7 @@ public class MentorshipLifecycleServiceImpl implements MentorshipLifecycleServic
   }
 
   @Override
+  @Transactional
   public void terminateLinkByMentor(Long mentorId, Long studentId) {
     Mentor mentor = userFinder.findMentorById(mentorId);
     Student student = userFinder.findStudentById(studentId);
@@ -48,6 +51,7 @@ public class MentorshipLifecycleServiceImpl implements MentorshipLifecycleServic
   }
 
   @Override
+  @Transactional
   public void terminateLinkByStudent(Long studentId) {
     Student student = userFinder.findStudentById(studentId);
 

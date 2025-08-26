@@ -76,7 +76,8 @@ public class MentorshipServiceImpl implements MentorshipService {
   private void approveApplication(Application application) {
     application.setStatus(ApplicationStatus.ACCEPTED);
 
-    mentorshipLifecycleService.establishLink(application.getMentor(), application.getStudent());
+    mentorshipLifecycleService.establishLink(
+        application.getMentor().getId(), application.getStudent().getId());
 
     List<Application> otherPendingApps =
         applicationRepository.findAllByStudentIdAndStatus(
