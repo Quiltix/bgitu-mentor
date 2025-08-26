@@ -9,12 +9,12 @@ import com.bgitu.mentor.mentor.data.repository.MentorRepository;
 import com.bgitu.mentor.vote.service.MentorVoteHandler;
 import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +26,7 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService {
   private final MentorMapper mentorMapper;
 
   @Override
+  @Transactional(readOnly = true)
   public Page<MentorSummaryResponseDto> findMentors(
       Long specialityId, String query, Pageable pageable) {
 
@@ -48,6 +49,7 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public MentorDetailsResponseDto getMentorDetails(Long mentorId) {
     Mentor mentor =
         mentorRepository
