@@ -10,11 +10,14 @@ import com.bgitu.mentor.vote.service.MentorVoteHandler;
 import com.bgitu.mentor.vote.service.VotingService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,5 +66,15 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService {
   @Transactional
   public void voteForMentor(Long mentorId, boolean upvote, Long userId) {
     votingService.vote(mentorId, userId, upvote, mentorVoteHandler);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  @Cacheable(value = "popularMentors")
+  public List<MentorSummaryResponseDto> findPopularMentors() {
+
+    List<Mentor> popularMentors = mentorRepository.findTop3ByOrderByRankDesc();
+
+    return mentorMapper.toSummaryDtoList(popularMentors);
   }
 }

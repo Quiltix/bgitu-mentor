@@ -8,6 +8,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface MentorMapper {
 
@@ -17,6 +19,8 @@ public interface MentorMapper {
   @Mapping(source = "description", target = "shortDescription", qualifiedByName = "trimDescription")
   @Mapping(source = "speciality.name", target = "specialityName")
   MentorSummaryResponseDto toSummaryDto(Mentor mentor);
+
+  List<MentorSummaryResponseDto> toSummaryDtoList(List<Mentor> mentors);
 
   UserCredentialsResponseDto toCredentialsDto(Mentor mentor);
 
