@@ -14,9 +14,9 @@ import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.student.data.repository.StudentRepository;
 import com.bgitu.mentor.user.data.model.BaseUser;
 import com.bgitu.mentor.user.service.BaseUserManagementService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -45,7 +45,6 @@ public class StudentProfileServiceImpl implements StudentProfileService {
   }
 
   @Override
-  @Transactional
   public UserCredentialsResponseDto updateProfile(
       Long studentId, UserCredentialsUpdateRequestDto dto) {
     BaseUser updatedUser = baseUserManagementService.updateProfile(studentId, dto);
@@ -54,6 +53,7 @@ public class StudentProfileServiceImpl implements StudentProfileService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public MentorDetailsResponseDto getMentorOfStudent(Long studentId) {
     Student student = findStudentById(studentId);
     Mentor mentor = student.getMentor();
@@ -65,13 +65,13 @@ public class StudentProfileServiceImpl implements StudentProfileService {
   }
 
   @Override
-  @Transactional
   public void terminateCurrentMentorship(Long studentId) {
 
     mentorshipLifecycleService.terminateLinkByStudent(studentId);
   }
 
   @Override
+  @Transactional(readOnly = true)
   public StudentDetailsResponseDto getPublicCardById(Long studentId) {
 
     Student student = findStudentById(studentId);
@@ -79,6 +79,7 @@ public class StudentProfileServiceImpl implements StudentProfileService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public UserCredentialsResponseDto getPersonalInfo(Long studentId) {
     Student student = findStudentById(studentId);
     return studentMapper.toCredentialsDto(student);
