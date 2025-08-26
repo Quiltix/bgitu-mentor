@@ -1,67 +1,51 @@
 package com.bgitu.mentor.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.CacheManager;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
-
+import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @EnableCaching
 public class CacheConfig {
 
-  @Value("${spring.data.redis.host}")
-  private String redisHost;
-
-  @Value("${spring.data.redis.port}")
-  private int redisPort;
-
   @Bean
-  public RedisConnectionFactory redisConnectionFactory() {
-    RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
-    return new LettuceConnectionFactory(config);
+  public GenericJackson2JsonRedisSerializer redisSerializer(ObjectMapper objectMapper) {
+
+    ObjectMapper mapper = objectMapper.copy();
+
+    mapper.activateDefaultTyping(
+        LaissezFaireSubTypeValidator.instance,
+        ObjectMapper.DefaultTyping.NON_FINAL,
+        JsonTypeInfo.As.PROPERTY);
+
+    return new GenericJackson2JsonRedisSerializer(mapper);
   }
 
   @Bean
-  public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(new JavaTimeModule());
-
-    GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(mapper);
-
-    RedisCacheConfiguration defaultCacheConfig =
-        RedisCacheConfiguration.defaultCacheConfig()
-            .entryTtl(Duration.ofMinutes(5))
-            .disableCachingNullValues()
-            .serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(serializer));
-
-    Map<String, RedisCacheConfiguration> cacheConfigurationMap = new HashMap<>();
-    cacheConfigurationMap.put("topArticles", defaultCacheConfig.entryTtl(Duration.ofMinutes(10)));
-    cacheConfigurationMap.put("topMentors", defaultCacheConfig.entryTtl(Duration.ofMinutes(15)));
-
-    return RedisCacheManager.builder(redisConnectionFactory)
-        .cacheDefaults(defaultCacheConfig)
-        .withInitialCacheConfigurations(cacheConfigurationMap)
-        .build();
+  public RedisCacheConfiguration cacheConfiguration(
+      GenericJackson2JsonRedisSerializer redisSerializer) {
+    return RedisCacheConfiguration.defaultCacheConfig()
+        .entryTtl(Duration.ofMinutes(5))
+        .disableCachingNullValues()
+        .serializeValuesWith(SerializationPair.fromSerializer(redisSerializer));
   }
 
   @Bean
-  public SimpleKeyGenerator keyGenerator() {
-    return new SimpleKeyGenerator();
+  public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer(
+      RedisCacheConfiguration defaultCacheConfiguration) {
+    return builder ->
+        builder
+            .withCacheConfiguration(
+                "popularMentors", defaultCacheConfiguration.entryTtl(Duration.ofMinutes(15)))
+            .withCacheConfiguration(
+                "popularArticles", defaultCacheConfiguration.entryTtl(Duration.ofMinutes(10)));
   }
 }

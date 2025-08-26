@@ -9,6 +9,7 @@ import com.bgitu.mentor.user.data.repository.BaseUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -22,6 +23,7 @@ public class BaseUserManagementServiceImpl implements BaseUserManagementService 
   private final BaseUserRepository baseUserRepository;
 
   @Override
+  @Transactional
   public BaseUser updateProfile(Long userId, UserCredentialsUpdateRequestDto dto) {
     BaseUser user = userFinder.findUserById(userId);
 
@@ -41,6 +43,7 @@ public class BaseUserManagementServiceImpl implements BaseUserManagementService 
   }
 
   @Override
+  @Transactional
   public void updateCard(BaseUser user, BaseUserUpdateRequestDto dto, MultipartFile avatarFile) {
     if (dto.getFirstName() != null) {
       user.setFirstName(dto.getFirstName());
