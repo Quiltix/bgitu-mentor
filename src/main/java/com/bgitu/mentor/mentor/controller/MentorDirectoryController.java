@@ -15,6 +15,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -60,5 +62,12 @@ public class MentorDirectoryController {
       @PathVariable Long id, @RequestParam boolean upvote, Authentication authentication) {
     Long userId = SecurityUtils.getCurrentUserId(authentication);
     mentorService.voteForMentor(id, upvote, userId);
+  }
+
+  @GetMapping("/popular")
+  @PreAuthorize("isAuthenticated()")
+  @Operation(summary = "Получить топ-3 популярных менторов (результат кэшируется)")
+  public List<MentorSummaryResponseDto> getPopularMentors() {
+    return mentorService.findPopularMentors();
   }
 }
