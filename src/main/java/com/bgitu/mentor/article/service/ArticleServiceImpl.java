@@ -21,12 +21,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ArticleServiceImpl implements ArticleService {
   private final ArticleRepository articleRepository;
   private final UserFinder userFinder;
@@ -58,6 +60,7 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public ArticleDetailsResponseDto getById(Long id, Long userId) {
 
     Article article = findById(id);
@@ -82,12 +85,14 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<ArticleSummaryResponseDto> findArticlesByAuthor(Long authorId) {
     List<Article> articles = articleRepository.findAllByAuthorId(authorId);
     return articleMapper.toSummaryDtoList(articles);
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Page<ArticleSummaryResponseDto> findArticles(
       Long specialityId, String query, Pageable pageable) {
 
