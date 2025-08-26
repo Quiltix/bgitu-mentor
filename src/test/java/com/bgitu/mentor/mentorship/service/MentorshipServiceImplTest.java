@@ -170,7 +170,7 @@ class MentorshipServiceImplTest {
 
     mentorshipServiceImpl.updateApplicationStatus(mentorId, applicationId, decisionDto);
 
-    verify(mentorshipLifecycleService, times(1)).establishLink(mentor, student);
+    verify(mentorshipLifecycleService, times(1)).establishLink(mentorId, studentId);
 
     assertEquals(ApplicationStatus.ACCEPTED, mainApplication.getStatus());
 

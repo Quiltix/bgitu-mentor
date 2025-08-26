@@ -111,7 +111,9 @@ class MentorshipLifecycleServiceImplTest {
     student.setId(2L);
     student.setMentor(null);
 
-    mentorshipLifecycleServiceImpl.establishLink(mentor, student);
+    when(userFinder.findStudentById(student.getId())).thenReturn(student);
+    when(userFinder.findMentorById(mentor.getId())).thenReturn(mentor);
+    mentorshipLifecycleServiceImpl.establishLink(mentor.getId(), student.getId());
 
     assertEquals(mentor, student.getMentor());
     verify(studentRepository, times(1)).save(student);
@@ -127,9 +129,12 @@ class MentorshipLifecycleServiceImplTest {
     student.setId(2L);
     student.setMentor(new Mentor());
 
+    when(userFinder.findStudentById(student.getId())).thenReturn(student);
+    when(userFinder.findMentorById(mentor.getId())).thenReturn(mentor);
+
     assertThrows(
         IllegalStateException.class,
-        () -> mentorshipLifecycleServiceImpl.establishLink(mentor, student));
+        () -> mentorshipLifecycleServiceImpl.establishLink(mentor.getId(), student.getId()));
 
     verifyNoInteractions(studentRepository);
   }
