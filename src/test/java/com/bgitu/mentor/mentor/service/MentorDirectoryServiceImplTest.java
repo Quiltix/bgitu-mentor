@@ -123,4 +123,60 @@ class MentorDirectoryServiceImplTest {
     assertThrows(
         IllegalStateException.class, () -> mentorDirectoryService.findMentors(null, query, null));
   }
+
+  @Test
+  @DisplayName("Должен вернуть список популярных менторов")
+  void findPopularMentors_shouldReturnListOfPopularMentors() {
+    List<Mentor> fakeMentors =
+        List.of(createMentor(1L, "Анна"), createMentor(2L, "Иван"), createMentor(3L, "Ольга"));
+
+    List<MentorSummaryResponseDto> fakeDtos =
+        List.of(
+            new MentorSummaryResponseDto(),
+            new MentorSummaryResponseDto(),
+            new MentorSummaryResponseDto());
+
+    when(mentorRepository.findTop3ByOrderByRankDesc()).thenReturn(fakeMentors);
+    when(mentorMapper.toSummaryDtoList(fakeMentors)).thenReturn(fakeDtos);
+
+    List<MentorSummaryResponseDto> result = mentorDirectoryService.findPopularMentors();
+
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    verify(mentorRepository, times(1)).findTop3ByOrderByRankDesc();
+    verify(mentorMapper, times(1)).toSummaryDtoList(fakeMentors);
+  }
+
+  @Test
+  @DisplayName("Должен вернуть пустой список, если нет популярных менторов")
+  void findPopularMentors_shouldReturnEmptyList_whenNoMentorsExist() {
+    when(mentorRepository.findTop3ByOrderByRankDesc()).thenReturn(List.of());
+    when(mentorMapper.toSummaryDtoList(List.of())).thenReturn(List.of());
+
+    List<MentorSummaryResponseDto> result = mentorDirectoryService.findPopularMentors();
+
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
+    verify(mentorRepository, times(1)).findTop3ByOrderByRankDesc();
+    verify(mentorMapper, times(1)).toSummaryDtoList(List.of());
+  }
+
+  @Test
+  @DisplayName("Должен вернуть список из 2 популярных менторов")
+  void findPopularMentors_shouldReturnListOfTwoPopularMentors() {
+    List<Mentor> fakeMentors = List.of(createMentor(1L, "Анна"), createMentor(2L, "Иван"));
+
+    List<MentorSummaryResponseDto> fakeDtos =
+        List.of(new MentorSummaryResponseDto(), new MentorSummaryResponseDto());
+
+    when(mentorRepository.findTop3ByOrderByRankDesc()).thenReturn(fakeMentors);
+    when(mentorMapper.toSummaryDtoList(fakeMentors)).thenReturn(fakeDtos);
+
+    List<MentorSummaryResponseDto> result = mentorDirectoryService.findPopularMentors();
+
+    assertNotNull(result);
+    assertEquals(2, result.size());
+    verify(mentorRepository, times(1)).findTop3ByOrderByRankDesc();
+    verify(mentorMapper, times(1)).toSummaryDtoList(fakeMentors);
+  }
 }
