@@ -5,9 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MentorRepository
     extends JpaRepository<Mentor, Long>, JpaSpecificationExecutor<Mentor> {
 
   List<Mentor> findTop3ByOrderByRankDesc();
+
+  Optional<Mentor> findByEmail(String email);
 }

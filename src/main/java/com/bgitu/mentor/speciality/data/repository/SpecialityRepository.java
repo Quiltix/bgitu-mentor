@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface SpecialityRepository extends JpaRepository<Speciality, Long> {
   boolean existsByName(String name);
+
+  Optional<Speciality> findByName(String name);
 }

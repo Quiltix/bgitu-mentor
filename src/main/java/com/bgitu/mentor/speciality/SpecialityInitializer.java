@@ -21,7 +21,11 @@ public class SpecialityInitializer {
           "Frontend Development", // Разработка клиентской части (React, Angular, Vue.js)
           "Full-Stack Development", // Полный цикл разработки (Frontend + Backend)
           "Mobile Development", // Разработка мобильных приложений (iOS, Android, Flutter, React
-          // Native)
+          "Java Development", // Разработка на Java (Spring, Hibernate)
+          "Python Development", // Разработка на Python (Django, Flask)
+          "JavaScript Development", // Разработка на JavaScript (Node.js, Express)
+          "C#/.NET Development", // Разработка на C# (.NET Core, ASP.NET)
+          "Go Development", // Разработка на Go (Golang)
           "Data Science", // Анализ данных, машинное обучение, статистика
           "Machine Learning Engineering", // Разработка и внедрение ML-моделей
           "Artificial Intelligence", // Искусственный интеллект, нейронные сети
@@ -40,10 +44,8 @@ public class SpecialityInitializer {
           "AR/VR Development", // Разработка приложений для дополненной и виртуальной реальности
           "Product Management", // Управление продуктами, планирование и стратегия
           "Project Management", // Управление проектами (Agile, Scrum, Kanban)
-          "Technical Writing", // Написание технической документации
           "Business Analysis", // Анализ бизнес-процессов и требований
           "Big Data", // Работа с большими данными (Hadoop, Spark)
-          "Robotics", // Разработка робототехнических систем
           "System Architecture" // Проектирование сложных систем и архитектур
           );
 
