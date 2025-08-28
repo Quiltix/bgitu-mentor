@@ -1,55 +1,18 @@
-# =======================================
-# SPRING BOOT CORE
-# =======================================
+# Настройки, которые ПЕРЕОПРЕДЕЛЯЮТ базовые для PROD-профиля
 spring:
-  application:
-    name: mentor
-  datasource:
-    url: ${DB_URL}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-    driver-class-name: org.postgresql.Driver
   jpa:
-    open-in-view: false
     hibernate:
+      # В PROD мы только проверяем схему, но не меняем ее
       ddl-auto: validate
+    # В PROD SQL-запросы в логах не нужны
     show-sql: false
+
+  # Отключаем DevTools в проде на всякий случай
   devtools:
     add-properties: false
-  # --- Caching & Redis ---
-  cache:
-    type: redis
-  data:
-    redis:
-      host: ${SPRING_REDIS_HOST}
-      port: ${SPRING_REDIS_PORT}
-      # password: ${SPRING_REDIS_PASSWORD}
 
-  # --- File Upload ---
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-
-# =======================================
-# SERVER CONFIGURATION
-# =======================================
-server:
-  port: 8080
-
-# =======================================
-# CUSTOM APPLICATION PROPERTIES
-# =======================================
-file:
-  upload-dir: uploads/images
-
-jwt:
-  secret: ${JWT_SECRET}
-
-swagger:
-  server-url: ${SWAGGER_SERVER_URL}
-
+# В PROD нам нужен более строгий уровень логирования
 logging:
   level:
     root: INFO
-    com.mentor: INFO
+    com.bgitu.mentor: INFO # или WARN для еще меньшего количества логов

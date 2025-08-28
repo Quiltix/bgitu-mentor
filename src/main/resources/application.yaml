@@ -11,12 +11,6 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
   # --- Caching & Redis ---
   cache:
     type: redis
@@ -49,8 +43,3 @@ jwt:
 
 swagger:
   server-url: ${SWAGGER_SERVER_URL}
-
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql: TRACE
