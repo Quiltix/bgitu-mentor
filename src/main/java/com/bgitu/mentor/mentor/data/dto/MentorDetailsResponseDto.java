@@ -17,4 +17,5 @@ public class MentorDetailsResponseDto {
   private String telegramUrl;
   private String speciality;
   Integer rank;
+  private Boolean canVote;
 }

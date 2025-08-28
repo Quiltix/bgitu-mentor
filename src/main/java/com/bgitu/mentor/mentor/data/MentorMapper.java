@@ -13,8 +13,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface MentorMapper {
 
-  @Mapping(source = "speciality.name", target = "speciality")
-  MentorDetailsResponseDto toDetailsDto(Mentor mentor);
+  @Mapping(source = "mentor.speciality.name", target = "speciality")
+  @Mapping(source = "canVote", target = "canVote") //
+  MentorDetailsResponseDto toDetailsDto(Mentor mentor, Boolean canVote);
 
   @Mapping(source = "description", target = "shortDescription", qualifiedByName = "trimDescription")
   @Mapping(source = "speciality.name", target = "specialityName")
@@ -23,6 +24,10 @@ public interface MentorMapper {
   List<MentorSummaryResponseDto> toSummaryDtoList(List<Mentor> mentors);
 
   UserCredentialsResponseDto toCredentialsDto(Mentor mentor);
+
+  default MentorDetailsResponseDto toDetailsDto(Mentor mentor) {
+    return toDetailsDto(mentor, null);
+  }
 
   @Named("trimDescription")
   default String trimDescription(String description) {
