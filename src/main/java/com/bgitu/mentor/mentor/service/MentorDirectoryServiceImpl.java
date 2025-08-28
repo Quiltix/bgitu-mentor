@@ -36,14 +36,14 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService {
     Specification<Mentor> specification = Specification.not(null);
 
     if (specialityId != null) {
-      specification.and(MentorSpecifications.hasSpeciality(specialityId));
+      specification = specification.and(MentorSpecifications.hasSpeciality(specialityId));
     }
 
     if (query != null && !query.isBlank()) {
       if (query.length() > 250) {
         throw new IllegalStateException("Строка для поиска слишком длинная");
       }
-      specification.and(MentorSpecifications.nameOrDescriptionContains(query));
+      specification = specification.and(MentorSpecifications.nameOrDescriptionContains(query));
     }
 
     Page<Mentor> mentorPage = mentorRepository.findAll(specification, pageable);

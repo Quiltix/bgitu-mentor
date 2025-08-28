@@ -111,14 +111,14 @@ public class ArticleServiceImpl implements ArticleService {
     Specification<Article> specification = Specification.not(null);
 
     if (specialityId != null) {
-      specification.and(ArticleSpecifications.hasSpeciality(specialityId));
+      specification = specification.and(ArticleSpecifications.hasSpeciality(specialityId));
     }
 
     if (query != null && !query.isBlank()) {
       if (query.length() > 250) {
         throw new IllegalStateException("Сократите строку поиска до 250 символов");
       }
-      specification.and(ArticleSpecifications.titleOrContentContains(query));
+      specification = specification.and(ArticleSpecifications.titleOrContentContains(query));
     }
     Page<Article> articlePages = articleRepository.findAll(specification, pageable);
 
