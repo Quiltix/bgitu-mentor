@@ -53,13 +53,13 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService {
 
   @Override
   @Transactional(readOnly = true)
-  public MentorDetailsResponseDto getMentorDetails(Long mentorId) {
+  public MentorDetailsResponseDto getMentorDetails(Long mentorId, Long userId) {
     Mentor mentor =
         mentorRepository
             .findById(mentorId)
             .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
 
-    return mentorMapper.toDetailsDto(mentor);
+    return mentorMapper.toDetailsDto(mentor, !mentorVoteHandler.hasVoted(userId, mentorId));
   }
 
   @Override

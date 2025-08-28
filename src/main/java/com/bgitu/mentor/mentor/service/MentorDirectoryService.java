@@ -11,7 +11,7 @@ public interface MentorDirectoryService {
 
   Page<MentorSummaryResponseDto> findMentors(Long specialityId, String query, Pageable pageable);
 
-  MentorDetailsResponseDto getMentorDetails(Long mentorId);
+  MentorDetailsResponseDto getMentorDetails(Long mentorId, Long userId);
 
   void voteForMentor(Long mentorId, boolean isUpvote, Long votingUserId);
 

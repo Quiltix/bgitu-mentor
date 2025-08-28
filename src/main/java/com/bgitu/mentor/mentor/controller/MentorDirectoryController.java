@@ -48,8 +48,10 @@ public class MentorDirectoryController {
           "Доступно для ролей STUDENT и MENTOR. Возвращает полную информацию по ментору по id.")
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/{id}")
-  public MentorDetailsResponseDto getMentorDetails(@PathVariable Long id) {
-    return mentorService.getMentorDetails(id);
+  public MentorDetailsResponseDto getMentorDetails(
+      @PathVariable Long id, Authentication authentication) {
+    Long userId = SecurityUtils.getCurrentUserId(authentication);
+    return mentorService.getMentorDetails(id, userId);
   }
 
   @PreAuthorize("hasRole('STUDENT')")

@@ -54,7 +54,7 @@ class MentorDirectoryServiceImplTest {
     when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(fakeMentor));
     when(mentorMapper.toDetailsDto(fakeMentor)).thenReturn(fakeDto);
 
-    MentorDetailsResponseDto resultDto = mentorDirectoryService.getMentorDetails(mentorId);
+    MentorDetailsResponseDto resultDto = mentorDirectoryService.getMentorDetails(mentorId, null);
 
     assertNotNull(resultDto);
     assertEquals(fakeDto.getId(), resultDto.getId());
@@ -70,7 +70,8 @@ class MentorDirectoryServiceImplTest {
 
     when(mentorRepository.findById(99L)).thenReturn(Optional.empty());
 
-    assertThrows(EntityNotFoundException.class, () -> mentorDirectoryService.getMentorDetails(99L));
+    assertThrows(
+        EntityNotFoundException.class, () -> mentorDirectoryService.getMentorDetails(99L, null));
   }
 
   @Test

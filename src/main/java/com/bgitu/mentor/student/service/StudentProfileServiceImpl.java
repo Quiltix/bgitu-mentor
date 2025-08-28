@@ -61,7 +61,7 @@ public class StudentProfileServiceImpl implements StudentProfileService {
       throw new ResourceNotFoundException("У студента нет ментора");
     }
 
-    return mentorDirectoryService.getMentorDetails(mentor.getId());
+    return mentorDirectoryService.getMentorDetails(mentor.getId(), studentId);
   }
 
   @Override
