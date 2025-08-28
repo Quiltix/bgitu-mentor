@@ -38,8 +38,9 @@ public class DataSeeder {
 
       Speciality javaSpec =
           specialityRepository
-              .findByName("Java Backend")
-              .orElseThrow(() -> new RuntimeException("Специальность 'Java Backend' не найдена"));
+              .findByName("Java Development")
+              .orElseThrow(
+                  () -> new RuntimeException("Специальность 'Java Development' не найдена"));
       Speciality dataScienceSpec =
           specialityRepository
               .findByName("Data Science")
