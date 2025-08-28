@@ -1,0 +1,55 @@
+# =======================================
+# SPRING BOOT CORE
+# =======================================
+spring:
+  application:
+    name: mentor
+  datasource:
+    url: ${DB_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  devtools:
+    add-properties: false
+  # --- Caching & Redis ---
+  cache:
+    type: redis
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}
+      # password: ${SPRING_REDIS_PASSWORD}
+
+  # --- File Upload ---
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# =======================================
+# SERVER CONFIGURATION
+# =======================================
+server:
+  port: 8080
+
+# =======================================
+# CUSTOM APPLICATION PROPERTIES
+# =======================================
+file:
+  upload-dir: uploads/images
+
+jwt:
+  secret: ${JWT_SECRET}
+
+swagger:
+  server-url: ${SWAGGER_SERVER_URL}
+
+logging:
+  level:
+    root: INFO
+    com.mentor: INFO
