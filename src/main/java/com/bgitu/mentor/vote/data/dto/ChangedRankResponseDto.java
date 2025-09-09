@@ -1,4 +1,4 @@
-package com.bgitu.mentor.common.dto;
+package com.bgitu.mentor.vote.data.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

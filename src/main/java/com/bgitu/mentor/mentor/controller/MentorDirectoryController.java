@@ -1,7 +1,7 @@
 package com.bgitu.mentor.mentor.controller;
 
 import com.bgitu.mentor.common.SecurityUtils;
-import com.bgitu.mentor.common.dto.ChangedRankResponseDto;
+import com.bgitu.mentor.vote.data.dto.ChangedRankResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
 import com.bgitu.mentor.mentor.service.MentorDirectoryService;

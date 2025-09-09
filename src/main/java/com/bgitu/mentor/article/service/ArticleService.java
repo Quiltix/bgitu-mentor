@@ -3,7 +3,7 @@ package com.bgitu.mentor.article.service;
 import com.bgitu.mentor.article.data.dto.ArticleCreateRequestDto;
 import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
-import com.bgitu.mentor.common.dto.ChangedRankResponseDto;
+import com.bgitu.mentor.vote.data.dto.ChangedRankResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;

@@ -7,7 +7,7 @@ import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.article.data.repository.ArticleRepository;
-import com.bgitu.mentor.common.dto.ChangedRankResponseDto;
+import com.bgitu.mentor.vote.data.dto.ChangedRankResponseDto;
 import com.bgitu.mentor.speciality.service.SpecialityService;
 import com.bgitu.mentor.user.service.UserFinder;
 import com.bgitu.mentor.common.service.FileStorageService;
