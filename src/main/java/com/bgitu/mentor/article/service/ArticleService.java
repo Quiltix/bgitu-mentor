@@ -3,6 +3,7 @@ package com.bgitu.mentor.article.service;
 import com.bgitu.mentor.article.data.dto.ArticleCreateRequestDto;
 import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
+import com.bgitu.mentor.common.dto.ChangedRankResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,5 +25,5 @@ public interface ArticleService {
 
   void deleteArticle(Long articleId, Long userId);
 
-  void changeArticleRank(Long articleId, boolean like, Long userId);
+  ChangedRankResponseDto changeArticleRank(Long articleId, boolean like, Long userId);
 }

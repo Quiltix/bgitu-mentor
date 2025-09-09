@@ -7,6 +7,7 @@ import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.article.data.repository.ArticleRepository;
+import com.bgitu.mentor.common.dto.ChangedRankResponseDto;
 import com.bgitu.mentor.speciality.service.SpecialityService;
 import com.bgitu.mentor.user.service.UserFinder;
 import com.bgitu.mentor.common.service.FileStorageService;
@@ -84,8 +85,9 @@ public class ArticleServiceImpl implements ArticleService {
 
   @Override
   @Transactional
-  public void changeArticleRank(Long articleId, boolean like, Long userId) {
-    votingService.vote(articleId, userId, like, articleVoteHandler);
+  public ChangedRankResponseDto changeArticleRank(Long articleId, boolean like, Long userId) {
+    return (new ChangedRankResponseDto(
+        votingService.vote(articleId, userId, like, articleVoteHandler)));
   }
 
   @Override
