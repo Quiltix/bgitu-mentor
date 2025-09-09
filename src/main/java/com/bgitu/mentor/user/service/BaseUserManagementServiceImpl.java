@@ -1,7 +1,7 @@
 package com.bgitu.mentor.user.service;
 
 import com.bgitu.mentor.user.data.dto.UserCredentialsUpdateRequestDto;
-import com.bgitu.mentor.common.service.FileStorageService;
+import com.bgitu.mentor.file.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.user.data.dto.BaseUserUpdateRequestDto;
 import com.bgitu.mentor.user.data.model.BaseUser;

@@ -4,7 +4,7 @@ import com.bgitu.mentor.article.data.dto.ArticleCreateRequestDto;
 import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.service.ArticleService;
-import com.bgitu.mentor.common.SecurityUtils;
+import com.bgitu.mentor.auth.security.SecurityUtils;
 import com.bgitu.mentor.vote.data.dto.ChangedRankResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

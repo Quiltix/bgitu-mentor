@@ -6,7 +6,7 @@ import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.data.model.Article;
 import com.bgitu.mentor.article.data.repository.ArticleRepository;
-import com.bgitu.mentor.common.service.FileStorageService;
+import com.bgitu.mentor.file.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.speciality.data.model.Speciality;
 import com.bgitu.mentor.speciality.service.SpecialityService;

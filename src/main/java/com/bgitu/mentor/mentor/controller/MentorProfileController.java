@@ -1,7 +1,7 @@
 package com.bgitu.mentor.mentor.controller;
 
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
-import com.bgitu.mentor.common.SecurityUtils;
+import com.bgitu.mentor.auth.security.SecurityUtils;
 import com.bgitu.mentor.user.data.dto.UserCredentialsResponseDto;
 import com.bgitu.mentor.user.data.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;

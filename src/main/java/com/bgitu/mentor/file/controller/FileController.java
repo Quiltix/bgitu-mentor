@@ -1,6 +1,6 @@
-package com.bgitu.mentor.common.controller;
+package com.bgitu.mentor.file.controller;
 
-import com.bgitu.mentor.common.service.FileStorageService;
+import com.bgitu.mentor.file.service.FileStorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

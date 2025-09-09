@@ -1,7 +1,7 @@
 package com.bgitu.mentor.mentorship.controller;
 
 import com.bgitu.mentor.auth.Role;
-import com.bgitu.mentor.common.SecurityUtils;
+import com.bgitu.mentor.auth.security.SecurityUtils;
 import com.bgitu.mentor.mentorship.data.dto.ApplicationDecisionRequestDto;
 import com.bgitu.mentor.mentorship.data.dto.ApplicationDetailsResponseDto;
 import com.bgitu.mentor.mentorship.data.dto.ApplicationCreateRequestDto;

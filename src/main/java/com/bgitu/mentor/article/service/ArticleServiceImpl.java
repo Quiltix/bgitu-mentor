@@ -10,7 +10,7 @@ import com.bgitu.mentor.article.data.repository.ArticleRepository;
 import com.bgitu.mentor.vote.data.dto.ChangedRankResponseDto;
 import com.bgitu.mentor.speciality.service.SpecialityService;
 import com.bgitu.mentor.user.service.UserFinder;
-import com.bgitu.mentor.common.service.FileStorageService;
+import com.bgitu.mentor.file.service.FileStorageService;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.speciality.data.model.Speciality;
 import com.bgitu.mentor.vote.service.ArticleVoteHandler;

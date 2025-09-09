@@ -1,4 +1,4 @@
-package com.bgitu.mentor.common.service;
+package com.bgitu.mentor.file.service;
 
 import com.bgitu.mentor.exception.custom.FileStorageException;
 import com.bgitu.mentor.exception.custom.ResourceNotFoundException;

@@ -1,4 +1,4 @@
-package com.bgitu.mentor.common;
+package com.bgitu.mentor.auth.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
