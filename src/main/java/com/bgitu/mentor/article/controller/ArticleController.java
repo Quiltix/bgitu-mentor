@@ -5,6 +5,7 @@ import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.common.SecurityUtils;
+import com.bgitu.mentor.common.dto.ChangedRankResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -93,10 +94,10 @@ public class ArticleController {
       summary = "Оценить статью",
       description = "Лайк или дизлайк статьи. true = лайк, false = дизлайк")
   @ResponseStatus(HttpStatus.OK)
-  public void voteArticle(
+  public ChangedRankResponseDto voteArticle(
       @PathVariable Long id, @RequestParam boolean like, Authentication authentication) {
     Long userId = SecurityUtils.getCurrentUserId(authentication);
-    articleService.changeArticleRank(id, like, userId);
+    return articleService.changeArticleRank(id, like, userId);
   }
 
   @PreAuthorize("isAuthenticated()")
