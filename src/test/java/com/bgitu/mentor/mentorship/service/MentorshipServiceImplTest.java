@@ -1,7 +1,7 @@
 package com.bgitu.mentor.mentorship.service;
 
 import com.bgitu.mentor.auth.Role;
-import com.bgitu.mentor.exception.dto.ResourceNotFoundException;
+import com.bgitu.mentor.exception.custom.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentorship.data.ApplicationMapper;
 import com.bgitu.mentor.mentorship.data.dto.ApplicationCreateRequestDto;

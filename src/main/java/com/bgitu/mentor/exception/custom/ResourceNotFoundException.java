@@ -1,4 +1,4 @@
-package com.bgitu.mentor.exception.dto;
+package com.bgitu.mentor.exception.custom;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -1,5 +1,5 @@
 // src/main/java/com/bgitu/mentor/common/dto/ErrorResponseDto.java
-package com.bgitu.mentor.common.dto;
+package com.bgitu.mentor.exception.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.bgitu.mentor.exception.handler;
 
-import com.bgitu.mentor.common.dto.ErrorResponseDto;
-import com.bgitu.mentor.exception.dto.ResourceNotFoundException;
+import com.bgitu.mentor.exception.dto.ErrorResponseDto;
+import com.bgitu.mentor.exception.custom.ResourceNotFoundException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;

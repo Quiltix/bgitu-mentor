@@ -4,7 +4,7 @@ import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.user.data.dto.UserCredentialsResponseDto;
 import com.bgitu.mentor.user.data.dto.UserCredentialsUpdateRequestDto;
-import com.bgitu.mentor.exception.dto.ResourceNotFoundException;
+import com.bgitu.mentor.exception.custom.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.data.MentorMapper;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;
