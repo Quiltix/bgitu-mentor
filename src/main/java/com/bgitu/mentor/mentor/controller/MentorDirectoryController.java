@@ -1,6 +1,7 @@
 package com.bgitu.mentor.mentor.controller;
 
 import com.bgitu.mentor.common.SecurityUtils;
+import com.bgitu.mentor.common.dto.ChangedRankResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
 import com.bgitu.mentor.mentor.service.MentorDirectoryService;
@@ -60,10 +61,10 @@ public class MentorDirectoryController {
   @Operation(
       summary = "Лайк/дизлайк ментора",
       description = "Голосование за ментора (1 раз на студента)")
-  public void voteMentor(
+  public ChangedRankResponseDto voteMentor(
       @PathVariable Long id, @RequestParam boolean upvote, Authentication authentication) {
     Long userId = SecurityUtils.getCurrentUserId(authentication);
-    mentorService.voteForMentor(id, upvote, userId);
+    return mentorService.voteForMentor(id, upvote, userId);
   }
 
   @GetMapping("/popular")
