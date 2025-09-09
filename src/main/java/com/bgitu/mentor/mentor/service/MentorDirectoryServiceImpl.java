@@ -1,5 +1,6 @@
 package com.bgitu.mentor.mentor.service;
 
+import com.bgitu.mentor.common.dto.ChangedRankResponseDto;
 import com.bgitu.mentor.mentor.data.MentorMapper;
 import com.bgitu.mentor.mentor.data.MentorSpecifications;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
@@ -64,8 +65,9 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService {
 
   @Override
   @Transactional
-  public void voteForMentor(Long mentorId, boolean upvote, Long userId) {
-    votingService.vote(mentorId, userId, upvote, mentorVoteHandler);
+  public ChangedRankResponseDto voteForMentor(Long mentorId, boolean upvote, Long userId) {
+    return (new ChangedRankResponseDto(
+        votingService.vote(mentorId, userId, upvote, mentorVoteHandler)));
   }
 
   @Override

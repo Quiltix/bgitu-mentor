@@ -1,5 +1,6 @@
 package com.bgitu.mentor.mentor.service;
 
+import com.bgitu.mentor.common.dto.ChangedRankResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ public interface MentorDirectoryService {
 
   MentorDetailsResponseDto getMentorDetails(Long mentorId, Long userId);
 
-  void voteForMentor(Long mentorId, boolean isUpvote, Long votingUserId);
+  ChangedRankResponseDto voteForMentor(Long mentorId, boolean isUpvote, Long votingUserId);
 
   List<MentorSummaryResponseDto> findPopularMentors();
 }
