@@ -14,7 +14,7 @@ public class VotingService {
   private final UserFinder userFinder;
 
   @Transactional
-  public <T extends Votable> void vote(
+  public <T extends Votable> Integer vote(
       Long entityId, Long userId, boolean isUpvote, VoteHandler<T> handler) {
     BaseUser user = userFinder.findUserById(userId);
 
@@ -30,5 +30,6 @@ public class VotingService {
     entity.setRank(entity.getRank() + rankChange);
 
     handler.saveVotableEntity(entity);
+    return rankChange;
   }
 }
