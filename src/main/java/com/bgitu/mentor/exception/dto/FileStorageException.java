@@ -1,4 +1,4 @@
-package com.bgitu.mentor.exception.handler.dto;
+package com.bgitu.mentor.exception.dto;
 
 public class FileStorageException extends RuntimeException {
   public FileStorageException(String message) {

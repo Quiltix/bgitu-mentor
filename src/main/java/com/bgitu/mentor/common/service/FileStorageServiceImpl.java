@@ -1,7 +1,7 @@
 package com.bgitu.mentor.common.service;
 
-import com.bgitu.mentor.exception.handler.dto.FileStorageException;
-import com.bgitu.mentor.exception.handler.dto.ResourceNotFoundException;
+import com.bgitu.mentor.exception.dto.FileStorageException;
+import com.bgitu.mentor.exception.dto.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
