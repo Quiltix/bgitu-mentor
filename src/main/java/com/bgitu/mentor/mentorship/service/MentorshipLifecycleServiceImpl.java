@@ -1,6 +1,6 @@
 package com.bgitu.mentor.mentorship.service;
 
-import com.bgitu.mentor.common.exception.ResourceNotFoundException;
+import com.bgitu.mentor.exception.handler.dto.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.student.data.model.Student;
 import com.bgitu.mentor.student.data.repository.StudentRepository;
