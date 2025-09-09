@@ -1,8 +1,8 @@
 package com.bgitu.mentor.student.controller;
 
 import com.bgitu.mentor.common.SecurityUtils;
-import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
-import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
+import com.bgitu.mentor.user.data.dto.UserCredentialsResponseDto;
+import com.bgitu.mentor.user.data.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.student.data.dto.StudentDetailsResponseDto;
 import com.bgitu.mentor.student.data.dto.StudentDetailsUpdateRequestDto;

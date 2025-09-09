@@ -1,6 +1,6 @@
 package com.bgitu.mentor.mentor.data;
 
-import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
+import com.bgitu.mentor.user.data.dto.UserCredentialsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;

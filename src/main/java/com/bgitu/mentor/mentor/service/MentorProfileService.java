@@ -1,8 +1,8 @@
 package com.bgitu.mentor.mentor.service;
 
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
-import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
-import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
+import com.bgitu.mentor.user.data.dto.UserCredentialsResponseDto;
+import com.bgitu.mentor.user.data.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 
 import com.bgitu.mentor.mentor.data.dto.MentorUpdateRequestDto;

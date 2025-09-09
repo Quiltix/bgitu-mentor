@@ -1,4 +1,4 @@
-package com.bgitu.mentor.common.dto;
+package com.bgitu.mentor.user.data.dto;
 
 import jakarta.validation.constraints.Email;
 import lombok.Getter;

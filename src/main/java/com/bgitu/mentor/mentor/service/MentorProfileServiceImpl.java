@@ -2,8 +2,8 @@ package com.bgitu.mentor.mentor.service;
 
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.service.ArticleService;
-import com.bgitu.mentor.common.dto.UserCredentialsResponseDto;
-import com.bgitu.mentor.common.dto.UserCredentialsUpdateRequestDto;
+import com.bgitu.mentor.user.data.dto.UserCredentialsResponseDto;
+import com.bgitu.mentor.user.data.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.common.exception.ResourceNotFoundException;
 import com.bgitu.mentor.mentor.data.MentorMapper;
 import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
