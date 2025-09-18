@@ -1,6 +1,6 @@
 package com.bgitu.mentor.speciality.data;
 
-import com.bgitu.mentor.mentor.data.dto.SpecialityDto;
+import com.bgitu.mentor.speciality.data.dto.SpecialityDto;
 import com.bgitu.mentor.speciality.data.model.Speciality;
 import org.mapstruct.Mapper;
 

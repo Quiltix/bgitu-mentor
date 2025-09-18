@@ -1,6 +1,6 @@
 package com.bgitu.mentor.speciality.controller;
 
-import com.bgitu.mentor.mentor.data.dto.SpecialityDto;
+import com.bgitu.mentor.speciality.data.dto.SpecialityDto;
 import com.bgitu.mentor.speciality.service.SpecialityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

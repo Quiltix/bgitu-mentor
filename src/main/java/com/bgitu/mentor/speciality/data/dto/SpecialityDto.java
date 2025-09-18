@@ -1,4 +1,4 @@
-package com.bgitu.mentor.mentor.data.dto;
+package com.bgitu.mentor.speciality.data.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
