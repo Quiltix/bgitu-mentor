@@ -5,8 +5,12 @@ import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
 import com.bgitu.mentor.article.data.dto.ArticleSummaryResponseDto;
 import com.bgitu.mentor.article.service.ArticleService;
 import com.bgitu.mentor.auth.security.SecurityUtils;
+import com.bgitu.mentor.exception.dto.ErrorResponseDto;
 import com.bgitu.mentor.vote.data.dto.ChangedRankResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -55,9 +59,30 @@ public class ArticleController {
 
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/{id}")
-  @Operation(summary = "Получить статью", description = "Получить статью по её ID")
+  @Operation(
+      summary = "Получить статью по ID",
+      description =
+          "Возвращает полную информацию о статье включая возможность голосования для текущего пользователя")
+  @ApiResponse(
+      responseCode = "200",
+      description = "Статья найдена",
+      content = @Content(schema = @Schema(implementation = ArticleDetailsResponseDto.class)))
+  @ApiResponse(
+      responseCode = "400",
+      description = "Неверный ID статьи",
+      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован")
+  @ApiResponse(
+      responseCode = "404",
+      description = "Статья не найдена",
+      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  @ApiResponse(
+      responseCode = "500",
+      description = "Внутренняя ошибка сервера",
+      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
   public ArticleDetailsResponseDto getArticleById(
-      @PathVariable Long id, Authentication authentication) {
+      @Parameter(description = "ID статьи", example = "15") @PathVariable Long id,
+      Authentication authentication) {
     Long userId = SecurityUtils.getCurrentUserId(authentication);
     return articleService.getById(id, userId);
   }
