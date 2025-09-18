@@ -2,6 +2,7 @@
 package com.bgitu.mentor.exception.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.WebRequest;
@@ -10,15 +11,29 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @Getter
-@JsonInclude(JsonInclude.Include.NON_NULL) // Не включать в JSON поля, которые равны null
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Стандартный ответ об ошибке")
 public class ErrorResponseDto {
 
+  @Schema(description = "Время возникновения ошибки", example = "2023-12-01T15:30:45.123")
   private final LocalDateTime timestamp;
+
+  @Schema(description = "HTTP статус код", example = "400")
   private final int status;
-  private final String error; // Краткое описание статуса, e.g., "Bad Request"
-  private final String message; // Сообщение для пользователя
-  private final String path; // Путь, на котором произошла ошибка
-  private Map<String, String> validationErrors; // Для ошибок валидации
+
+  @Schema(description = "Краткое описание статуса", example = "Bad Request")
+  private final String error;
+
+  @Schema(description = "Сообщение для пользователя", example = "Некорректные данные запроса")
+  private final String message;
+
+  @Schema(description = "Путь API где произошла ошибка", example = "/api/articles")
+  private final String path;
+
+  @Schema(
+      description = "Детали ошибок валидации (только для статуса 400)",
+      example = "{\"title\": \"Название не может быть пустым\"}")
+  private Map<String, String> validationErrors;
 
   public ErrorResponseDto(HttpStatus httpStatus, String message, WebRequest request) {
     this.timestamp = LocalDateTime.now();
