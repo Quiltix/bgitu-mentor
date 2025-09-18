@@ -1,4 +1,4 @@
-package com.bgitu.mentor.auth.dto;
+package com.bgitu.mentor.auth.data.dto;
 
 import com.bgitu.mentor.auth.Role;
 import jakarta.validation.constraints.Email;

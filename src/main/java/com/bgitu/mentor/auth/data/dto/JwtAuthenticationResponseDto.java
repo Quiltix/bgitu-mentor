@@ -1,4 +1,4 @@
-package com.bgitu.mentor.auth.dto;
+package com.bgitu.mentor.auth.data.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -14,10 +14,6 @@ public class JwtAuthenticationResponseDto {
   @Schema(description = "Тип аутентификации", example = "Bearer")
   private final String tokenType = "Bearer";
 
+  @Schema(description = "Роль пользователя", example = "STUDENT")
   private String role;
-
-  public JwtAuthenticationResponseDto(String accessToken, String role) {
-    this.accessToken = accessToken;
-    this.role = role;
-  }
 }

@@ -1,9 +1,10 @@
 package com.bgitu.mentor.auth.service;
 
 import com.bgitu.mentor.auth.Role;
-import com.bgitu.mentor.auth.dto.JwtAuthenticationResponseDto;
-import com.bgitu.mentor.auth.dto.LoginRequestDto;
-import com.bgitu.mentor.auth.dto.RegisterRequestDto;
+import com.bgitu.mentor.auth.data.AuthMapper;
+import com.bgitu.mentor.auth.data.dto.JwtAuthenticationResponseDto;
+import com.bgitu.mentor.auth.data.dto.LoginRequestDto;
+import com.bgitu.mentor.auth.data.dto.RegisterRequestDto;
 import com.bgitu.mentor.auth.security.AuthenticatedUser;
 import com.bgitu.mentor.auth.security.JwtTokenProvider;
 import com.bgitu.mentor.mentor.data.model.Mentor;
@@ -25,6 +26,7 @@ public class AuthServiceImpl implements AuthService {
   private final BaseUserRepository userRepository;
   private final JwtTokenProvider tokenProvider;
   private final AuthenticationManager authenticationManager;
+  private final AuthMapper authMapper;
 
   @Transactional
   public JwtAuthenticationResponseDto register(RegisterRequestDto dto) {
@@ -56,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
 
     String token = tokenProvider.generateToken(savedUser.getId(), userRole);
 
-    return new JwtAuthenticationResponseDto(token, userRole.name());
+    return authMapper.toDto(token, userRole.name());
   }
 
   @Override
@@ -72,6 +74,6 @@ public class AuthServiceImpl implements AuthService {
 
     String token = tokenProvider.generateToken(userDetails.getId(), userDetails.getRole());
 
-    return new JwtAuthenticationResponseDto(token, userDetails.getRole().name());
+    return authMapper.toDto(token, userDetails.getRole().name());
   }
 }
