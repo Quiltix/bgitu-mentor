@@ -107,6 +107,23 @@ public class ArticleController {
   @PreAuthorize("hasRole('MENTOR')")
   @Operation(summary = "Удалить статью", description = "Удаляет статью, если вы её автор")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ApiResponse(responseCode = "200", description = "Статья удалена")
+  @ApiResponse(
+      responseCode = "403",
+      description = "Пользователь не автор статьи",
+      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  @ApiResponse(
+      responseCode = "400",
+      description = "Неверный ID статьи",
+      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  @ApiResponse(
+      responseCode = "404",
+      description = "Статья не найдена",
+      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  @ApiResponse(
+      responseCode = "500",
+      description = "Внутренняя ошибка сервера",
+      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
   public void deleteArticle(@PathVariable Long id, Authentication authentication) {
     Long userId = SecurityUtils.getCurrentUserId(authentication);
 
