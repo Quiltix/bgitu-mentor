@@ -1,8 +1,8 @@
 package com.bgitu.mentor.auth.service;
 
-import com.bgitu.mentor.auth.dto.JwtAuthenticationResponseDto;
-import com.bgitu.mentor.auth.dto.LoginRequestDto;
-import com.bgitu.mentor.auth.dto.RegisterRequestDto;
+import com.bgitu.mentor.auth.data.dto.JwtAuthenticationResponseDto;
+import com.bgitu.mentor.auth.data.dto.LoginRequestDto;
+import com.bgitu.mentor.auth.data.dto.RegisterRequestDto;
 
 public interface AuthService {
 
