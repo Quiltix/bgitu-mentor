@@ -159,10 +159,6 @@ public class ArticleController {
       description = "Пользователь не автор статьи",
       content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
   @ApiResponse(
-      responseCode = "400",
-      description = "Неверный ID статьи",
-      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
-  @ApiResponse(
       responseCode = "401",
       description = "Пользователь не аутентифицирован",
       content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
@@ -195,7 +191,8 @@ public class ArticleController {
       content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
   @ApiResponse(
       responseCode = "404",
-      description = "Пользователь, который голосует, не найден(такое в теории быть не может)",
+      description =
+          "Статьи с таким Id нет или пользователь, который голосует, не найден(такое в теории быть не может)",
       content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
   @ApiResponse(
       responseCode = "401",
