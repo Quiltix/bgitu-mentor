@@ -9,9 +9,11 @@ import com.bgitu.mentor.exception.dto.ErrorResponseDto;
 import com.bgitu.mentor.vote.data.dto.ChangedRankResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +41,28 @@ public class ArticleController {
   @PreAuthorize("hasRole('MENTOR')")
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "Создание статьи", description = "Позволяет ментору опубликовать статью")
-  @ApiResponse(responseCode = "201", description = "Статья успешно создана")
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "201",
+        description = "Статья создана",
+        content = @Content(schema = @Schema(implementation = ArticleDetailsResponseDto.class))),
+    @ApiResponse(
+        responseCode = "400",
+        description = "Специальность с таким id не найдена",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Пользователь не аутентифицирован",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Пользователь, который создает, не найден(такое в теории быть не может)",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Внутренняя ошибка сервера(связана скорее всего с сохранением файла)",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  })
   public ResponseEntity<ArticleDetailsResponseDto> createArticle(
       Authentication auth,
       @RequestPart("data") @Valid ArticleCreateRequestDto dto,
@@ -63,23 +86,28 @@ public class ArticleController {
       summary = "Получить статью по ID",
       description =
           "Возвращает полную информацию о статье включая возможность голосования для текущего пользователя")
-  @ApiResponse(
-      responseCode = "200",
-      description = "Статья найдена",
-      content = @Content(schema = @Schema(implementation = ArticleDetailsResponseDto.class)))
-  @ApiResponse(
-      responseCode = "400",
-      description = "Неверный ID статьи",
-      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
-  @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован")
-  @ApiResponse(
-      responseCode = "404",
-      description = "Статья не найдена",
-      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
-  @ApiResponse(
-      responseCode = "500",
-      description = "Внутренняя ошибка сервера",
-      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Статья найдена",
+        content = @Content(schema = @Schema(implementation = ArticleDetailsResponseDto.class))),
+    @ApiResponse(
+        responseCode = "400",
+        description = "Неверный ID статьи",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Пользователь не аутентифицирован",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Статья не найдена",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Внутренняя ошибка сервера",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  })
   public ArticleDetailsResponseDto getArticleById(
       @Parameter(description = "ID статьи", example = "15") @PathVariable Long id,
       Authentication authentication) {
@@ -96,10 +124,34 @@ public class ArticleController {
               + "Фильтры: `specialityId`, `query`. "
               + "Сортировка: `sort=rank,desc`. "
               + "Пагинация: `page`, `size`.")
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Статьи найдены"),
+    @ApiResponse(
+        responseCode = "400",
+        description = "Неверные параметры запроса",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Пользователь не аутентифицирован",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "403",
+        description = "Недостаточно прав",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Внутренняя ошибка сервера",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  })
   public Page<ArticleSummaryResponseDto> findArticles(
-      @RequestParam(required = false) Long specialityId,
-      @RequestParam(required = false) String query,
-      Pageable pageable) {
+      @Parameter(description = "ID специализации для фильтрации", example = "1")
+          @RequestParam(required = false)
+          Long specialityId,
+      @Parameter(description = "Строка для поиска по заголовку и содержанию", example = "Java")
+          @RequestParam(required = false)
+          String query,
+      @Parameter(description = "Параметры пагинации и сортировки") Pageable pageable) {
+
     return articleService.findArticles(specialityId, query, pageable);
   }
 
@@ -107,23 +159,29 @@ public class ArticleController {
   @PreAuthorize("hasRole('MENTOR')")
   @Operation(summary = "Удалить статью", description = "Удаляет статью, если вы её автор")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ApiResponse(responseCode = "200", description = "Статья удалена")
-  @ApiResponse(
-      responseCode = "403",
-      description = "Пользователь не автор статьи",
-      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
-  @ApiResponse(
-      responseCode = "400",
-      description = "Неверный ID статьи",
-      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
-  @ApiResponse(
-      responseCode = "404",
-      description = "Статья не найдена",
-      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
-  @ApiResponse(
-      responseCode = "500",
-      description = "Внутренняя ошибка сервера",
-      content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "Статья удалена"),
+    @ApiResponse(
+        responseCode = "403",
+        description = "Пользователь не автор статьи",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "400",
+        description = "Неверный ID статьи",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Пользователь не аутентифицирован",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Статья не найдена",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Внутренняя ошибка сервера",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  })
   public void deleteArticle(@PathVariable Long id, Authentication authentication) {
     Long userId = SecurityUtils.getCurrentUserId(authentication);
 
@@ -135,6 +193,28 @@ public class ArticleController {
   @Operation(
       summary = "Оценить статью",
       description = "Лайк или дизлайк статьи. true = лайк, false = дизлайк")
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Статья лайкнута",
+        content = @Content(schema = @Schema(implementation = ChangedRankResponseDto.class))),
+    @ApiResponse(
+        responseCode = "400",
+        description = "Статью уже лайкнули",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Пользователь, который голосует, не найден(такое в теории быть не может)",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Пользователь не аутентифицирован",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Ошибка сервера",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  })
   @ResponseStatus(HttpStatus.OK)
   public ChangedRankResponseDto voteArticle(
       @PathVariable Long id, @RequestParam boolean like, Authentication authentication) {
@@ -147,6 +227,24 @@ public class ArticleController {
   @Operation(
       summary = "Получить популярный статьи",
       description = "Возвращает топ 3 статьи по рейтингу")
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Статьи найдены",
+        content =
+            @Content(
+                array =
+                    @ArraySchema(
+                        schema = @Schema(implementation = ArticleSummaryResponseDto.class)))),
+    @ApiResponse(
+        responseCode = "401",
+        description = "Пользователь не аутентифицирован",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Ошибка сервера",
+        content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+  })
   public List<ArticleSummaryResponseDto> getPopularArticles() {
     return articleService.findPopularArticles();
   }
