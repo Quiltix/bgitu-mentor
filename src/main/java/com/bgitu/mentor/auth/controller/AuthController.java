@@ -1,6 +1,5 @@
 package com.bgitu.mentor.auth.controller;
 
-import com.bgitu.mentor.article.data.dto.ArticleDetailsResponseDto;
 import com.bgitu.mentor.auth.data.dto.JwtAuthenticationResponseDto;
 import com.bgitu.mentor.auth.data.dto.LoginRequestDto;
 import com.bgitu.mentor.auth.data.dto.RegisterRequestDto;
