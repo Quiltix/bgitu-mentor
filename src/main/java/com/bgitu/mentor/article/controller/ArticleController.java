@@ -46,7 +46,7 @@ public class ArticleController {
       content = @Content(schema = @Schema(implementation = ArticleDetailsResponseDto.class)))
   @ApiResponse(
       responseCode = "400",
-      description = "Специальность с таким id не найдена",
+      description = "Ошибка валидации данных или неверный формат запроса",
       content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
   @ApiResponse(
       responseCode = "401",
@@ -54,7 +54,8 @@ public class ArticleController {
       content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
   @ApiResponse(
       responseCode = "404",
-      description = "Пользователь, который создает, не найден(такое в теории быть не может)",
+      description =
+          "Пользователь, который создает, не найден(такое в теории быть не может) или не найдена специальность",
       content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
   @ApiResponse(
       responseCode = "500",

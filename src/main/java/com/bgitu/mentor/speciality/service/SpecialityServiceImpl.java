@@ -4,6 +4,7 @@ import com.bgitu.mentor.speciality.data.dto.SpecialityDto;
 import com.bgitu.mentor.speciality.data.SpecialityMapper;
 import com.bgitu.mentor.speciality.data.model.Speciality;
 import com.bgitu.mentor.speciality.data.repository.SpecialityRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class SpecialityServiceImpl implements SpecialityService {
   public Speciality getById(Long specialityId) {
     return specialityRepository
         .findById(specialityId)
-        .orElseThrow(() -> new IllegalArgumentException("Специальность не найдена"));
+        .orElseThrow(() -> new EntityNotFoundException("Специальность не найдена"));
   }
 
   public List<SpecialityDto> getAllSpecialities() {
