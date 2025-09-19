@@ -23,13 +23,7 @@ public class ApplicationOfStudentResponseDto {
   private String mentorSpeciality;
 
   @Schema(
-      description =
-          """
-                              Статус заявки(  PENDING,
-                                ACCEPTED,
-                                REJECTED,
-                                EXPIRED,
-                                CANCELED)""",
+      description = "Статус заявки(  PENDING, ACCEPTED, REJECTED, EXPIRED, CANCELED)",
       example = "PENDING")
   private ApplicationStatus status;
 }
