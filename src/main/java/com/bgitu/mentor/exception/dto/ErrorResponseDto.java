@@ -18,16 +18,16 @@ public class ErrorResponseDto {
   @Schema(description = "Время возникновения ошибки", example = "2023-12-01T15:30:45.123")
   private final LocalDateTime timestamp;
 
-  @Schema(description = "HTTP статус код", example = "400")
+  @Schema(description = "HTTP статус код", example = "***")
   private final int status;
 
-  @Schema(description = "Краткое описание статуса", example = "Bad Request")
+  @Schema(description = "Краткое описание статуса", example = "Something Went Wrong")
   private final String error;
 
-  @Schema(description = "Сообщение для пользователя", example = "Некорректные данные запроса")
+  @Schema(description = "Сообщение для пользователя", example = "Для пользователя")
   private final String message;
 
-  @Schema(description = "Путь API где произошла ошибка", example = "/api/articles")
+  @Schema(description = "Путь API где произошла ошибка", example = "/api/something")
   private final String path;
 
   @Schema(
