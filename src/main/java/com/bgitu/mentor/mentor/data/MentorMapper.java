@@ -13,7 +13,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface MentorMapper {
 
-  @Mapping(source = "mentor.speciality.name", target = "speciality")
+  @Mapping(source = "mentor.speciality.name", target = "specialityName")
   @Mapping(source = "canVote", target = "canVote") //
   MentorDetailsResponseDto toDetailsDto(Mentor mentor, Boolean canVote);
 
