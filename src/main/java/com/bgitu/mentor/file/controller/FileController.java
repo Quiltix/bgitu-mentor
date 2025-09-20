@@ -9,11 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 @Tag(name = "Files", description = "Методы для взаимодействия с файлами")
 @RestController
@@ -30,10 +30,9 @@ public class FileController {
   public ResponseEntity<Resource> serveImage(
       @PathVariable String directory, @PathVariable String filename) throws IOException {
 
-    String relativePath = directory + File.pathSeparator + filename;
+    String relativePath = Paths.get(directory, filename).toString();
     Resource resource = fileStorageService.loadAsResource(relativePath);
 
-    // Определяем Content-Type
     String contentType = Files.probeContentType(Path.of(resource.getURI()));
     if (contentType == null) {
       contentType = "application/octet-stream";

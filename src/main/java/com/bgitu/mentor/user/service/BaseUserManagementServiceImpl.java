@@ -63,7 +63,7 @@ public class BaseUserManagementServiceImpl implements BaseUserManagementService 
 
     if (avatarFile != null && !avatarFile.isEmpty()) {
       String userType = (user instanceof Mentor) ? "mentor" : "student";
-      String storedRelativePath = fileStorageService.store(avatarFile, userType + "s/avatars");
+      String storedRelativePath = fileStorageService.store(avatarFile, userType);
       user.setAvatarUrl("/api/uploads/image/" + storedRelativePath.replace("\\", "/"));
     }
   }
