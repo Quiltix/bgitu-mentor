@@ -37,7 +37,6 @@ public class FileController {
     if (contentType == null) {
       contentType = "application/octet-stream";
     }
-
     return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(resource);
   }
 }

@@ -42,7 +42,7 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/swagger-resources/**",
                         "/api/auth/**",
-                        "/api/uploads/images/**")
+                        "/api/uploads/image/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated());
