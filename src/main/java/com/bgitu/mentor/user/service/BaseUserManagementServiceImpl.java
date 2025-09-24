@@ -66,8 +66,7 @@ public class BaseUserManagementServiceImpl implements BaseUserManagementService 
 
       String oldAvatarRelativePath = extractRelativePath(user.getAvatarUrl());
 
-      String userType = (user instanceof Mentor) ? "mentors" : "students";
-      String newAvatarRelativePath = fileStorageService.store(avatarFile, userType + "/avatars");
+      String newAvatarRelativePath = fileStorageService.store(avatarFile, "/avatars");
 
       user.setAvatarUrl(DEFAULT_AVATAR_URL + newAvatarRelativePath.replace("\\", "/"));
 
