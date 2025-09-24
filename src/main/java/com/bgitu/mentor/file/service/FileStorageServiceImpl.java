@@ -3,6 +3,7 @@ package com.bgitu.mentor.file.service;
 import com.bgitu.mentor.exception.custom.FileStorageException;
 import com.bgitu.mentor.exception.custom.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -18,8 +19,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FileStorageServiceImpl implements FileStorageService {
@@ -38,7 +41,8 @@ public class FileStorageServiceImpl implements FileStorageService {
 
   @Override
   public String store(MultipartFile file, String subDirectory) {
-    String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+    String originalFilename =
+        StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
     if (file.isEmpty()) {
       throw new FileStorageException("Ошибка в сохранении пустого файла " + originalFilename);
@@ -84,6 +88,28 @@ public class FileStorageServiceImpl implements FileStorageService {
       }
     } catch (MalformedURLException e) {
       throw new ResourceNotFoundException("Невозможно прочитать файл: " + filename);
+    }
+  }
+
+  @Override
+  public void delete(String relativePath) {
+    if (relativePath == null || relativePath.isBlank()) {
+      return;
+    }
+
+    try {
+      Path fileToDelete = rootLocation.resolve(relativePath).normalize();
+
+      if (!fileToDelete.startsWith(this.rootLocation)) {
+        log.warn("Попытка удаления файла за пределами разрешенной директории: {}", relativePath);
+        return;
+      }
+
+      Files.deleteIfExists(fileToDelete);
+      log.info("Файл успешно удален: {}", relativePath);
+
+    } catch (IOException e) {
+      log.error("Не удалось удалить файл: {}", relativePath, e);
     }
   }
 }
