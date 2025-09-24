@@ -27,9 +27,10 @@ public class VotingService {
     handler.saveVote(user, entity, isUpvote);
 
     int rankChange = isUpvote ? 1 : -1;
-    entity.setRank(entity.getRank() + rankChange);
+    int newRank = entity.getRank() + rankChange;
+    entity.setRank(newRank);
 
     handler.saveVotableEntity(entity);
-    return rankChange;
+    return newRank;
   }
 }
