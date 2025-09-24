@@ -2,7 +2,6 @@ package com.bgitu.mentor.user.service;
 
 import com.bgitu.mentor.user.data.dto.UserCredentialsUpdateRequestDto;
 import com.bgitu.mentor.file.service.FileStorageService;
-import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.user.data.dto.BaseUserUpdateRequestDto;
 import com.bgitu.mentor.user.data.model.BaseUser;
 import com.bgitu.mentor.user.data.repository.BaseUserRepository;
@@ -66,7 +65,7 @@ public class BaseUserManagementServiceImpl implements BaseUserManagementService 
 
       String oldAvatarRelativePath = extractRelativePath(user.getAvatarUrl());
 
-      String newAvatarRelativePath = fileStorageService.store(avatarFile, "/avatars");
+      String newAvatarRelativePath = fileStorageService.store(avatarFile, "avatars");
 
       user.setAvatarUrl(DEFAULT_AVATAR_URL + newAvatarRelativePath.replace("\\", "/"));
 
