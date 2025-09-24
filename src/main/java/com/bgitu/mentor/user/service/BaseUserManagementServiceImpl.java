@@ -21,6 +21,7 @@ public class BaseUserManagementServiceImpl implements BaseUserManagementService 
   private final PasswordEncoder passwordEncoder;
   private final FileStorageService fileStorageService;
   private final BaseUserRepository baseUserRepository;
+  private static final String DEFAULT_AVATAR_URL = "/api/uploads/image/";
 
   @Override
   @Transactional
@@ -62,9 +63,24 @@ public class BaseUserManagementServiceImpl implements BaseUserManagementService 
     }
 
     if (avatarFile != null && !avatarFile.isEmpty()) {
-      String userType = (user instanceof Mentor) ? "mentor" : "student";
-      String storedRelativePath = fileStorageService.store(avatarFile, userType);
-      user.setAvatarUrl("/api/uploads/image/" + storedRelativePath.replace("\\", "/"));
+
+      String oldAvatarRelativePath = extractRelativePath(user.getAvatarUrl());
+
+      String userType = (user instanceof Mentor) ? "mentors" : "students";
+      String newAvatarRelativePath = fileStorageService.store(avatarFile, userType + "/avatars");
+
+      user.setAvatarUrl(DEFAULT_AVATAR_URL + newAvatarRelativePath.replace("\\", "/"));
+
+      if (oldAvatarRelativePath != null) {
+        fileStorageService.delete(oldAvatarRelativePath);
+      }
     }
+  }
+
+  private String extractRelativePath(String fullUrl) {
+    if (fullUrl == null || !fullUrl.contains(DEFAULT_AVATAR_URL)) {
+      return null;
+    }
+    return fullUrl.substring(fullUrl.indexOf(DEFAULT_AVATAR_URL) + DEFAULT_AVATAR_URL.length());
   }
 }

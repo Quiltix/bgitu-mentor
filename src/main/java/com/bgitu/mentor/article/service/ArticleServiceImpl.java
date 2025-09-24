@@ -76,11 +76,15 @@ public class ArticleServiceImpl implements ArticleService {
     Article article = findById(articleId);
 
     Mentor currentMentor = userFinder.findMentorById(userId);
+    String imageRelativePath = extractRelativePath(article.getImageUrl());
 
     if (!article.getAuthor().getId().equals(currentMentor.getId())) {
       throw new AccessDeniedException("Вы можете удалять только свои статьи");
     }
     articleRepository.delete(article);
+    if (imageRelativePath != null) {
+      fileStorageService.delete(imageRelativePath);
+    }
   }
 
   @Override
@@ -131,5 +135,13 @@ public class ArticleServiceImpl implements ArticleService {
     return articleRepository
         .findById(articleId)
         .orElseThrow(() -> new EntityNotFoundException("Статья не найдена"));
+  }
+
+  private String extractRelativePath(String fullUrl) {
+    if (fullUrl == null || !fullUrl.contains("/api/uploads/image/")) {
+      return null;
+    }
+    return fullUrl.substring(
+        fullUrl.indexOf("/api/uploads/image/") + "/api/uploads/image/".length());
   }
 }
