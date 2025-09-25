@@ -40,4 +40,13 @@ public class ArticleVoteHandler implements VoteHandler<Article> {
   public void saveVotableEntity(Article entity) {
     articleRepository.save(entity);
   }
+
+  @Override
+  public int getResultVote(Long userId, Long entityId) {
+    ArticleVote vote = voteRepository.findByUser_IdAndArticle_Id(userId, entityId).orElse(null);
+    if (vote == null) {
+      return 0;
+    }
+    return vote.isUpvote() ? 1 : 0;
+  }
 }
