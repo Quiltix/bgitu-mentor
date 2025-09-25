@@ -13,5 +13,5 @@ public interface VoteHandler<T extends Votable> {
 
   void saveVotableEntity(T entity);
 
-  int getResultVote(Long UserId, Long entityId);
+  int getResultVote(Long userId, Long entityId);
 }

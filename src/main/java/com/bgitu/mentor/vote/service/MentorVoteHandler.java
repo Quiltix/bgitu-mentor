@@ -44,4 +44,13 @@ public class MentorVoteHandler implements VoteHandler<Mentor> {
   public void saveVotableEntity(Mentor entity) {
     mentorRepository.save(entity);
   }
+
+  @Override
+  public int getResultVote(Long userId, Long entityId) {
+    MentorVote vote = voteRepository.findByUser_IdAndMentor_Id(userId, entityId).orElse(null);
+    if (vote == null) {
+      return 0;
+    }
+    return vote.isUpvote() ? 1 : 0;
+  }
 }
