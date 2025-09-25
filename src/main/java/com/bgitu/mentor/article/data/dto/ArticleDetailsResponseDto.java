@@ -30,6 +30,9 @@ public class ArticleDetailsResponseDto {
   @Schema(description = "Полное имя автора", example = "Иван Петров")
   private String authorFullName;
 
-  @Schema(description = "Может ли текущий пользователь голосовать за статью")
-  private Boolean canVote;
+  @Schema(
+      description =
+          "Отображает, лайкал ли пользователь и оценку(1 - лайк, 0 - ничего, -1 - дизлайк)",
+      example = "1")
+  private Integer voteResult;
 }
