@@ -60,7 +60,7 @@ public class MentorDirectoryServiceImpl implements MentorDirectoryService {
             .findById(mentorId)
             .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
 
-    return mentorMapper.toDetailsDto(mentor, !mentorVoteHandler.hasVoted(userId, mentorId));
+    return mentorMapper.toDetailsDto(mentor, mentorVoteHandler.getResultVote(userId, mentorId));
   }
 
   @Override
