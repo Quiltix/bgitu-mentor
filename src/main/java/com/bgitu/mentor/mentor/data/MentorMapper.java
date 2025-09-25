@@ -14,8 +14,8 @@ import java.util.List;
 public interface MentorMapper {
 
   @Mapping(source = "mentor.speciality.name", target = "specialityName")
-  @Mapping(source = "voteResult", target = "voteResult") //
-  MentorDetailsResponseDto toDetailsDto(Mentor mentor, Integer canVote);
+  @Mapping(source = "voteResult", target = "voteResult")
+  MentorDetailsResponseDto toDetailsDto(Mentor mentor, Integer voteResult);
 
   @Mapping(source = "description", target = "shortDescription", qualifiedByName = "trimDescription")
   @Mapping(source = "speciality.name", target = "specialityName")
