@@ -1,5 +1,6 @@
 package com.bgitu.mentor.exception.handler;
 
+import com.bgitu.mentor.exception.custom.FileStorageException;
 import com.bgitu.mentor.exception.dto.ErrorResponseDto;
 import com.bgitu.mentor.exception.custom.ResourceNotFoundException;
 import jakarta.persistence.EntityExistsException;
@@ -30,7 +31,8 @@ public class GlobalExceptionHandler {
     HttpMessageNotReadableException.class,
     IllegalArgumentException.class,
     IllegalStateException.class,
-    BadCredentialsException.class
+    BadCredentialsException.class,
+    FileStorageException.class
   })
   public ResponseEntity<ErrorResponseDto> handleClientInputExceptions(
       Exception ex, WebRequest request) {
