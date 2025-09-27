@@ -37,7 +37,8 @@ public class MentorDetailsResponseDto {
   Integer rank;
 
   @Schema(
-      description = "Отображает возможность для текущего пользователя проголосовать за ментора ",
-      example = "true")
-  private Boolean canVote;
+      description =
+          "Отображает, лайкал ли пользователь и оценку(1 - лайк, 0 - ничего, -1 - дизлайк)",
+      example = "1")
+  private Integer voteResult;
 }

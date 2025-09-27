@@ -12,4 +12,6 @@ public interface VoteHandler<T extends Votable> {
   void saveVote(BaseUser user, T entity, boolean upVote);
 
   void saveVotableEntity(T entity);
+
+  int getResultVote(Long userId, Long entityId);
 }

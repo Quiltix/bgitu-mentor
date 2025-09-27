@@ -9,6 +9,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class MentorVoteHandler implements VoteHandler<Mentor> {
@@ -18,8 +20,8 @@ public class MentorVoteHandler implements VoteHandler<Mentor> {
 
   @Override
   public boolean hasVoted(Long userId, Long entityId) {
-    if (mentorRepository.existsById(userId)) {
-      return true;
+    if (!mentorRepository.existsById(entityId)) {
+      return false;
     }
     return voteRepository.existsByMentorIdAndUserId(entityId, userId);
   }
@@ -43,5 +45,14 @@ public class MentorVoteHandler implements VoteHandler<Mentor> {
   @Override
   public void saveVotableEntity(Mentor entity) {
     mentorRepository.save(entity);
+  }
+
+  @Override
+  public int getResultVote(Long userId, Long entityId) {
+    if (userId == null) {
+      return 0;
+    }
+    Optional<MentorVote> voteOptional = voteRepository.findByUserIdAndMentorId(userId, entityId);
+    return voteOptional.map(vote -> vote.isUpvote() ? 1 : -1).orElse(0);
   }
 }

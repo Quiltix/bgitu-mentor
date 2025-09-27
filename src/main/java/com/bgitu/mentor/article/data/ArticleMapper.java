@@ -18,8 +18,8 @@ public interface ArticleMapper {
       source = "article.author",
       target = "authorFullName",
       qualifiedByName = "authorToFullName")
-  @Mapping(source = "canVote", target = "canVote")
-  ArticleDetailsResponseDto toDetailsDto(Article article, Boolean canVote);
+  @Mapping(source = "voteResult", target = "voteResult")
+  ArticleDetailsResponseDto toDetailsDto(Article article, Integer voteResult);
 
   @Mapping(source = "speciality.name", target = "specialityName")
   @Mapping(source = "content", target = "shortContent", qualifiedByName = "contentToShort")

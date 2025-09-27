@@ -67,7 +67,7 @@ public class ArticleServiceImpl implements ArticleService {
   public ArticleDetailsResponseDto getById(Long id, Long userId) {
 
     Article article = findById(id);
-    return articleMapper.toDetailsDto(article, !articleVoteHandler.hasVoted(userId, id));
+    return articleMapper.toDetailsDto(article, articleVoteHandler.getResultVote(userId, id));
   }
 
   @Override
