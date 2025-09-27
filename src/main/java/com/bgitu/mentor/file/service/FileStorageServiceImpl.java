@@ -19,6 +19,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -26,6 +28,11 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class FileStorageServiceImpl implements FileStorageService {
+  private static final List<String> ALLOWED_IMAGE_TYPES =
+      Arrays.asList("image/jpeg", "image/png", "image/gif", "image/webp");
+
+  private static final List<String> ALLOWED_IMAGE_EXTENSIONS =
+      Arrays.asList("jpg", "jpeg", "png", "gif", "webp");
 
   private final Path rootLocation;
 
@@ -51,6 +58,7 @@ public class FileStorageServiceImpl implements FileStorageService {
       throw new FileStorageException(
           "Ошибка в сохранении файла с этим названием " + originalFilename);
     }
+    validateImageFile(file);
 
     try {
       String extension = StringUtils.getFilenameExtension(originalFilename);
@@ -110,6 +118,20 @@ public class FileStorageServiceImpl implements FileStorageService {
 
     } catch (IOException e) {
       log.error("Не удалось удалить файл: {}", relativePath, e);
+    }
+  }
+
+  private void validateImageFile(MultipartFile file) {
+    String contentType = file.getContentType();
+    if (contentType == null || !ALLOWED_IMAGE_TYPES.contains(contentType.toLowerCase())) {
+      throw new FileStorageException(
+          "Недопустимый тип файла. Разрешены только изображения: " + ALLOWED_IMAGE_TYPES);
+    }
+
+    String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+    if (extension == null || !ALLOWED_IMAGE_EXTENSIONS.contains(extension.toLowerCase())) {
+      throw new FileStorageException(
+          "Недопустимое расширение файла. Разрешены: " + ALLOWED_IMAGE_EXTENSIONS);
     }
   }
 }
