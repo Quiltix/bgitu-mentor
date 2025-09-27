@@ -47,6 +47,9 @@ public class MentorVoteHandler implements VoteHandler<Mentor> {
 
   @Override
   public int getResultVote(Long userId, Long entityId) {
+    if (userId == null) {
+      return 0;
+    }
     Optional<MentorVote> voteOptional = voteRepository.findByUserIdAndMentorId(userId, entityId);
     return voteOptional.map(vote -> vote.isUpvote() ? 1 : -1).orElse(0);
   }
