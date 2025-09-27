@@ -20,7 +20,9 @@ public class MentorVoteHandler implements VoteHandler<Mentor> {
 
   @Override
   public boolean hasVoted(Long userId, Long entityId) {
-
+    if (!mentorRepository.existsById(entityId)) {
+      throw new EntityNotFoundException("Ментор не найден");
+    }
     return voteRepository.existsByMentorIdAndUserId(entityId, userId);
   }
 
