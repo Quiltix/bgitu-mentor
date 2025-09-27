@@ -9,6 +9,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class ArticleVoteHandler implements VoteHandler<Article> {
@@ -43,10 +45,12 @@ public class ArticleVoteHandler implements VoteHandler<Article> {
 
   @Override
   public int getResultVote(Long userId, Long entityId) {
-    ArticleVote vote = voteRepository.findByUser_IdAndArticle_Id(userId, entityId).orElse(null);
-    if (vote == null) {
+    if (userId == null) {
       return 0;
     }
-    return vote.isUpvote() ? 1 : 0;
+
+    Optional<ArticleVote> voteOptional = voteRepository.findByUserIdAndArticleId(userId, entityId);
+
+    return voteOptional.map(vote -> vote.isUpvote() ? 1 : -1).orElse(0);
   }
 }
