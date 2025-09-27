@@ -9,5 +9,5 @@ public interface MentorVoteRepository extends JpaRepository<MentorVote, Long> {
 
   boolean existsByMentorIdAndUserId(Long entityId, Long id);
 
-  Optional<MentorVote> findByUser_IdAndMentor_Id(Long id, Long id1);
+  Optional<MentorVote> findByUserIdAndMentorId(Long userId, Long mentorId);
 }
