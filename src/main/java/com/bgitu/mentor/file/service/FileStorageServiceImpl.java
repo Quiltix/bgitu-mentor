@@ -125,7 +125,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     String contentType = file.getContentType();
     if (contentType == null || !ALLOWED_IMAGE_TYPES.contains(contentType.toLowerCase())) {
       throw new FileStorageException(
-          "Недопустимый тип файла. Разрешены только изображения: " + ALLOWED_IMAGE_TYPES);
+          "Недопустимый тип файла. Разрешены только изображения: " + ALLOWED_IMAGE_EXTENSIONS);
     }
 
     String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
