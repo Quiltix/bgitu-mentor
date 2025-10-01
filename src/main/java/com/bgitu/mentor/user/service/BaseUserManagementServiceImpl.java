@@ -36,6 +36,9 @@ public class BaseUserManagementServiceImpl implements BaseUserManagementService 
     }
 
     if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+      if (dto.getPassword().length() < 5) {
+        throw new IllegalArgumentException("Пароль должен содержать хотя-бы 5 символов");
+      }
       user.setPassword(passwordEncoder.encode(dto.getPassword()));
     }
 
