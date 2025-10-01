@@ -1,6 +1,6 @@
 services:
   app:
-    image: quiltix/mentor:tagname
+    image: quiltix/mentor:latest
     container_name: mentor-app
     restart: unless-stopped
     ports:
