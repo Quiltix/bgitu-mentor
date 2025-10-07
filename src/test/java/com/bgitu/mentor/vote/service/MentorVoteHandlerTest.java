@@ -34,11 +34,28 @@ class MentorVoteHandlerTest {
     Long mentorId = 2L;
 
     when(voteRepository.existsByMentorIdAndUserId(mentorId, userId)).thenReturn(true);
+    when(mentorRepository.existsById(mentorId)).thenReturn(true);
 
     boolean result = mentorVoteHandler.hasVoted(userId, mentorId);
 
     verify(voteRepository, times(1)).existsByMentorIdAndUserId(mentorId, userId);
+    verify(mentorRepository, times(1)).existsById(mentorId);
     assertTrue(result);
+  }
+
+  @DisplayName("hasVoted | Should return false when mentor does not exist")
+  @Test
+  void hasVoted_returnsFalse_whenMentorNotFound() {
+    Long userId = 1L;
+    Long mentorId = 2L;
+
+    when(mentorRepository.existsById(mentorId)).thenReturn(false);
+
+    boolean result = mentorVoteHandler.hasVoted(userId, mentorId);
+
+    verify(voteRepository, never()).existsByMentorIdAndUserId(mentorId, userId);
+    verify(mentorRepository, times(1)).existsById(mentorId);
+    assertFalse(result);
   }
 
   @DisplayName("hasVoted | Should return false when vote does not exist for given user and mentor")
@@ -48,6 +65,7 @@ class MentorVoteHandlerTest {
     Long mentorId = 2L;
 
     when(voteRepository.existsByMentorIdAndUserId(mentorId, userId)).thenReturn(false);
+    when(mentorRepository.existsById(mentorId)).thenReturn(true);
 
     boolean result = mentorVoteHandler.hasVoted(userId, mentorId);
 

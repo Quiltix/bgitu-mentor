@@ -5,6 +5,7 @@ import com.bgitu.mentor.mentor.data.dto.MentorDetailsResponseDto;
 import com.bgitu.mentor.mentor.data.dto.MentorSummaryResponseDto;
 import com.bgitu.mentor.mentor.data.model.Mentor;
 import com.bgitu.mentor.mentor.data.repository.MentorRepository;
+import com.bgitu.mentor.vote.service.MentorVoteHandler;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ class MentorDirectoryServiceImplTest {
 
   @Mock private MentorRepository mentorRepository;
   @Mock private MentorMapper mentorMapper;
+  @Mock private MentorVoteHandler mentorVoteHandler;
 
   @InjectMocks private MentorDirectoryServiceImpl mentorDirectoryService;
 
@@ -52,7 +54,8 @@ class MentorDirectoryServiceImplTest {
     fakeDto.setFirstName("Иван");
 
     when(mentorRepository.findById(mentorId)).thenReturn(Optional.of(fakeMentor));
-    when(mentorMapper.toDetailsDto(fakeMentor)).thenReturn(fakeDto);
+    when(mentorMapper.toDetailsDto(fakeMentor, 0)).thenReturn(fakeDto);
+    when(mentorVoteHandler.getResultVote(null, mentorId)).thenReturn(0);
 
     MentorDetailsResponseDto resultDto = mentorDirectoryService.getMentorDetails(mentorId, null);
 
@@ -61,7 +64,7 @@ class MentorDirectoryServiceImplTest {
     assertEquals(fakeDto.getFirstName(), resultDto.getFirstName());
 
     verify(mentorRepository, times(1)).findById(mentorId);
-    verify(mentorMapper, times(1)).toDetailsDto(fakeMentor);
+    verify(mentorMapper, times(1)).toDetailsDto(fakeMentor, 0);
   }
 
   @Test
