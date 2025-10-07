@@ -1,6 +1,7 @@
 package com.bgitu.mentor.auth.service;
 
 import com.bgitu.mentor.auth.Role;
+import com.bgitu.mentor.auth.data.AuthMapper;
 import com.bgitu.mentor.auth.data.dto.JwtAuthenticationResponseDto;
 import com.bgitu.mentor.auth.data.dto.LoginRequestDto;
 import com.bgitu.mentor.auth.data.dto.RegisterRequestDto;
@@ -31,6 +32,7 @@ class AuthServiceImplTest {
   @Mock private BaseUserRepository userRepository;
   @Mock private JwtTokenProvider tokenProvider;
   @Mock private AuthenticationManager authenticationManager;
+  @Mock private AuthMapper authMapper;
 
   @InjectMocks private AuthServiceImpl authServiceImpl;
 
@@ -56,6 +58,9 @@ class AuthServiceImplTest {
     dto.setFirstName("John");
     dto.setLastName("Doe");
     dto.setRole(Role.MENTOR);
+    JwtAuthenticationResponseDto dtoForMapper = new JwtAuthenticationResponseDto();
+    dtoForMapper.setAccessToken("jwtToken");
+    dtoForMapper.setRole(Role.MENTOR.name());
 
     Mentor savedMentor = new Mentor();
     savedMentor.setId(1L);
@@ -63,7 +68,7 @@ class AuthServiceImplTest {
     when(userRepository.save(any(Mentor.class))).thenReturn(savedMentor);
     when(passwordEncoder.encode(dto.getPassword())).thenReturn("encodedPassword");
     when(tokenProvider.generateToken(savedMentor.getId(), Role.MENTOR)).thenReturn("jwtToken");
-
+    when(authMapper.toDto("jwtToken", Role.MENTOR.name())).thenReturn(dtoForMapper);
     JwtAuthenticationResponseDto response = authServiceImpl.register(dto);
 
     verify(userRepository, times(1)).existsByEmail(dto.getEmail());
@@ -84,12 +89,17 @@ class AuthServiceImplTest {
     dto.setLastName("Doe");
     dto.setRole(Role.STUDENT);
 
+    JwtAuthenticationResponseDto dtoForMapper = new JwtAuthenticationResponseDto();
+    dtoForMapper.setAccessToken("jwtToken");
+    dtoForMapper.setRole(Role.STUDENT.name());
+
     Student savedStudent = new Student();
     savedStudent.setId(2L);
     when(userRepository.existsByEmail(dto.getEmail())).thenReturn(false);
     when(userRepository.save(any(Student.class))).thenReturn(savedStudent);
     when(passwordEncoder.encode(dto.getPassword())).thenReturn("encodedPassword");
     when(tokenProvider.generateToken(savedStudent.getId(), Role.STUDENT)).thenReturn("jwtToken");
+    when(authMapper.toDto("jwtToken", Role.STUDENT.name())).thenReturn(dtoForMapper);
 
     JwtAuthenticationResponseDto response = authServiceImpl.register(dto);
 
@@ -122,6 +132,9 @@ class AuthServiceImplTest {
     LoginRequestDto dto = new LoginRequestDto();
     dto.setEmail("user@example.com");
     dto.setPassword("password");
+    JwtAuthenticationResponseDto dtoForMapper = new JwtAuthenticationResponseDto();
+    dtoForMapper.setAccessToken("jwtToken");
+    dtoForMapper.setRole(Role.MENTOR.name());
 
     AuthenticatedUser userDetails =
         new AuthenticatedUser(1L, "user@example.com", "password", Role.MENTOR);
@@ -132,6 +145,7 @@ class AuthServiceImplTest {
     when(authentication.getPrincipal()).thenReturn(userDetails);
     when(tokenProvider.generateToken(userDetails.getId(), userDetails.getRole()))
         .thenReturn("jwtToken");
+    when(authMapper.toDto("jwtToken", Role.MENTOR.name())).thenReturn(dtoForMapper);
 
     JwtAuthenticationResponseDto response = authServiceImpl.login(dto);
 
