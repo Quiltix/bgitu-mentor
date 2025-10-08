@@ -29,8 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -268,5 +267,25 @@ class ArticleServiceImplTest {
     assertThrows(
         IllegalStateException.class, () -> articleService.findArticles(null, longQuery, pageable));
     verifyNoInteractions(articleRepository);
+  }
+
+  @DisplayName("findById | Should find article when it exists")
+  @Test
+  void findById_shouldReturnsArticle_whenExists() {
+    Article fakeArticle = new Article();
+    fakeArticle.setTitle("test");
+    fakeArticle.setId(1L);
+    ArticleDetailsResponseDto fakeResult = new ArticleDetailsResponseDto();
+    fakeResult.setId(1L);
+    fakeResult.setTitle("test");
+
+    when(articleMapper.toDetailsDto(fakeArticle, 0)).thenReturn(fakeResult);
+    when(articleRepository.findById(1L)).thenReturn(Optional.of(fakeArticle));
+    when(articleVoteHandler.getResultVote(2L, 1L)).thenReturn(0);
+
+    ArticleDetailsResponseDto result = articleService.getById(1L, 2L);
+
+    assertNotNull(result);
+    assertEquals(fakeResult, result);
   }
 }
