@@ -157,6 +157,7 @@ class ArticleServiceImplTest {
     Long userId = 2L;
 
     Article article = new Article();
+    article.setImageUrl("/api/uploads/image/avatars/c71ff760-fd61-44c4-b693-7602e5843c09.png");
     Mentor author = new Mentor();
     author.setId(userId);
     article.setAuthor(author);
@@ -169,6 +170,7 @@ class ArticleServiceImplTest {
     verify(articleRepository, times(1)).findById(articleId);
     verify(userFinder, times(1)).findMentorById(userId);
     verify(articleRepository, times(1)).delete(article);
+    verify(fileStorageService, times(1)).delete("avatars/c71ff760-fd61-44c4-b693-7602e5843c09.png");
   }
 
   @DisplayName("deleteArticle | Should throw exception when article does not exist")
@@ -287,5 +289,15 @@ class ArticleServiceImplTest {
 
     assertNotNull(result);
     assertEquals(fakeResult, result);
+  }
+
+  @DisplayName("findById | Should throw exception when it doesnt exists")
+  @Test
+  void findById_shouldThrow_whenDoesntExists() {
+
+    when(articleRepository.findById(2L)).thenThrow(EntityNotFoundException.class);
+
+    assertThrows(EntityNotFoundException.class, () -> articleService.getById(2L, 1L));
+    verify(articleMapper, never()).toDetailsDto(any(), any());
   }
 }
