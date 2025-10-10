@@ -3,6 +3,8 @@ package com.bgitu.mentor.mentorship.data.repository;
 import com.bgitu.mentor.mentorship.data.model.Application;
 import com.bgitu.mentor.mentorship.data.model.ApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -18,4 +20,12 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
   boolean existsByStudentIdAndMentorIdAndStatus(
       Long studentId, Long mentorId, ApplicationStatus status);
+
+  @Modifying
+  @Query(
+      """
+         UPDATE Application a SET a.status = 'EXPIRED'
+         WHERE a.student.id = :studentId AND a.id <> :excludedApplicationId AND a.status = 'PENDING'
+         """)
+  void updateOtherPendingApplicationsToExpired(Long studentId, Long excludedApplicationId);
 }
