@@ -21,7 +21,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
   boolean existsByStudentIdAndMentorIdAndStatus(
       Long studentId, Long mentorId, ApplicationStatus status);
 
-  @Modifying
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
   @Query(
       """
          UPDATE Application a SET a.status = 'EXPIRED'
