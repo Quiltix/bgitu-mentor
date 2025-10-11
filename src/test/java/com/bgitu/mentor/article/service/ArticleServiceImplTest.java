@@ -150,25 +150,19 @@ class ArticleServiceImplTest {
     verifyNoInteractions(fileStorageService, articleRepository, articleMapper);
   }
 
-  @DisplayName("deleteArticle | Should delete article when user is the author")
+  @DisplayName("deleteArticle | Should delete article")
   @Test
-  void deleteArticle_deletesArticle_whenUserIsAuthor() {
+  void deleteArticle_deletesArticle_whenArticleExists() {
     Long articleId = 1L;
-    Long userId = 2L;
 
     Article article = new Article();
     article.setImageUrl("/api/uploads/image/avatars/c71ff760-fd61-44c4-b693-7602e5843c09.png");
-    Mentor author = new Mentor();
-    author.setId(userId);
-    article.setAuthor(author);
 
     when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
-    when(userFinder.findMentorById(userId)).thenReturn(author);
 
-    articleService.deleteArticle(articleId, userId);
+    articleService.deleteArticle(articleId);
 
     verify(articleRepository, times(1)).findById(articleId);
-    verify(userFinder, times(1)).findMentorById(userId);
     verify(articleRepository, times(1)).delete(article);
     verify(fileStorageService, times(1)).delete("avatars/c71ff760-fd61-44c4-b693-7602e5843c09.png");
   }
@@ -177,41 +171,13 @@ class ArticleServiceImplTest {
   @Test
   void deleteArticle_throwsException_whenArticleDoesNotExist() {
     Long articleId = 1L;
-    Long userId = 2L;
 
     when(articleRepository.findById(articleId)).thenReturn(Optional.empty());
 
-    assertThrows(
-        EntityNotFoundException.class, () -> articleService.deleteArticle(articleId, userId));
+    assertThrows(EntityNotFoundException.class, () -> articleService.deleteArticle(articleId));
 
     verify(articleRepository, times(1)).findById(articleId);
     verifyNoInteractions(userFinder);
-  }
-
-  @DisplayName("deleteArticle | Should throw exception when user is not the author")
-  @Test
-  void deleteArticle_throwsException_whenUserIsNotAuthor() {
-    Long articleId = 1L;
-    Long userId = 2L;
-    Long anotherUserId = 3L;
-
-    Article article = new Article();
-    Mentor author = new Mentor();
-    author.setId(anotherUserId);
-    article.setAuthor(author);
-
-    Mentor currentMentor = new Mentor();
-    currentMentor.setId(userId);
-
-    when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
-    when(userFinder.findMentorById(userId)).thenReturn(currentMentor);
-
-    assertThrows(
-        AccessDeniedException.class, () -> articleService.deleteArticle(articleId, userId));
-
-    verify(articleRepository, times(1)).findById(articleId);
-    verify(userFinder, times(1)).findMentorById(userId);
-    verify(articleRepository, never()).delete(article);
   }
 
   @DisplayName(
