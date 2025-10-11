@@ -23,7 +23,7 @@ public interface ArticleService {
 
   List<ArticleSummaryResponseDto> findPopularArticles();
 
-  void deleteArticle(Long articleId, Long userId);
+  void deleteArticle(Long articleId);
 
   ChangedRankResponseDto changeArticleRank(Long articleId, boolean like, Long userId);
 }

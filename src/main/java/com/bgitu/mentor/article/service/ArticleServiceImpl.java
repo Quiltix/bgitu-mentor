@@ -40,6 +40,8 @@ public class ArticleServiceImpl implements ArticleService {
   private final ArticleVoteHandler articleVoteHandler;
   private final ArticleMapper articleMapper;
 
+  private static final String URL_PATTERN = "/api/uploads/image/";
+
   @Override
   @Transactional
   public ArticleDetailsResponseDto createArticle(
@@ -56,7 +58,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     if (image != null && !image.isEmpty()) {
       String storedRelativePath = fileStorageService.store(image, "articles");
-      String publicUrl = "/api/uploads/image/" + storedRelativePath.replace("\\", "/");
+      String publicUrl = URL_PATTERN + storedRelativePath.replace("\\", "/");
       article.setImageUrl(publicUrl);
     }
     return articleMapper.toDetailsDto(articleRepository.save(article));
@@ -72,15 +74,11 @@ public class ArticleServiceImpl implements ArticleService {
 
   @Override
   @Transactional
-  public void deleteArticle(Long articleId, Long userId) {
+  public void deleteArticle(Long articleId) {
     Article article = findById(articleId);
 
-    Mentor currentMentor = userFinder.findMentorById(userId);
     String imageRelativePath = extractRelativePath(article.getImageUrl());
 
-    if (!article.getAuthor().getId().equals(currentMentor.getId())) {
-      throw new AccessDeniedException("Вы можете удалять только свои статьи");
-    }
     articleRepository.delete(article);
     if (imageRelativePath != null) {
       fileStorageService.delete(imageRelativePath);
@@ -138,10 +136,9 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   private String extractRelativePath(String fullUrl) {
-    if (fullUrl == null || !fullUrl.contains("/api/uploads/image/")) {
+    if (fullUrl == null || !fullUrl.contains(URL_PATTERN)) {
       return null;
     }
-    return fullUrl.substring(
-        fullUrl.indexOf("/api/uploads/image/") + "/api/uploads/image/".length());
+    return fullUrl.substring(fullUrl.indexOf(URL_PATTERN) + URL_PATTERN.length());
   }
 }
