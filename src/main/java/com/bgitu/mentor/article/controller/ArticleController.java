@@ -150,7 +150,7 @@ public class ArticleController {
   }
 
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasRole('MENTOR')")
+  @PreAuthorize("hasRole('MENTOR') and @articleSecurity.isAuthor(authentication, #id)")
   @Operation(summary = "Удалить статью", description = "Удаляет статью, если вы её автор")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ApiResponse(responseCode = "200", description = "Статья удалена")
@@ -170,10 +170,9 @@ public class ArticleController {
       responseCode = "500",
       description = "Внутренняя ошибка сервера",
       content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
-  public void deleteArticle(@PathVariable Long id, Authentication authentication) {
-    Long userId = SecurityUtils.getCurrentUserId(authentication);
+  public void deleteArticle(@PathVariable Long id) {
 
-    articleService.deleteArticle(id, userId);
+    articleService.deleteArticle(id);
   }
 
   @PreAuthorize("isAuthenticated()")
