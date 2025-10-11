@@ -20,8 +20,8 @@ public class AuthenticatedUser implements UserDetails {
   public AuthenticatedUser(Long id, Role role) {
     this.id = id;
     this.role = role;
-    this.email = null; // Email не нужен для последующих запросов, только для логина
-    this.password = null; // Пароль тем более не нужен
+    this.email = null;
+    this.password = null;
   }
 
   public AuthenticatedUser(Long id, String email, String password, Role role) {

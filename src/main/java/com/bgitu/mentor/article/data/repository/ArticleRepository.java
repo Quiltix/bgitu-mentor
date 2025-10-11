@@ -14,4 +14,6 @@ public interface ArticleRepository
   List<Article> findTop3ByOrderByRankDesc();
 
   boolean existsByTitle(String title);
+
+  boolean existsByIdAndAuthorId(Long articleId, Long userId);
 }
